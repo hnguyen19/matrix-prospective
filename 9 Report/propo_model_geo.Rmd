@@ -97,11 +97,15 @@ Assumptions:
 -  Waterhemp accumulated biomass in soybean was twice as much as it is in corn. *To relax by simulating multiple levels of biomass accumulation given the means throughout the years.* 
 - Cohorts 1 to 6 fecundity within a crop identity by corn weed management can be estimated using the same equation.  
 
-```{r}
+```{r, echo=FALSE}
 ## Use fecundity equations to estimate seed production  
 ### import seed estimation equation from  2018 data
+fecund_eq <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Fecundity/fecund_eq.csv")
 
- 
+### import 2019 biomass 
+
+
+### simulate individual biomass based on population density and population mean biomass 
 ```
  
 ```{r fecundity geo, echo=FALSE, warning=FALSE}
