@@ -1,0 +1,18 @@
+---
+title: "Effects of crop rotation on common waterhemp population dynamics: a prospective analysis"
+author: "Huong Nguyen"
+date: "10/19/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Tillage-induced seedbank composition  
+
+### Emergence  
+
+### Growth and survival  
+
+### Fecundity estimation from aboveground mass at maturity 

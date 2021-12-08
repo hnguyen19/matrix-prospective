@@ -1,0 +1,316 @@
+---
+documentclass: article
+classoption: a4paper
+fontsize: 12pt
+title: ""
+author: "Huong Nguyen"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  word_document:
+  highlight: tango
+bibliography: propo.bib
+biblio-style: cell
+sansfont: Georgia
+---
+## Population model with geometric means adjusted 2019 census data      
+
+This sub-section generally repeats the **Population model with the original 2019** procedure. 
+Two changes were made here: (i) waterhemp survival rate in soybean is the same as in corn and (ii) waterhemp accumulated biomass in soybean was twice as much as in corn, for all cohorts. Only adjusted matrices are displayed.  
+
+```{r model geo, include=FALSE}
+library(emmeans)
+library(here)
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(tidyverse)
+library(purrr)
+#library(readr)
+#library(dplyr)
+library(popbio)
+#library(pracma)
+```
+
+ 
+
+```{r emergence geo, include=FALSE}
+emerge <- read_csv("~/Documents/Dissertation/Emergence/2019Emergence/2_Data/emerge_19.csv")
+
+
+## 2019 emergence
+# row 1, column 1: remaining seeds in the soil seedbank top stratum 
+# row 2, column 1: seeds move from top to bottom stratum --> change to 1?
+# row 1, column 2: seeds move from bottom to top stratum --> change to 1?
+# row 2, column 2: seeds in the bottom remains in the bottom
+# rows 3 to 8, column 1: emerged cohorts 1 to 6
+emerge_m<-lapply(split(emerge, emerge$ID),
+      function(x)rbind(cbind(c(1-sum(x$Mean_ep),0),rbind(0,1),matrix(0,nrow = 2,ncol = 6)),matrix(c(x$Mean_ep,rep(0,(48-length(x$Mean_ep)))),byrow = F,nrow = 6)))
+
+# emerge_m$A4_c check one matrix 
+
+## 2020 emergence
+```
+
+### Adjusted survival matrices  
+Assuming that waterhemp survival rates are the same as in corn, the following matrices are obtained. 
+Survival matrix of 2-year, conventional soybean (CONV S2) is included as an example.  
+
+```{r survival geo, echo=FALSE, warning=FALSE}
+## 2019
+lx_19_a <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Growth/surv_19_adj.csv")
+
+lx_19_a$lx_a[is.infinite(lx_19_a$lx_a)]<-0
+
+surv_g_<-lapply(split(lx_19_a, lx_19_a$ID),
+       function(x)(rbind(cbind(matrix(c( 1, 0, 0, 1),nrow=2,byrow = T),matrix(0,nrow=2,ncol=6)),cbind(matrix(0,nrow=6,ncol=2),diag(x$lx_a,6)))))
+
+
+summerS_m1<- rbind(cbind(matrix(c(0.5, 0, 0, 0.42),nrow=2,byrow = T),matrix(0,nrow=2,ncol=6)),cbind(matrix(0,nrow=6,ncol=2),diag(1,6)))
+summerS_m1 #for C, S
+
+
+summerS_m3<- rbind(cbind(matrix(c(0.28, 0, 0, 0.58),nrow=2,byrow = T),matrix(0,nrow=2,ncol=6)),cbind(matrix(0,nrow=6,ncol=2),diag(1,6)))
+
+summerS_m3 # for O4 and O3
+
+
+summerS_m2<- rbind(cbind(matrix(c(0.3, 0, 0, 0.5),nrow=2,byrow = T),matrix(0,nrow=2,ncol=6)),cbind(matrix(0,nrow=6,ncol=2),diag(1,6)))
+
+summerS_m2 #for A4
+
+surv_g<- lapply(seq_along(surv_g_), function(i){
+  if(names(surv_g_[i]) %in% c("O4_l","O4_c","O3_l","O3_c")) summerS_m3*surv_g_[[i]] else
+    if(names(surv_g_[i]) %in% c("A4_c","A4_l")) summerS_m2*surv_g_[[i]]
+    else summerS_m1*surv_g_[[i]]
+})
+
+names(surv_g) <- names(surv_g_)
+
+```
+
+
+### Fecundity    
+
+Biomass matrix is used as an intermediate matrix for fecundity.  
+
+In 2018, waterhemp was not controlled effectively but in 2019 herbicide efficacy that controlled waterhemp to non-existence.
+Assumptions: 
+-  Waterhemp accumulated biomass in soybean was twice as much as it is in corn. *To relax by simulating multiple levels of biomass accumulation given the means throughout the years.* 
+- Cohorts 1 to 6 fecundity within a crop identity by corn weed management can be estimated using the same equation.  
+
+```{r}
+## Use fecundity equations to estimate seed production  
+### import seed estimation equation from  2018 data
+
+ 
+```
+ 
+```{r fecundity geo, echo=FALSE, warning=FALSE}
+
+fed_19_g <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Fecundity/fed_19g.csv")
+
+fed_19_g <- fed_19_g%>%
+  mutate(pred=ifelse(ID %in% c("A4_c", "A4_l"), .5,
+                     ifelse(ID %in% c("O3_c","O3_l"), .7,
+                            ifelse(ID %in% c ("O4_c","O4_l"), .8,
+                                   ifelse(ID %in% c("S2_c","S2_l","S3_c","S4_l","S3_l","S4_c"),.14,.05)))))
+
+fed_19_g$pred_surv <- 1-fed_19_g$pred
+
+fed_19_g$f <- fed_19_g$Seed*fed_19_g$pred_surv
+
+
+fed_geo_m<-lapply(split(fed_19_g, fed_19_g$ID),
+       function(x)(rbind(cbind(diag(1,2),matrix(c(x$f,rep(0,6)), byrow = T, nrow=2)),matrix(0,nrow = 6, ncol=8))))
+
+fed_geo_m$A4_c
+
+```
+
+
+```{r fall tillage geo, include=FALSE}
+#disk <- rbind(cbind(matrix(c(0.482,0.518,0.034,0.966),nrow=2,byrow = F),matrix(0,nrow=2,ncol=6)),matrix(0,ncol = 8,nrow=6))
+
+chisel <- rbind(cbind(matrix(c(0.409,0.591,0.044,0.956),nrow=2,byrow = F),matrix(0,nrow=2,ncol=6)),matrix(0,ncol = 8,nrow=6))
+
+moldboard <- rbind(cbind(matrix(c(0.013,0.987,0.078,0.922),nrow=2,byrow = F),matrix(0,nrow=2,ncol=6)),matrix(0,ncol = 8,nrow=6))
+
+notill <- rbind(cbind(matrix(c(1,0,0,1),nrow=2,byrow = F),matrix(0,nrow=2,ncol=6)),matrix(0,ncol = 8,nrow=6))
+```
+
+
+```{r mod mold Mohler geo, include=FALSE}
+moldboard
+```  
+
+```{r mod chisel Mohler geo, include=FALSE}
+chisel
+```
+
+```{r mod notill geo, include=FALSE}
+notill
+```
+
+
+```{r overwinter geo, include=FALSE} 
+overwinter_m1<- rbind(cbind(matrix(c(0.6, 0, 0, 0.62),nrow=2,byrow = T),matrix(0,nrow=2,ncol=6)),matrix(0,ncol = 8,nrow=6))  
+
+overwinter_m1
+
+
+overwinter_m3<- rbind(cbind(matrix(c(0.78, 0, 0, 0.82),nrow=2,byrow = T),matrix(0,nrow=2,ncol=6)),matrix(0,ncol = 8,nrow=6))  
+
+overwinter_m3
+
+
+overwinter_m2<- rbind(cbind(matrix(c(0.69, 0, 0, 0.72),nrow=2,byrow = T),matrix(0,nrow=2,ncol=6)),matrix(0,ncol = 8,nrow=6))  
+
+overwinter_m2
+```
+
+### Annual population projection matrix, with adjusted parameters  
+
+New annual population projection matrices were obtained after the adjustments above. A matrix for CONV A4 is shown below as an example.  
+
+```{r phase wise geo, include=TRUE, echo=FALSE, warning=FALSE}
+#View(emerge_m)
+#View(surv_m)
+#View(fed_m)
+#library(purrr)
+list_phaseg <- mget(paste0(c("fed_geo_m","surv_g","emerge_m"))) #need herb in between surv and fed then grani at the end 
+
+
+#everything before tillage
+prj1g <- flatten(tail(accumulate(list_phaseg, map2, crossprod), 1))
+
+
+
+#apply tillage
+prj2g<- lapply(seq_along(prj1g), function(i){
+  if(names(prj1g[i]) %in% c("A4_l","A4_c","O3_l","O3_c")) moldboard%*%prj1g[[i]] else 
+    if(names(prj1g[i]) %in% c("C2_c","C2_l","C3_c","C3_l","C4_c","C4_l")) chisel%*%prj1g[[i]]
+    else notill%*%prj1g[[i]]
+})
+
+names(prj2g) <- names(prj1g)
+
+
+#over-winter survival 
+prj3g<-lapply(seq_along(prj2g), function(i){
+  if(names(prj2g[i]) %in% c("A4_l","A4_c","O3_l","O3_c")) overwinter_m1%*%prj2g[[i]] else
+    if(names(prj2g[i]) %in% c("C2_c","C2_l","C3_c","C3_l","C4_c","C4_l")) overwinter_m2%*%prj2g[[i]]
+    else overwinter_m3%*%prj2g[[i]]
+})
+
+names(prj3g) <- names(prj2g)
+
+
+```
+
+
+```{r phase wise 19 geo fed, include=FALSE}
+phase_eigen_ana_19g <- lapply(prj3g, function(i){
+  eigen.analysis(i)})
+```
+
+
+### Rotation-wise population matrix  
+
+
+```{r rotationwise geo fed, include=FALSE} 
+#4year, conventional
+y4_c_19g<- prj3g[c("A4_c","O4_c","S4_c","C4_c")]
+
+#4year, low
+y4_l_19g<- prj3g[c("A4_l","O4_l","S4_l","C4_l")]
+
+#3year, conventional
+y3_c_19g<- prj3g[c("O3_c","S3_c","C3_c")]
+#3year, low
+y3_l_19g<- prj3g[c("O3_l","S3_l","C3_l")]
+
+#2year, conventional
+y2_c_19g<- prj3g[c("S2_c","C2_c")]
+#2year, low
+y2_l_19g<- prj3g[c("S2_l","C2_l")]
+
+list_rot_19g <-  mget(paste0(c("y4_c_19g","y4_l_19g","y3_c_19g","y3_l_19g","y2_c_19g","y2_l_19g")))
+
+
+rot_19g <- lapply(list_rot_19g, function(i){
+  Reduce("%*%",i)
+})
+
+rot_eigen_ana_19g <- lapply(rot_19g, function(i){
+  eigen.analysis(i)})
+## annualized population growth rate
+
+
+#ask stackoverflow how to do all at once
+#rot_eigen_ana_19$y4_c_19
+```
+
+The annualized population growth rate and other demographic parameters for waterhemp using adjusted data are shown below. 
+
+2-year, conventional  
+
+```{r annualized 19 geo 2yr c, echo=FALSE, warning=FALSE}
+
+#names(rot_eigen_ana_19)
+map(.x=rot_eigen_ana_19g$y2_c_19g,~nthroot(.x,2))
+```
+
+2-year, low   
+
+```{r annualized 19 geo 2yr l, echo=FALSE, warning=FALSE}
+map(.x=rot_eigen_ana_19g$y2_l_19g,~nthroot(.x,2))
+```
+
+3-year, conventional   
+
+```{r annualized 19 geo 3yr c, echo=FALSE, warning=FALSE}
+map(.x=rot_eigen_ana_19g$y3_c_19g,~nthroot(.x,3))
+```
+
+3-year, low   
+
+```{r annualized 19 geo 3yr l, echo=FALSE, warning=FALSE}
+map(.x=rot_eigen_ana_19g$y3_l_19g,~nthroot(.x,3))
+```
+
+4-year, conventional  
+
+```{r annualized 19 geo 4yr c, echo=FALSE, warning=FALSE}
+map(.x=rot_eigen_ana_19g$y4_c_19g,~nthroot(.x,4))
+```
+
+4-year, low   
+
+```{r annualized 19 geo 4yr l, echo=FALSE, warning=FALSE}
+map(.x=rot_eigen_ana_19g$y4_l_19g,~nthroot(.x,4))
+
+#lapply(rot_eigen_ana_19,'[',1)
+``` 
+
+
+The current results of population growth rates, $\lambda$ are presented below. 
+$\lambda$ values were annualized by taking the $r^{th}$ root of the rotation-wise population growth rates with $r$ being the number of crop phases in the rotation system. In both cases, original and adjusted data, the waterhemp population is decreasing. 
+If waterhemp were controlled at 100% efficacy in one crop phase, soybean - as in 2019 as-is data, the population change rate would not be remarkably different across rotation systems. 
+If waterhemp were present in soybean and accumulated twice as much biomass as in corn, the 3-year rotation would deplete the waterhemp soil seedbank the fastest.  
+
+*Work is underway to expand the table below to include more scenarios, one of which is for waterhemp being controlled at lower efficacy in 2018. Then, two waterhemps were found with at least 1.5 million seeds.*  
+
+Table 4.3 - Population growth rates   
+
+| Treatment | 2019, as is | 2019, adjusted |   
+| ------------ | ------------------- | ------------------- |  
+| 2-year, conv | 3.56 | 3.12 |  
+| 2-year, low | 0.42 | 0.44 |  
+| 3-year, conv | 2.22 | 2.57 |   
+| 3-year, low | 1.31 | 1.55 |  
+| 4-year, conv | 2.26 | 2.84 |  
+| 4-year, low | 2.39 | 3 |    
+
+  
+In both cases, original and adjusted data, there are four non-zero elements in the sensitivities and elasticities matrices that represent the dynamics of the seedbank. 
+The population growth rates are most influenced by the densities of buried seeds and of buried seeds that were brought to the soil surface.  
+
