@@ -103,15 +103,48 @@ Assumptions:
 fecund_eq <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Fecundity/fecund_eq.csv")
 
 ### import 2019 biomass 
+female_19 <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Fecundity/female_19.csv") # 1365 entries
 
+#replace NA with 0, 0 will be corrected by log(Biomass + 0.0005) in the later step
+
+
+
+### estimate 2019 fecundity 
+female_19_est <- left_join(fecund_eq, female_19, 
+                           by = c("Corn_weed_management" = "Corn_herbicide",
+                                  "Crop_ID" = "Crop_ID")) %>% #now 1371 entries, with 6 NA for soybeans 
+  replace_na(list(Weight = 0)) 
+
+# Seed = a * log(Weight) + b
+# a = log(Biomass + 0.005)_estimate /// b = (Intercept)_estimate
+
+female_19_est$Seed <- exp(log(female_19_est$Weight + 0.0005)*female_19_est$`log(Biomass + 0.005)_estimate` + female_19_est$`(Intercept)_estimate`)
 
 ### simulate individual biomass based on population density and population mean biomass 
+
 ```
- 
+
+```{r, echo=FALSE}
+## summarize fecundity by Crop_ID x Corn weed management
+female_19_est$ID <- paste0(female_19_est$Crop_ID, "_", substr(female_19_est$Corn_weed_management,0,1))
+
+
+female_19_est_summ <- female_19_est%>%
+  group_by(ID, Cohort) %>%
+  summarize(mean_fecundity = mean(Seed),
+            sd_fecundity = sd(Seed))
+
+## partition seed list to 18 matrices (9 Crop_ID x 2 Corn weed management)
+
+fecund_geo_m<-lapply(split(female_19_est_summ, female_19_est_summ$ID),
+       function(x)(rbind(matrix(c(x$mean_fecundity,rep(0,6)), byrow = T, nrow=2))))
+```
+
 ```{r fecundity geo, echo=FALSE, warning=FALSE}
 
 fed_19_g <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Fecundity/fed_19g.csv")
 
+## survival from predation for seeds on the soil surface?
 fed_19_g <- fed_19_g%>%
   mutate(pred=ifelse(ID %in% c("A4_c", "A4_l"), .5,
                      ifelse(ID %in% c("O3_c","O3_l"), .7,
@@ -123,6 +156,7 @@ fed_19_g$pred_surv <- 1-fed_19_g$pred
 fed_19_g$f <- fed_19_g$Seed*fed_19_g$pred_surv
 
 
+## from 108 rows to 18 matrices of 8 x 8
 fed_geo_m<-lapply(split(fed_19_g, fed_19_g$ID),
        function(x)(rbind(cbind(diag(1,2),matrix(c(x$f,rep(0,6)), byrow = T, nrow=2)),matrix(0,nrow = 6, ncol=8))))
 
