@@ -1,0 +1,22 @@
+---
+title: "Fecundity matrix organization"
+output: html_document
+---
+
+```{r, include=FALSE, message=FALSE}
+library(tidyverse)
+library(readr)
+library(emmeans)
+library(here)
+```
+
+The calculation of fecundity is 
+
+$$ F = aX + b$$
+where, 
+F is the fecundity a cohort 
+a is the Intercept from [@nguyenImpactCroppingSystem2022]
+```{r amata-fecundity-equation, include=FALSE}
+fecundity_eq <- read.csv(here("2-Data/Raw/fecund_eq.csv"))
+
+```

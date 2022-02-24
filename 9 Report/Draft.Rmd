@@ -8,11 +8,23 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+### Starting density  
+
+Emergence: use emergence density from 2018, 2019 and 2020 (Number_begin by cohort)
+
+## Seedbank
 
 ### Tillage-induced seedbank composition  
 
-### Emergence  
+### Recruiment: emergence as proportion of seedbank density 
+
+## Seedling
 
 ### Growth and survival  
 
+## Mature ??
 ### Fecundity estimation from aboveground mass at maturity 
+
+### Mature density: reported in Waterhemp-fecundity 
+
+### Female density: 
