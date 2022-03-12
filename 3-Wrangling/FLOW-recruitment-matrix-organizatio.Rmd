@@ -14,8 +14,10 @@ library(nlme)
 
 
 
-```{r emergence-matrix-list}
+```{r emergence-density-matrix-list}
+# Look in AMATA-demography for original code
 
+emerge_19 <- readRDS("../2-Data/Raw/six-cohort-female-emerge-list-raw.RData")
 ```
 
 ```{r seedbank-19}

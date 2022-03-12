@@ -11,6 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(purrr) # for map2()
 ```
 
+Scenario 1 settings:
+
 Using the 2019 seedbank stratum-based densities as the initial state of the seedbank vertical distribution (model year 1), the following matrices traced how the seed population in model year 1 grow in three rotation systems crossed with two corn weed management regimes. 
 
 ```{r}
@@ -33,7 +35,6 @@ pre_planting_tillage  <- readRDS("../2-Data/Clean/pre-planting-tillage.RData")
 
 ## Emergence 
 
-emerge <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
 
 ## Seed survival and plant survival 
 
