@@ -1,0 +1,86 @@
+
+An attempt to demonstrate matrix resize in R. The R calculation match hand calculation in Excel for all matrices, but moldboard, so Excel was used.
+
+```{r tillage-matrix}
+# Seed bed preparation tillage, imported from folder `Tillage matrix`
+## Prepare the seed columns for the Seed Chaser matrices.  
+# A seed column that is only filled from 0 to 2 cm
+top_only <- c(rep(1600,3),rep(0,16))
+
+# A seed column that is only filled from 3 to 18 cm
+bottom_only <- c(rep(0,3),rep(300,16))
+# 4 tillage regimes at once
+
+# https://stackoverflow.com/questions/46518781/reading-multiple-csv-files-as-data-frames-in-r
+SC <- "~/Documents/Dissertation/matrix-prospective/2-Data/Raw/SeedChaser_Spokas07"
+
+SC_till <- list.files(path = SC, 
+           pattern = '.csv$', full.names = TRUE) %>%
+  map(read_csv, col_names = FALSE)
+
+
+#make sure that the loaded tables are matrices
+SC_till_matrix <- lapply(SC_till,function(i){
+  as.matrix(i)
+})  
+
+names(SC_till_matrix ) <- c("chisel","disc", "field_cultivator", "moldboard")
+
+# seeds in the top stratum moved downward
+SC_top_down <- lapply(SC_till_matrix ,"%*%",top_only)
+
+SC_top_down_pct <- lapply(SC_top_down ,"/",4800)
+
+# seeds in the bottom stratum moved upward
+SC_bottom_up <- lapply(SC_till_matrix ,"%*%",bottom_only)
+SC_bottom_up_pct <- lapply(SC_bottom_up ,"/",4800)
+
+# resize 
+
+### top stay in top
+SC_top_top <- sapply(SC_top_down_pct, "[", 1:3)
+SC_top_top_2by2 <- colSums(SC_top_top)
+
+### top move to bottom
+SC_top_bottom <- sapply(SC_top_down_pct, "[", 4:19)
+SC_top_bottom_2by2 <- colSums(SC_top_bottom)
+
+### bottom move to top
+SC_bottom_top <- sapply(SC_bottom_up_pct, "[", 1:3)
+SC_bottom_top_2by2 <- colSums(SC_bottom_top)
+
+### bottom stay at the bottom  
+SC_bottom_bottom <- sapply(SC_bottom_up_pct, "[", 4:19)
+
+SC_bottom_bottom_2by2 <- colSums(SC_bottom_bottom)
+
+## Arrange the calculated proportions to 2x2, the matrix is currently alphabetical
+SC_stratified <- list(SC_top_top, SC_top_bottom, SC_bottom_top, SC_bottom_bottom)
+SC_sum <- lapply(SC_stratified, "colSums")
+
+# Make matrix and list the 4 matrices together.
+
+tillage_id <- seq_along(SC_sum[[1]])
+names(tillage_id) <- names(SC_sum[[1]])
+tillage_list_raw <- lapply(tillage_id, function(i) matrix(vapply(SC_sum, `[[`, 0, i), ncol = 2))
+
+# A an Identity matrix for no till 
+no_till <- diag(1,2)
+
+tillage_list_raw$no_till <- no_till
+# Expand the raw tillage list to 8 x 8 for multiplication with the overwinter matrices 
+# Post harvest: moldboard x 4 ; chisel x 6 ; no till x 8 
+# Pre-planting: field cultivator x 16 ; no till x 2 
+
+post_harvest_raw <- tillage_list_raw[-c(2,3)] #disc is temporarily out, field cultivator is for pre_planting 
+
+post_harvest_repeat_n <-list(c(6, ), c(2,3)) #number of times each matrix is repeated
+
+repeat_chisel <- lapply(seq_along(tillage_list_raw ), function(i)rep(tillage_list_raw[[i]], repeat.list[[i]]))
+
+# Arrange tillage matrix with matrix_id as in other list
+
+
+
+
+```

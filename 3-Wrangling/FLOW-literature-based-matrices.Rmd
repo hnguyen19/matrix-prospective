@@ -1,0 +1,321 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+    reference_docx: style_template.docx
+---
+
+Matrices in this document is listed chronologically, from natural seed rain (at AMATA senescence) to new seed production. 
+
+```{r, include=FALSE}
+library(emmeans)
+library(here)
+library(readr)
+```
+
+```{r fresh-seed-viability}
+# Table 2 in Buhler and Hartzler, 2001, at <http://www.jstor.com/stable/4046508> 
+
+fresh_seed_viability_BH <- expand.grid(Crop_ID = c("C2","S2",
+                                                "C3","S3","O3",
+                                                "C4", "S4", "O4", "A4"),
+                                    Corn_weed_management = c("conv","low"),
+                                    Cohort = c(1:6),
+                                  Viability = 0.83)
+
+fresh_seed_viability_BH_matrix <- fresh_seed_viability_BH %>%
+  mutate(matrix_id = paste(Crop_ID,Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id)
+
+fresh_seed_viability_BH_matrix_list <- lapply(split(fresh_seed_viability_BH_matrix, fresh_seed_viability_BH_matrix$matrix_id),
+       function(x)(diag(x$Viability, 6)))  #seed fecundity matrix and rearrange if needed
+
+# Table 1 in Korres et al., 2018, at <https://doi.org/10.1017/wsc.2018.27>
+fresh_seed_viability_Korres <- expand.grid(Crop_ID = c("C2","S2",
+                                                "C3","S3","O3",
+                                                "C4", "S4", "O4", "A4"),
+                                    Corn_weed_management = c("conv","low"),
+                                    Cohort = c(1:6),
+                                  Viability = 0.935) # mean(c(98, 97.3, 92, 88.2, 91.9)) = 93.48
+
+
+```
+
+SeedChaser is a Java application that simulates how seeds are moved vertically by a tillage method. The SeedChaser tillage matrices relevant to this exercices are field cultivator, moldboard, chisel, and disk. The Seed Chaser matrices describe seed movement in 1 cm increament from 0 to 18 cm depth while our soil samples were taken down to 20 cm depth. We assume that the 2 - 18 cm depth in the Seed Chaser matrices describe the seed movement dynamics in our 2 - 20 cm depth when the corresponding tillage method is applied.  
+
+The overall mechanism of resizing the matrices is the law of total probability. Each column in the original and the resized matrices sums to 1. For example: 
+
+$$ 
+T_{2,1} =  P[top | bottom] = P[top | bottom 1] P[depth1 | bottom] + P[top | bottom 2] P[bottom 2 | bottom] + ... + P[top | bottom 20] P[bottom 20 | bottom]
+$$
+where,  
+P[top | bottom] is the probability that a seed move from the bottom stratum to the top,  
+P[top | depth i] is the probability that a seed move from depth i to the top stratum, and  
+P[depth i | bottom] is the probability that a seed at depth i remain in the bottom stratum.  
+
+Each of the original 18 x 18 matrices was resized to 2 x 2 using the following steps: 
++ Round 1: Calculation of the probability of a seed in the top 0 - 2 cm stratum remains in the top ($T_{1,1}$) and the probability that that it moves to the bottom 2 - 20 cm stratum ($T_{1,2}$). 
+
+- Distribute 4800 seeds evenly from 0 to 2 cm by filling 1600 to the first three elements of a 18 x 1 vector.
+- Fill the remaining sixteen elements with 0.
+- Run one pass of a tillage method to redistribute the seed column.
+- Divide each element of the redistributed seed column by 4800 to make a top-down vector.
+- Sum the first three elements of the top-down vector to have $T_{1,1}$ and the last sixteen elements to have $T_{1,2}$.
+
++ Round 2: Calculation of the probability of a seed in the bottom 2 - 20 cm stratum remains in the bottom stratum ($T_{2,2}$) and the probability that it moves to the top 0 - 2 stratum ($T_{2,1}$). 
+
+- Distribute 4800 seeds evenly from 3 to 18 cm by filling 3000 to the last sixteen elements of a 18 x 1 vector.
+- Fill the remaining three elements with 0.
+- Run one pass of a tillage method to redistribute the seed column.
+- Divide each element of the redistributed seed column by 4800 to make a bottom-up vector.
+- Sum the first three elements of the bottom-up vector to have $T_{2,1}$ and the last sixteem elements to have $T_{2,2}$.
+
+```{r post-harvest-tillage-matrix}
+# Post-harvest tillage, imported from folder `Tillage-resized`
+chisel <- read_csv("../2-Data/Raw/Tillage-resized/chisel_2by2.csv", col_names = FALSE, show_col_types = FALSE)
+names(chisel) <- NULL
+
+moldboard <- read_csv("../2-Data/Raw/Tillage-resized/moldboard_2by2.csv", col_names = FALSE, show_col_types = FALSE)
+names(moldboard) <- NULL
+
+no_till <- read_csv("../2-Data/Raw/Tillage-resized/notill_2by2.csv", col_names = FALSE, show_col_types = FALSE)
+
+# Make a list of post-harvest tillage practices
+
+post_harvest_tillage <- rbindlist(list(chisel, chisel, chisel, chisel, chisel, chisel,
+                             moldboard, moldboard, moldboard, moldboard, 
+                             no_till, no_till, no_till, no_till,
+                             no_till, no_till, no_till, no_till),
+                              use.names = TRUE, fill = FALSE)
+
+post_harvest_tillage$matrix_id <- c(rep("C2_low", 2), rep("C2_conv",2),
+                                    rep("C3_low", 2), rep("C3_conv",2),
+                                    rep("C4_low", 2), rep("C4_conv",2),
+                                    rep("S2_low", 2), rep("S2_conv",2),
+                                    rep("S3_low", 2), rep("S3_conv",2),
+                                    rep("S4_low", 2), rep("S4_conv",2),
+                                    rep("O4_low", 2), rep("O4_conv",2),
+                                    rep("A4_low", 2), rep("A4_conv",2),
+                                    rep("O3_low", 2), rep("O3_conv",2))
+
+post_harvest_tillage_list <- lapply(split(post_harvest_tillage, post_harvest_tillage$matrix_id),
+       function(x)(rbind(cbind(matrix(c(x$X1, x$X2), byrow = FALSE, nrow=2),
+                   matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+
+# saveRDS(post_harvest_tillage_list, file="../2-Data/Clean/post-harvest-tillage.RData")
+```
+
+
+
+Multiple scenarios of off-season seed survival at the top and bottom stratum were used. Our exhaustive search in the current literature has returned few crop environments: corn, soybean, and rye cover crop. 
+
+To account for the difference in field conditions provided by cover crops between no till with cover crop (from O4 to A4 phases) and no till without cover crop (from S2 to C2, S3 to O4, and S4 to O4 phases), educated guesses were made of overwinter seed viability were examined. 
+
+Scenario 1: Using AMAPA's seedbank behavior in place of AMATA's.  
+
+@sosnoskieGlyphosateResistanceDoes2013 tested *Amaranthus Palmeri* seed viability as a function of 
+
+@sosnoskieGlyphosateResistanceDoes2013 did not find significant effect of rye cover crop's presence on overwinter viability of Palmer amaranth's seeds, but other studies have recognized the effects of cover crops on herbivore activities [@gallandtEffectCovercroppingSystems2005; @heggenstallerSeasonalPatternsPostdispersal2006]. 
+
+$o_1 = y = 98.9 e^{-0.068x} \%$ and $o_2 = y = 99.5 e^{-0.05x} \%$ from Figures 1 and 3 in [@sosnoskieGlyphosateResistanceDoes2013] were used for the top and bottom survival rate between all crop phases.
+
+
+The x values are filled with the gap in months between active growing of the preceding and succeeding crop phases, such as 6 months from corn harvest to soybean planting and 9 month from oat harvest to alfalfa active growing, etc.  
+
+
+Scenario 2: Using AMATA undisturbed seedbank behavior
+
+relevant for the no till
+
+ 
+*Each scenario of overwinter or summer seed viability was examined by holding all the values in the empirical matrices constant.*
+
+
+
+```{r off-season-viability-matrix, echo=FALSE}
+# After seed rain and post-harvest vertical redistribution
+#################### Scenario 1: Sosnoskie et al. 2013 -  No distinguishable cover crop effect
+# Assign 6 months of summer and winter to corn and soybean, 5.5 months of summer to oat and 4.5 month of summer to alfalfa per the observation at Marsden that oat and alfalfa delayed waterhemp emergence.
+
+overwinter_Sosnoskie_13 <- read_csv("../2-Data/Raw/seed-survival-Sosnoskie-2013.csv", show_col_types = FALSE)
+
+overwinter_Sosnoskie_13_cohort <- overwinter_Sosnoskie_13 %>%
+  mutate(Seed_overwinter = Coefficient_a*exp(Coefficient_b*winter_month),
+         Seed_overwinter_prop = Seed_overwinter/100,
+         matrix_id = paste(from_Phase,Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, desc(Stratum)) #Matrices are identified by the crop species that presented before the month of December in a particular plot.
+
+overwinter_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13_cohort, overwinter_Sosnoskie_13_cohort$matrix_id),
+       function(x)(rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
+                         matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+                         
+off_season_scenario1 <- overwinter_Sosnoskie_13_cohort_list 
+
+# saveRDS(off_season_scenario1 , file="../2-Data/Clean/winter-seed-survival-scenario1.RData")
+
+#################### Scenario 2: Korres et al., 2018 - No crop environment effect
+
+overwinter_Korres_18 <-  expand.grid(Crop_ID = c("C2","S2",
+                                                "C3","S3","O3",
+                                                "C4", "S4", "O4", "A4"),
+                                    Corn_weed_management = c("conv","low"),
+                                    Stratum = c("Top", "Bottom")) 
+
+overwinter_Korres_18_deduced <- overwinter_Korres_18 %>%
+  mutate(Seed_overwinter_prop = ifelse(Stratum == "Top", 0.44, 0.31)) %>%
+  mutate(from_Phase = Crop_ID,
+         matrix_id = paste(from_Phase,Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, Stratum)
+
+
+overwinter_Korres_18_cohort_list <- lapply(split(overwinter_Korres_18_deduced, overwinter_Korres_18_deduced$matrix_id),
+       function(x)(rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
+                         matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+                         
+off_season_scenario2 <- overwinter_Korres_18_cohort_list
+
+# saveRDS(off_season_scenario2, file="../2-Data/Clean/winter-seed-survival-scenario2.RData")
+
+
+#################### Scenario 3: corn and soybean deduced from Steckel et al. 2007, oat and alfalfa from Scenario 1's numbers.  
+
+overwinter_Steckel_07 <- read_csv("../2-Data/Raw/winter-seed-survival-Steckel-2007.csv", show_col_types = FALSE)
+  
+overwinter_Steckel_07_cohort <- overwinter_Steckel_07 %>%
+  mutate(Seed_overwinter_prop = Seed_overwinter_pct/100,
+         matrix_id = paste(from_Phase, Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, desc(Stratum))
+
+
+overwinter_Steckel_07_cohort_list <- lapply(split(overwinter_Steckel_07_cohort, overwinter_Steckel_07_cohort$matrix_id),
+       function(x)(rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
+                         matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+                         
+off_season_scenario3 <- overwinter_Steckel_07_cohort_list 
+
+# saveRDS(off_season_scenario3, file="../2-Data/Clean/winter-seed-survival-scenario3.RData")
+
+```
+
+
+```{r pre-planting-tillage-matrix}
+# Pre-planting tillage
+
+field_cultivator <- read_csv("../2-Data/Raw/Tillage-resized/fieldcultivator_2by2.csv", col_names = FALSE, show_col_types = FALSE)
+
+pre_planting_tillage <- rbindlist(list(field_cultivator, field_cultivator , field_cultivator, field_cultivator,
+                                               field_cultivator, field_cultivator , field_cultivator, field_cultivator,
+                                               field_cultivator, field_cultivator , field_cultivator, field_cultivator,
+                                               field_cultivator, field_cultivator , field_cultivator, field_cultivator,
+                                               no_till, no_till),
+                              use.names = TRUE, fill = FALSE)
+
+# All phases received pre-planting field cultivator, except A4
+pre_planting_tillage$matrix_id <- c(rep("C2_low", 2), rep("C2_conv",2),
+                                    rep("C3_low", 2), rep("C3_conv",2),
+                                    rep("C4_low", 2), rep("C4_conv",2),
+                                    rep("S2_low", 2), rep("S2_conv",2),
+                                    rep("S3_low", 2), rep("S3_conv",2),
+                                    rep("S4_low", 2), rep("S4_conv",2),
+                                    rep("O4_low", 2), rep("O4_conv",2),
+                                    rep("O3_low", 2), rep("O3_conv",2),
+                                    rep("A4_low", 2), rep("A4_conv",2))
+
+pre_planting_tillage_list <- lapply(split(pre_planting_tillage, pre_planting_tillage$matrix_id),
+      function(x)(rbind(cbind(matrix(c(x$X1, x$X2), byrow = FALSE, nrow=2),
+                   matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+
+#saveRDS(pre_planting_tillage_list, file="../2-Data/Clean/pre-planting-tillage.RData")
+```
+
+
+```{r summer-seed-survival-matrix}
+# Summer seed consumption on the soil surface,  to be incorporated with recruitment matrix by summation
+
+####################### Scenario 1: 
+
+# Calculations are from Sosnoskie et al., 2013, using the same rationale as in the winter survival, but different values of the time lapse to account for cool-seasoned crops effects. 
+# The gap month is the number of months that a crop is in active growth.  This arrangement will account for dormant seeds viability loss.
+
+summer_seed_survival_Sosnoskie_13 <- overwinter_Sosnoskie_13 
+
+summer_seed_survival_Sosnoskie_13_cohort <- summer_seed_survival_Sosnoskie_13  %>%
+  mutate(Seed_overwinter = Coefficient_a*exp(Coefficient_b*summer_month),
+         Seed_overwinter_prop = Seed_overwinter/100,
+         matrix_id = paste(from_Phase,Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, desc(Stratum)) #Matrices are identified by the crop species that presented before the month of December in a particular plot.
+
+summer_seed_survival_Sosnoskie_13_cohort_list <- lapply(split(summer_seed_survival_Sosnoskie_13_cohort , summer_seed_survival_Sosnoskie_13_cohort$matrix_id),
+       function(x)(rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
+                         matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+                         
+# saveRDS(summer_seed_decay_Sosnoskie_13_cohort_list, file="../2-Data/Clean/summer-seed-survival-scenario1.RData")
+
+####################### Scenario 2: Buhler and Harzler 2001  findings are actually survival after one year. These numbers might be inflated if an overwinter matrix is already in place. This matrix might serve as a combined matrix of seed survival for the whole year. 
+summer_seed_survival_scenario2 <- expand.grid(Crop_ID = c("C2","S2",
+                                                "C3","S3","O3",
+                                                "C4", "S4", "O4", "A4"),
+                                    Corn_weed_management = c("conv","low"),
+                                    Stratum = c("Top", "Bottom"))
+
+## Fill in the proportion of retrieved seeds and viability of retrieved seeds 1 year after burial 
+summer_seed_survival_scenario2_filled <- summer_seed_survival_scenario2%>%
+  mutate(retrieved_prop = 0.65,
+         retrieved_viability = 0.8,
+         original_survival_prop = retrieved_prop*retrieved_viability,
+         matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
+    arrange(matrix_id, desc(Stratum))
+
+summer_seed_survival_scenario2_filled_list <- lapply(split(summer_seed_survival_scenario2_filled  , summer_seed_survival_scenario2_filled$matrix_id),
+       function(x)(rbind(cbind(diag(x$original_survival_prop, 2), 
+                         matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+
+# saveRDS(summer_seed_survival_scenario2_filled_list, file="../2-Data/Clean/summer-seed-survival-scenario2.RData")
+```
+
+```{r summer-seed-predation}
+## may be optional 
+summer_seed_pred <- read_csv("../2-Data/Raw/seed-predation-van-der-Laat-2015.csv", na = ".",,
+                             show_col_types = FALSE)
+
+summer_seed_pred_clean <- summer_seed_pred %>%
+  rename(Event = ev,
+         Block = blk,
+         Sample = sam,
+         Consumed_pct = `%pred`) %>%
+  mutate(Year = ifelse(yr == 1, "2003", "2004"),
+         Species = ifelse(sp == "W", "Waterhemp", "NA"),
+         Tillage = ifelse(trt =="CP", "chisel",
+                          ifelse(trt == "NT", "no till", "moldboard")),
+         Exclusion = ifelse(type == "w", "vertebrate exclusion",
+                            ifelse(type == "c", "none", "vertebrate and invertebreate exclusion")),
+         Consumed_prop = Consumed_pct/100)
+
+#summer_seed_pred_clean[,c(1:7, 9:13)] <- lapply(summer_seed_pred_clean[,c(1:7, 9:13)], factor)
+
+## Since the authors did not find consistent patterns of tillage effects on seed predation, I used a data-based (instead of model-based) sets of mean seed consumption for a starting point of my population dynamics model.  
+summer_seed_pred_summ <- summer_seed_pred_clean %>%
+  group_by(Tillage, Species, Exclusion, Year, Event) %>%
+  summarize(Consumed_prop = mean(Consumed_prop, na.rm = TRUE))
+
+## The summer predation averaged over 10 timestamps and 2 year
+summer_seed_pred_grand_summ <- summer_seed_pred_clean %>%
+  group_by(Tillage, Species) %>%
+  summarize(Consumed_prop = mean(Consumed_prop, na.rm = TRUE)) %>%
+  mutate(Stratum = "Top") #add stratum identification to use later
+
+
+```
+
+```{r}
+## After model run: where does herbicide survival fit in?
+## Using 2018 and 2019 survival as a starting point, partition matrices into HR and non-HR survival rate, sum them up
+```

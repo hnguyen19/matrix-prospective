@@ -1,0 +1,23 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readr)
+library(emmeans)
+library(here)
+library(nlme)
+```
+
+
+
+```{r emergence-matrix-list}
+
+```
+
+```{r seedbank-19}
+#save all seedbank information in one sheet in AMATA-demography, then filter for 2019 here
+```

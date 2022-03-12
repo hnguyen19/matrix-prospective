@@ -1,0 +1,56 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+    reference_docx: style_template.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(purrr) # for map2()
+```
+
+Using the 2019 seedbank stratum-based densities as the initial state of the seedbank vertical distribution (model year 1), the following matrices traced how the seed population in model year 1 grow in three rotation systems crossed with two corn weed management regimes. 
+
+```{r}
+## Read seed column data  
+seed_column <- readRDS("../2-Data/Raw/seed_column_19_list.RData")
+
+seed_column_round <- readRDS("../2-Data/Raw/seed_column_19_list_poisson.RData") #something wrong, 6 rows only?
+
+
+## Post-harvest tillage
+post_harvest_tillage <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
+
+## Overwinter survival 
+
+overwinter <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.RData")
+
+## Pre-planting tillage 
+
+pre_planting_tillage  <- readRDS("../2-Data/Clean/pre-planting-tillage.RData")
+
+## Emergence 
+
+emerge <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
+
+## Seed survival and plant survival 
+
+female_survive <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
+
+## Fecundity 
+
+fecundity <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
+```
+
+
+
+```{r post-harvest-tillage-pop}
+# https://stackoverflow.com/questions/68342613/use-lapply-to-multiply-two-lists-of-matrices-in-r
+
+post_harvest_tillage_pop <- purrr::map2(post_harvest_tillage, seed_column, `%*%`)
+```
+
+```{r overwinter-pop}
+```

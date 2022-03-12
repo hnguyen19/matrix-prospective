@@ -8,15 +8,157 @@ library(tidyverse)
 library(readr)
 library(emmeans)
 library(here)
+library(nlme)
 ```
 
-The calculation of fecundity is 
+```{r fecund-18, include=FALSE}
+fecundity18 <- read_csv("../2-Data/Raw/fecundity_18.csv", 
+    col_types = cols(Biomass = col_number(), 
+        Seed = col_number()), na = "empty")
+
+fecundity18$Crop_ID <- factor(fecundity18$Crop_ID, 
+                              levels = c("C2", "S2",
+                                         "C3", "S3", "O3",
+                                         "C4", "S4", "O4", "A4"))
+
+# Make sure that Block, Crop ID, Corn_weed_management, and bt are factors
+fecundity18[,c(1:7,10:13)]  <- lapply(fecundity18[,c(1:7,10:13)], factor) 
+
+
+## Keep complete cases only (389/391 entries), "sb" in fecundity18_sb stands for seed and biomass 
+fecundity18_sb <- fecundity18[complete.cases(fecundity18$Seed, fecundity18$Biomass), ]
+
+allcrops.biom.seed.gls <- gls(log(Seed+1) ~ Block + 
+                                log(Biomass + 0.005) + 
+                      Crop_ID*Corn_weed_management +
+                      Crop_ID:log(Biomass + 0.005) +
+                        Corn_weed_management:log(Biomass + 0.005) +
+                      Crop_ID:Corn_weed_management:log(Biomass + 0.005),
+  correlation=corCompSymm(form= ~1 | bt), #identifies each treatment within block
+  data=fecundity18_sb)
+
+# Partition plant size and fecundity into 6 bins
+
+#hist(log(fecundity18_sb$Biomass), bin = 6)
+
+fecundity18_sb_log <- fecundity18_sb %>% 
+  mutate(log_Biomass = log(Biomass + 0.005),
+         log_Seed = log(Seed + 1)) %>%
+  group_by(Crop_ID, Corn_weed_management) %>% # pool all plants from the same CropID x Corn weed mgt
+  mutate(quantile_Biomass = ntile(log_Biomass , 6),
+         quantile_Seed = ntile(log_Seed, 6)) %>%
+  dplyr::mutate(tag = ifelse(quantile_Biomass > quantile_Seed, "mismatched", "matched")) # check if Biomass and Seed quantiles are aligned
+
+#fecundity18_sb_log %>% filter(Crop_ID == "S2", Corn_weed_management == "low") %>% View()
+
+# nrow(fecundity18_sb_log %>% filter(tag == "mismatched")) # 86 entries with mismatched bins of biomass and seeds. The difference is one bin only. # 63 mismatched bins only, if all the plants were pooled
+
+## Calculate quantile-means, with log and original data
+fecundity18_sb_log_quantile_summ <- fecundity18_sb_log %>%
+  group_by(quantile_Biomass, Crop_ID, Corn_weed_management) %>%
+  summarize(geometric_mean_Biomass = mean(log_Biomass),
+         geometric_mean_Seed = mean(log_Seed),
+         mean_Seed = mean(Seed)) %>% #
+  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_"))
+
+#View(fecundity18_sb_log_quantile_summ)
+
+# Check if all combinations have 6 bins, for 6 cohorts.
+#table(fecundity18_sb_log_quantile_summ$Crop_ID, fecundity18_sb_log_quantile_summ$quantile_Biomass)
+
+#range(fecundity18_sb_log_quantile_summ$geometric_mean_Biomass)
+
+# cut(fecundity18_sb_log_quantile_summ$geometric_mean_Biomass, 5)
+
+# Write a list of 8 x 8 matrices
+
+fecundity_mean_18_list <-  lapply(split(fecundity18_sb_log_quantile_summ, fecundity18_sb_log_quantile_summ$matrix_id),
+       function(x)(rbind(cbind(diag(1,2),
+                         rbind(matrix(c(x$mean_Seed,rep(0,6)), byrow = T, nrow=2))),
+       matrix(rep(0,48), nrow = 6, byrow = T))))
+
+## Save the 18 2018 fecundity matrices as a list 
+# saveRDS(fecundity_mean_18_list, file="../2-Data/Clean/fecundity-mean-18-cohort.RData")
+
+```
+
+```{r save-fecundity, include=FALSE}
+# Estimated marginal means of fecundity 
+# Since the effects of corn weed management and crop identity on fecundity were mediated by biomass 
+# at = list(Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08), from cut(fecundity18_sb_log_quantile_summ$geometric_mean_Biomass, 5)
+# need to refine the cut() to reflect appropriate size bin partitioning, especially the big plants
+
+# Need cutting by Crop_ID
+seeds_18_emm <- emmeans(allcrops.biom.seed.gls, ~ 
+                       Crop_ID * Corn_weed_management | Biomass,
+                     at = list(Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08)))  # 6 bins, as pooled by the whole experiment
+
+seeds_18_emm_df <- seeds_18_emm %>%
+  as.data.frame() %>%
+  rename(ln_seed = emmean) %>%
+  mutate(Seed_original = exp(ln_seed) - 1)
+
+View(seeds_18_emm_df)
+```
+
+
+The calculation of fecundity from 2019 aboveground mass data is 
 
 $$ F = aX + b$$
 where, 
 F is the fecundity a cohort 
 a is the Intercept from [@nguyenImpactCroppingSystem2022]
 ```{r amata-fecundity-equation, include=FALSE}
-fecundity_eq <- read.csv(here("2-Data/Raw/fecund_eq.csv"))
+fecundity_eq <- read_csv("../2-Data/Raw/fecund_eq.csv")
+
+### import 2019 biomass 
+female_19 <- read_csv("../2-Data/Raw/female_19.csv") # 1365 entries
+
+#replace NA with 0, 0 will be corrected by log(Biomass + 0.0005) in the later step
+
+### estimate 2019 fecundity 
+female_19_est <- left_join(fecundity_eq, female_19, 
+                           by = c("Corn_weed_management", "Crop_ID" )) %>% #now 1371 entries, with 6 NA for soybeans 
+  replace_na(list(Weight = 0)) 
+
+# Seed = a * log(Weight) + b
+# a = log(Biomass + 0.005)_estimate /// b = (Intercept)_estimate
+
+female_19_est$Seed <- exp(log(female_19_est$Weight + 0.0005)*female_19_est$`log(Biomass + 0.005)_estimate` + female_19_est$`(Intercept)_estimate`)
+
+female_19_est_quantile_summ <- female_19_est %>% 
+  group_by(Corn_weed_management, Crop_ID) %>% # pool all plants from the same CropID x Corn weed mgt
+  mutate(quantile_Biomass = ntile(`log(Biomass + 0.005)_estimate` , 6),
+         quantile_Seed = ntile(Seed, 6)) %>%
+  group_by(quantile_Biomass, Corn_weed_management, Crop_ID) %>%
+  summarize( mean_Seed = mean(Seed))  %>% 
+  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_"))
+
+# check combinations for non-zero entries: 78
+table(female_19_est_quantile_summ$quantile_Biomass, female_19_est_quantile_summ$Crop_ID)
+
+# Fill cohorts 2 until 6 in soybeans with zeros 
+
+female_19_seed_placeholder <- expand.grid(Crop_ID = c("S2", "S3", "S4"),
+            Corn_weed_management = c("conv","low"),
+            quantile_Biomass = c(2:6),
+            mean_Seed = 0)
+
+female_19_seed_placeholder$matrix_id <- paste(female_19_seed_placeholder$Crop_ID,
+                                          female_19_seed_placeholder$Corn_weed_management,
+                                          sep = "_")
+
+female_19_est_quantile_summ_expand <- rbind(female_19_est_quantile_summ, female_19_seed_placeholder)
+
+
+# Save estimated fecundity in 2019 as a list
+fecundity_mean_19_list <-  lapply(split(female_19_est_quantile_summ_expand, female_19_est_quantile_summ_expand$matrix_id),
+       function(x)(rbind(cbind(diag(1,2),
+                         rbind(matrix(c(x$mean_Seed,rep(0,6)), byrow = T, nrow=2))),
+       matrix(rep(0,48), nrow = 6, byrow = T))))
+
+## Save the 18  2019 fecundity matrices as a list 
+# saveRDS(fecundity_mean_19_list, file="../2-Data/Clean/fecundity-mean-19-cohort.RData")
+
 
 ```
