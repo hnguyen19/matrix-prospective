@@ -17,32 +17,67 @@ Using the 2019 seedbank stratum-based densities as the initial state of the seed
 
 ```{r}
 ## Read seed column data  
-seed_column <- readRDS("../2-Data/Raw/seed_column_19_list.RData")
+seed_column <- readRDS("../2-Data/Raw/seed-column-2019-list.RData")
 
-seed_column_round <- readRDS("../2-Data/Raw/seed_column_19_list_poisson.RData") #something wrong, 6 rows only?
+```
 
-
+```{r post-harvest-tillage}
 ## Post-harvest tillage
 post_harvest_tillage <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
 
+post_harvest_tillage_pop <- purrr::map2(post_harvest_tillage, seed_column, `%*%`)
+```
+
+```{r over-winter}
 ## Overwinter survival 
 
-overwinter <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.RData")
+overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.RData")
 
+over_winter_pop_scenario1 <- purrr::map2(overwinter_scenario1, post_harvest_tillage_pop, `%*%`)
+```
+
+```{r spring-till}
 ## Pre-planting tillage 
+spring_tillage <-  readRDS("../2-Data/Clean/pre-planting-tillage.RData")
 
-pre_planting_tillage  <- readRDS("../2-Data/Clean/pre-planting-tillage.RData")
+spring_tillage_pop_scenario1 <- purrr::map2(spring_tillage, over_winter_pop_scenario1, `%*%`)
+```
 
+```{r emerge-scenario1}
 ## Emergence 
+emergence_scenario1 <- readRDS("../2-Data/Clean/emergence-prop-scenario1.RData")
 
+spring_pop_scenario1 <- purrr::map2(emergence_scenario1, spring_tillage_pop_scenario1, `%*%`)
+```
 
+```{r summer-survive-senario1}
 ## Seed survival and plant survival 
+#### seed survival 
 
-female_survive <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
+summer_seed_survival_scenario1  <- readRDS("../2-Data/Clean/summer-seed-survival-scenario1.RData")
 
-## Fecundity 
+#### plant survival
+female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
+#### combine seed and plant survivals into one matrix with element-wise multiplication 
 
-fecundity <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
+summer_survival_scenario1 <- purrr::map2(summer_seed_survival_scenario1 , female_survival, `*`)
+
+summer_pop_scenario1 <- purrr::map2(summer_survival_scenario1, spring_pop_scenario1, `%*%`)
+```
+
+```{r fecund-scenario1}
+## Fecundity scenario 1
+
+fecundity_2019 <- readRDS("../2-Data/Clean/fecundity-mean-19-cohort.RData")
+
+fall_pop_scenario1 <- purrr::map2(fecundity_2019 , summer_pop_scenario1 , `%*%`)
+```
+
+
+```{r fecund-scenario2}
+## Fecundity scenario 2
+
+fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
 ```
 
 
