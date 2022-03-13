@@ -8,10 +8,11 @@ output:
 
 Matrices in this document is listed chronologically, from natural seed rain (at AMATA senescence) to new seed production. 
 
-```{r, include=FALSE}
+```{r, include=FALSE, message=FALSE}
 library(emmeans)
 library(here)
 library(readr)
+library(data.table) #for rbindlist
 ```
 
 ```{r fresh-seed-viability}
@@ -251,12 +252,13 @@ summer_seed_survival_Sosnoskie_13_cohort <- summer_seed_survival_Sosnoskie_13  %
          matrix_id = paste(from_Phase,Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, desc(Stratum)) #Matrices are identified by the crop species that presented before the month of December in a particular plot.
 
-summer_seed_survival_Sosnoskie_13_cohort_list <- lapply(split(summer_seed_survival_Sosnoskie_13_cohort , summer_seed_survival_Sosnoskie_13_cohort$matrix_id),
-       function(x)(rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
-                         matrix(rep(0,12), nrow = 2)),
-                   matrix(rep(0,48), nrow = 6))))
-                         
-# saveRDS(summer_seed_decay_Sosnoskie_13_cohort_list, file="../2-Data/Clean/summer-seed-survival-scenario1.RData")
+## fill the bottom left 6x6 matrix's diagonal with 1's to perform element wise multiplication with female-survival in prospective-dynamics.Rmd 
+summer_seed_survival_Sosnoskie_13_cohort_list  <- lapply(split(summer_seed_survival_Sosnoskie_13_cohort , summer_seed_survival_Sosnoskie_13_cohort$matrix_id),
+       function(x) rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
+                         matrix(rep(0,12), nrow = 2)), cbind(matrix(0,nrow = 6, ncol = 2), diag(1,6))))
+
+
+# saveRDS(summer_seed_survival_Sosnoskie_13_cohort_list, file="../2-Data/Clean/summer-seed-survival-scenario1.RData")
 
 ####################### Scenario 2: Buhler and Harzler 2001  findings are actually survival after one year. These numbers might be inflated if an overwinter matrix is already in place. This matrix might serve as a combined matrix of seed survival for the whole year. 
 summer_seed_survival_scenario2 <- expand.grid(Crop_ID = c("C2","S2",
@@ -266,17 +268,16 @@ summer_seed_survival_scenario2 <- expand.grid(Crop_ID = c("C2","S2",
                                     Stratum = c("Top", "Bottom"))
 
 ## Fill in the proportion of retrieved seeds and viability of retrieved seeds 1 year after burial 
-summer_seed_survival_scenario2_filled <- summer_seed_survival_scenario2%>%
+summer_seed_survival_scenario2_filled <- summer_seed_survival_scenario2 %>%
   mutate(retrieved_prop = 0.65,
          retrieved_viability = 0.8,
          original_survival_prop = retrieved_prop*retrieved_viability,
          matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
     arrange(matrix_id, desc(Stratum))
 
-summer_seed_survival_scenario2_filled_list <- lapply(split(summer_seed_survival_scenario2_filled  , summer_seed_survival_scenario2_filled$matrix_id),
-       function(x)(rbind(cbind(diag(x$original_survival_prop, 2), 
-                         matrix(rep(0,12), nrow = 2)),
-                   matrix(rep(0,48), nrow = 6))))
+summer_seed_survival_scenario2_filled_list <- lapply(split(summer_seed_survival_scenario2_filled, summer_seed_survival_scenario2_filled$matrix_id),
+       function(x) rbind(cbind(diag(x$original_survival_prop, 2), 
+                         matrix(rep(0,12), nrow = 2)), cbind(matrix(0,nrow = 6, ncol = 2), diag(1,6))))
 
 # saveRDS(summer_seed_survival_scenario2_filled_list, file="../2-Data/Clean/summer-seed-survival-scenario2.RData")
 ```
