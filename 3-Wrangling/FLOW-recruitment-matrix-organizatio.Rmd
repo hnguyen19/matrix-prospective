@@ -13,13 +13,86 @@ library(nlme)
 ```
 
 
+```{r seedbank-19, include=FALSE}
+## Read seed column data (from /AMATA-demography/4-Analysis/seedbank-fates-2014-through-2019.Rmd) 
+seed_column <- readRDS("../2-Data/Raw/seed-column-2019-list.RData")
 
-```{r emergence-density-matrix-list}
-# Look in AMATA-demography for original code
-
-emerge_19 <- readRDS("../2-Data/Raw/six-cohort-female-emerge-list-raw.RData")
+seed_column_round <- readRDS("../2-Data/Raw/seed-column-2019-list-poisson.RData")
+## To track possible errors, the seed columns are multiplied by each matrix step-by-step
 ```
 
-```{r seedbank-19}
-#save all seedbank information in one sheet in AMATA-demography, then filter for 2019 here
+
+```{r post-harvest-tillage, include=FALSE}
+post_harvest_tillage <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
+
+post_harvest_tillage_pop <- purrr::map2(post_harvest_tillage, seed_column, `%*%`)
+```
+
+```{r overwinter-seed-survival, include=FALSE}
+## Scenario 1 - Sosnoskie et al., 2013
+overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.RData")
+
+over_winter_pop_scenario1 <- purrr::map2(overwinter_scenario1, post_harvest_tillage_pop, `%*%`)
+```
+
+```{r spring-tillage, include=FALSE}
+spring_tillage <-  readRDS("../2-Data/Clean/pre-planting-tillage.RData")
+
+spring_tillage_pop_scenario1 <- purrr::map2(spring_tillage, over_winter_pop_scenario1, `%*%`)
+```
+
+```{r sequential-multiplication}
+
+### Write the top stratum of the newly shuffled seed columns (from fall tillage through spring tillage) into a dummy matrix
+# https://community.rstudio.com/t/extract-matrix-rows-from-list/19357/2
+#https://stackoverflow.com/questions/29511215/convert-row-names-into-first-column
+
+spring_tillage_pop_scenario1_df <- spring_tillage_pop_scenario1 %>%
+  map(~.x[1, ])  %>% 
+  unlist(use.names = TRUE) %>%
+  as.data.frame() %>%
+  rownames_to_column("matrix_id") %>% 
+  rename(top_stratum_density = ".")
+
+
+spring_tillage_pop_scenario1_dummy <-  lapply(split(spring_tillage_pop_scenario1_df, spring_tillage_pop_scenario1_df$matrix_id),
+       function(x)(matrix(x$top_stratum_density, nrow = 6)))
+
+### Seed column, rounded (may not be useful because of high AIC). If this seed column is used, a glm model with family = "poisson" is needed for the 2020 cohort emergence data.  
+post_harvest_tillage_round_pop <- purrr::map2(post_harvest_tillage, seed_column_round, `%*%`)
+
+```
+
+```{r emergence-density-matrix-list, include=FALSE}
+## Emergence density, non-integers
+emerge_20 <- readRDS("../2-Data/Raw/six-cohort-female-emerge-list-2020-raw.RData")
+```
+
+```{r recruitment-matrix}
+## Emergence proportion of the twice-shuffled seed columns by element-wise division
+emergence_prop <- purrr::map2(emerge_20, spring_tillage_pop_scenario1_dummy, `/`)
+
+
+## turn the emergence_prop to a dataframe 
+
+# https://stackoverflow.com/questions/15897236/extract-the-first-or-last-n-characters-of-a-string
+str_right <- function(string, n) {
+  substr(string, nchar(string) - (n - 1), nchar(string))
+}
+# https://stackoverflow.com/questions/23413331/how-to-remove-last-n-characters-from-every-element-in-the-r-vector
+emergence_prop_df <- emergence_prop %>%
+  map(~.x[1:6, ])  %>% 
+  unlist(use.names = TRUE) %>%
+  as.data.frame() %>%
+  rownames_to_column("matrix_id") %>% 
+  rename(emerge_prop = ".") %>%
+  mutate(Cohort = str_right(matrix_id, 1),
+         new_matrix_id = substr(matrix_id, 1, nchar(matrix_id)-1))
+
+emergence_prop_matrix_list <- lapply(split(emergence_prop_df, emergence_prop_df$new_matrix_id),
+       function(x) rbind(cbind(matrix(c(1-sum(x$emerge_prop), 0,0,1), nrow = 2, byrow = TRUE), matrix(0,nrow = 2, ncol = 6)),
+       cbind(matrix(x$emerge_prop, nrow = 6, ncol = 1),matrix(0,nrow =6, ncol=7))))
+
+### write the emergence proportion matrix
+# saveRDS(emergence_prop_matrix_list, file="../2-Data/Clean/emergence-prop-scenario1.RData")
 ```
