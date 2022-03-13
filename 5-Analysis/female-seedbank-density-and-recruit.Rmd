@@ -38,10 +38,10 @@ theme_set(theme_bw())
 ```
 
 ```{r, include=FALSE}
-## Read seed column data  
-seed_column <- readRDS("../2-Data/Raw/seed_column_19_list.RData")
+## Read seed column data (from /AMATA-demography/4-Analysis/seedbank-fates-2014-through-2019.Rmd) 
+seed_column <- readRDS("../2-Data/Raw/seed-column-2019-list.RData")
 
-seed_column_round <- readRDS("../2-Data/Raw/seed_column_19_list_poisson.RData")
+seed_column_round <- readRDS("../2-Data/Raw/seed-column-2019-list-poisson.RData")
 
 ```
 
