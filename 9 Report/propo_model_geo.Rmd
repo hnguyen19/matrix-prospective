@@ -56,7 +56,7 @@ Survival matrix of 2-year, conventional soybean (CONV S2) is included as an exam
 
 ```{r survival geo, echo=FALSE, warning=FALSE}
 ## 2019
-lx_19_a <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Growth/surv_19_adj.csv")
+lx_19_a <- read_csv("~/Documents/Dissertation/AMATA-demography/4-Analysis/Growth/surv_19_adj.csv")
 
 lx_19_a$lx_a[is.infinite(lx_19_a$lx_a)]<-0
 
@@ -100,10 +100,10 @@ Assumptions:
 ```{r, echo=FALSE}
 ## Use fecundity equations to estimate seed production  
 ### import seed estimation equation from  2018 data
-fecund_eq <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Fecundity/fecund_eq.csv")
+fecund_eq <- read_csv("~/Documents/Dissertation/AMATA-demography/4-Analysis/Fecundity/fecund_eq.csv")
 
 ### import 2019 biomass 
-female_19 <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Fecundity/female_19.csv") # 1365 entries
+female_19 <- read_csv("~/Documents/Dissertation/AMATA-demography/4-Analysis/Fecundity/female_19.csv") # 1365 entries
 
 #replace NA with 0, 0 will be corrected by log(Biomass + 0.0005) in the later step
 
@@ -142,7 +142,7 @@ fecund_geo_m<-lapply(split(female_19_est_summ, female_19_est_summ$ID),
 
 ```{r fecundity geo, echo=FALSE, warning=FALSE}
 
-fed_19_g <- read_csv("~/Documents/Dissertation/Demographic_AMATA/Fecundity/fed_19g.csv")
+fed_19_g <- read_csv("~/Documents/Dissertation/AMATA-demography/4-Analysis/Fecundity/fed_19g.csv")
 
 ## survival from predation for seeds on the soil surface?
 fed_19_g <- fed_19_g%>%
@@ -157,7 +157,7 @@ fed_19_g$f <- fed_19_g$Seed*fed_19_g$pred_surv
 
 
 ## from 108 rows to 18 matrices of 8 x 8
-fed_geo_m<-lapply(split(fed_19_g, fed_19_g$ID),
+fed_geo_m <-lapply(split(fed_19_g, fed_19_g$ID),
        function(x)(rbind(cbind(diag(1,2),matrix(c(x$f,rep(0,6)), byrow = T, nrow=2)),matrix(0,nrow = 6, ncol=8))))
 
 fed_geo_m$A4_c
@@ -220,7 +220,9 @@ list_phaseg <- mget(paste0(c("fed_geo_m","surv_g","emerge_m"))) #need herb in be
 #everything before tillage
 prj1g <- flatten(tail(accumulate(list_phaseg, map2, crossprod), 1))
 
-
+prj1g_reduce <- lapply(list_phaseg, function(i){
+  Reduce("%*%",i)
+})
 
 #apply tillage
 prj2g<- lapply(seq_along(prj1g), function(i){
@@ -247,7 +249,7 @@ names(prj3g) <- names(prj2g)
 
 ```{r phase wise 19 geo fed, include=FALSE}
 phase_eigen_ana_19g <- lapply(prj3g, function(i){
-  eigen.analysis(i)})
+  popbio::eigen.analysis(i)})
 ```
 
 

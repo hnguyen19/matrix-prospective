@@ -70,7 +70,10 @@ summer_pop_scenario1 <- purrr::map2(summer_survival_scenario1, spring_pop_scenar
 
 fecundity_2019 <- readRDS("../2-Data/Clean/fecundity-mean-19-cohort.RData")
 
+## After one model year, using 2019 fecundity rate, and before post-harvest tillage application, what are the seed densities? 
 fall_pop_scenario1 <- purrr::map2(fecundity_2019 , summer_pop_scenario1 , `%*%`)
+
+## How does this one-year cycle translate to rotation-specific dynamics?
 ```
 
 
@@ -78,6 +81,9 @@ fall_pop_scenario1 <- purrr::map2(fecundity_2019 , summer_pop_scenario1 , `%*%`)
 ## Fecundity scenario 2
 
 fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
+
+fall_pop_scenario2 <- purrr::map2(fecundity_2018 , summer_pop_scenario1 , `%*%`)
+## After one model year, using 2018 fecundity rate, and before post-harvest tillage application, what are the seed densities? 
 ```
 
 
