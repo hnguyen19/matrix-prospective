@@ -75,19 +75,22 @@ Each of the original 18 x 18 matrices was resized to 2 x 2 using the following s
 ```{r post-harvest-tillage-matrix}
 # Post-harvest tillage, imported from folder `Tillage-resized`
 chisel <- read_csv("../2-Data/Raw/Tillage-resized/chisel_2by2.csv", col_names = FALSE, show_col_types = FALSE)
-names(chisel) <- NULL
+#names(chisel) <- NULL
 
 moldboard <- read_csv("../2-Data/Raw/Tillage-resized/moldboard_2by2.csv", col_names = FALSE, show_col_types = FALSE)
-names(moldboard) <- NULL
+#names(moldboard) <- NULL
 
 no_till <- read_csv("../2-Data/Raw/Tillage-resized/notill_2by2.csv", col_names = FALSE, show_col_types = FALSE)
-
+#names(no_till) <- NULL
 # Make a list of post-harvest tillage practices
+## C2, C3, C4 are followed by chisel
+## S2, S3, S4; and O4 are followed by no till
+## O3 and A4 are followed by moldboard
 
 post_harvest_tillage <- rbindlist(list(chisel, chisel, chisel, chisel, chisel, chisel,
-                             moldboard, moldboard, moldboard, moldboard, 
-                             no_till, no_till, no_till, no_till,
-                             no_till, no_till, no_till, no_till),
+                                       no_till, no_till, no_till, no_till,
+                                       no_till, no_till, no_till, no_till,
+                                       moldboard, moldboard, moldboard, moldboard),
                               use.names = TRUE, fill = FALSE)
 
 post_harvest_tillage$matrix_id <- c(rep("C2_low", 2), rep("C2_conv",2),
@@ -138,7 +141,7 @@ relevant for the no till
 ```{r off-season-viability-matrix, echo=FALSE}
 # After seed rain and post-harvest vertical redistribution
 #################### Scenario 1: Sosnoskie et al. 2013 -  No distinguishable cover crop effect
-# Assign 6 months of summer and winter to corn and soybean, 5.5 months of summer to oat and 4.5 month of summer to alfalfa per the observation at Marsden that oat and alfalfa delayed waterhemp emergence.
+# Assign 6 months of summer to corn and soybean, 5.5 months of summer to oat and 4.5 month of summer to alfalfa per the observation at Marsden that oat and alfalfa delayed waterhemp emergence.
 
 overwinter_Sosnoskie_13 <- read_csv("../2-Data/Raw/seed-survival-Sosnoskie-2013.csv", show_col_types = FALSE)
 
@@ -204,12 +207,12 @@ off_season_scenario3 <- overwinter_Steckel_07_cohort_list
 ```
 
 
-```{r pre-planting-tillage-matrix}
+```{r pre-planting-tillage-matrix-for-model}
 # Pre-planting tillage
 
 field_cultivator <- read_csv("../2-Data/Raw/Tillage-resized/fieldcultivator_2by2.csv", col_names = FALSE, show_col_types = FALSE)
 
-pre_planting_tillage <- rbindlist(list(field_cultivator, field_cultivator , field_cultivator, field_cultivator,
+pre_planting_tillage_for_model <- rbindlist(list(field_cultivator, field_cultivator , field_cultivator, field_cultivator,
                                                field_cultivator, field_cultivator , field_cultivator, field_cultivator,
                                                field_cultivator, field_cultivator , field_cultivator, field_cultivator,
                                                field_cultivator, field_cultivator , field_cultivator, field_cultivator,
@@ -217,7 +220,7 @@ pre_planting_tillage <- rbindlist(list(field_cultivator, field_cultivator , fiel
                               use.names = TRUE, fill = FALSE)
 
 # All phases received pre-planting field cultivator, except A4
-pre_planting_tillage$matrix_id <- c(rep("C2_low", 2), rep("C2_conv",2),
+pre_planting_tillage_for_model$matrix_id <- c(rep("C2_low", 2), rep("C2_conv",2),
                                     rep("C3_low", 2), rep("C3_conv",2),
                                     rep("C4_low", 2), rep("C4_conv",2),
                                     rep("S2_low", 2), rep("S2_conv",2),
@@ -227,14 +230,57 @@ pre_planting_tillage$matrix_id <- c(rep("C2_low", 2), rep("C2_conv",2),
                                     rep("O3_low", 2), rep("O3_conv",2),
                                     rep("A4_low", 2), rep("A4_conv",2))
 
-pre_planting_tillage_list <- lapply(split(pre_planting_tillage, pre_planting_tillage$matrix_id),
+pre_planting_tillage_list_for_model <- lapply(split(pre_planting_tillage_for_model, pre_planting_tillage_for_model$matrix_id),
       function(x)(rbind(cbind(matrix(c(x$X1, x$X2), byrow = FALSE, nrow=2),
                    matrix(rep(0,12), nrow = 2)),
                    matrix(rep(0,48), nrow = 6))))
 
-#saveRDS(pre_planting_tillage_list, file="../2-Data/Clean/pre-planting-tillage.RData")
+#saveRDS(pre_planting_tillage_list_for_model, file="../2-Data/Clean/pre-planting-tillage.RData")
 ```
 
+
+```{r pre-planting-tillage-matrix-for-recruitment-prop}
+## Sequence
+
+pre_planting_tillage_for_recruitment <- rbindlist(list(field_cultivator, field_cultivator , field_cultivator, field_cultivator,
+                                               field_cultivator, field_cultivator , field_cultivator, field_cultivator,
+                                               field_cultivator, field_cultivator , field_cultivator, field_cultivator,
+                                               field_cultivator, field_cultivator , field_cultivator, field_cultivator,
+                                               no_till, no_till),
+                              use.names = TRUE, fill = FALSE)
+
+# All phases received pre-planting field cultivator, except A4
+pre_planting_tillage_for_recruitment$from_Phase <- c(rep("C2_low", 2), rep("C2_conv",2),
+                                    rep("C3_low", 2), rep("C3_conv",2),
+                                    rep("C4_low", 2), rep("C4_conv",2),
+                                    rep("S2_low", 2), rep("S2_conv",2),
+                                    rep("S3_low", 2), rep("S3_conv",2),
+                                    rep("S4_low", 2), rep("S4_conv",2),
+                                    rep("O4_low", 2), rep("O4_conv",2),
+                                    rep("O3_low", 2), rep("O3_conv",2),
+                                    rep("A4_low", 2), rep("A4_conv",2))
+
+pre_planting_tillage_for_recruitment$to_Phase <-c(rep("S2_low",2), rep("S2_conv",2),
+                                                  rep("S3_low",2), rep("S3_conv",2),
+                                                  rep("S4_low",2), rep("S4_conv",2),
+                                                  rep("C2_low",2), rep("C2_conv",2),
+                                                  rep("O3_low",2), rep("O3_conv",2),
+                                                  rep("O4_low",2), rep("O4_conv",2),
+                                                  rep("A4_low",2), rep("A4_conv",2),
+                                                  rep("C3_low",2), rep("C3_conv",2),
+                                                  rep("C4_low",2), rep("C4_conv",2))
+
+pre_planting_tillage_for_recruitment$matrix_id <- pre_planting_tillage_for_recruitment$from_Phase
+
+
+
+pre_planting_tillage_list_for_recruitment <- lapply(split(pre_planting_tillage_for_recruitment, pre_planting_tillage_for_recruitment$matrix_id),
+       function(x)(rbind(cbind(matrix(c(x$X1, x$X2), byrow = FALSE, nrow=2),
+                   matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+
+#saveRDS(pre_planting_tillage_list_for_recruitment, file="../2-Data/Raw/pre-planting-tillage-for-recruitment.RData")
+```
 
 ```{r summer-seed-survival-matrix}
 # Summer seed consumption on the soil surface,  to be incorporated with recruitment matrix by summation

@@ -21,8 +21,10 @@ seed_column_round <- readRDS("../2-Data/Raw/seed-column-2019-list-poisson.RData"
 ## To track possible errors, the seed columns are multiplied by each matrix step-by-step
 ```
 
+The seed column before post-harvest tillage was transitioned from post-harvest tillage through spring tillage with the general form of $A_{t+1} = A_tn_t$ by @caswellMatrixPopulationModels2001.  
 
 ```{r post-harvest-tillage, include=FALSE}
+## Raw data from 'FLOW-literature-based-matrices'
 post_harvest_tillage <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
 
 post_harvest_tillage_pop <- purrr::map2(post_harvest_tillage, seed_column, `%*%`)
@@ -39,9 +41,30 @@ over_winter_pop_scenario1 <- purrr::map2(overwinter_scenario1, post_harvest_till
 spring_tillage <-  readRDS("../2-Data/Clean/pre-planting-tillage.RData")
 
 spring_tillage_pop_scenario1 <- purrr::map2(spring_tillage, over_winter_pop_scenario1, `%*%`)
+
+## new
+over_winter_pop_scenario1_2by1 <- over_winter_pop_scenario1  %>%
+  map(~ head(.,2))
+
+no_till <- read_csv("../2-Data/Raw/Tillage-resized/notill_2by2.csv", col_names = FALSE, show_col_types = FALSE)
+names(no_till) <- NULL
+no_till_matrix <- as.matrix(no_till)
+
+
+field_cultivator <- read_csv("../2-Data/Raw/Tillage-resized/fieldcultivator_2by2.csv", col_names = FALSE, show_col_types = FALSE)
+names(field_cultivator) <- NULL
+
+field_cultivator_matrix <- as.matrix(field_cultivator)
+
+spring_tillage_pop_2by1  <- lapply(seq_along(over_winter_pop_scenario1_2by1), function(i){
+  if(names(over_winter_pop_scenario1_2by1[i]) %in% c("A4_low","A4_conv")) no_till_matrix %*% over_winter_pop_scenario1_2by1[[i]] else
+    field_cultivator_matrix %*% over_winter_pop_scenario1_2by1[[i]]
+})
+
+names(spring_tillage_pop_2by1) <- names(over_winter_pop_scenario1_2by1)
 ```
 
-```{r sequential-multiplication}
+```{r top-stratum-after-spring-tillage}
 
 ### Write the top stratum of the newly shuffled seed columns (from fall tillage through spring tillage) into a dummy matrix
 # https://community.rstudio.com/t/extract-matrix-rows-from-list/19357/2
@@ -58,9 +81,18 @@ spring_tillage_pop_scenario1_df <- spring_tillage_pop_scenario1 %>%
 spring_tillage_pop_scenario1_dummy <-  lapply(split(spring_tillage_pop_scenario1_df, spring_tillage_pop_scenario1_df$matrix_id),
        function(x)(matrix(x$top_stratum_density, nrow = 6)))
 
-### Seed column, rounded (may not be useful because of high AIC). If this seed column is used, a glm model with family = "poisson" is needed for the 2020 cohort emergence data.  
-post_harvest_tillage_round_pop <- purrr::map2(post_harvest_tillage, seed_column_round, `%*%`)
 
+## new
+spring_tillage_pop_2by1_scenario1_df <- spring_tillage_pop_2by1  %>%
+  map(~.x[1, ])  %>% 
+  unlist(use.names = TRUE) %>%
+  as.data.frame() %>%
+  rownames_to_column("matrix_id") %>% 
+  rename(top_stratum_density = ".")
+
+spring_tillage_pop_2by1_scenario1_dummy <-  lapply(split(spring_tillage_pop_2by1_scenario1_df,
+                                                         spring_tillage_pop_2by1_scenario1_df$matrix_id),
+       function(x)(matrix(x$top_stratum_density, nrow = 6)))
 ```
 
 ```{r emergence-density-matrix-list, include=FALSE}
@@ -68,9 +100,36 @@ post_harvest_tillage_round_pop <- purrr::map2(post_harvest_tillage, seed_column_
 emerge_20 <- readRDS("../2-Data/Raw/six-cohort-female-emerge-list-2020-raw.RData")
 ```
 
-```{r recruitment-matrix}
+```{r recruitment-matrix-old, include= FALSE}
 ## Emergence proportion of the twice-shuffled seed columns by element-wise division
 emergence_prop <- purrr::map2(emerge_20, spring_tillage_pop_scenario1_dummy, `/`)
+
+
+## turn the emergence_prop to a dataframe 
+
+# https://stackoverflow.com/questions/15897236/extract-the-first-or-last-n-characters-of-a-string
+str_right <- function(string, n) {
+  substr(string, nchar(string) - (n - 1), nchar(string))
+}
+# https://stackoverflow.com/questions/23413331/how-to-remove-last-n-characters-from-every-element-in-the-r-vector
+emergence_prop_df <- emergence_prop %>%
+  map(~.x[1:6, ])  %>% 
+  unlist(use.names = TRUE) %>%
+  as.data.frame() %>%
+  rownames_to_column("matrix_id") %>% 
+  rename(emerge_prop = ".") %>%
+  mutate(Cohort = str_right(matrix_id, 1),
+         new_matrix_id = substr(matrix_id, 1, nchar(matrix_id)-1))
+
+emergence_prop_matrix_list <- lapply(split(emergence_prop_df, emergence_prop_df$new_matrix_id),
+       function(x) rbind(cbind(matrix(c(1-sum(x$emerge_prop), 0,0,1), nrow = 2, byrow = TRUE), matrix(0,nrow = 2, ncol = 6)),
+       cbind(matrix(x$emerge_prop, nrow = 6, ncol = 1),matrix(0,nrow =6, ncol=7))))
+```
+
+```{r recruitment-matrix}
+### new 
+## Emergence proportion of the twice-shuffled seed columns by element-wise division
+emergence_prop <- purrr::map2(emerge_20, spring_tillage_pop_2by1_scenario1_dummy, `/`)
 
 
 ## turn the emergence_prop to a dataframe 
