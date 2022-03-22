@@ -47,7 +47,7 @@ fecundity18_sb_log <- fecundity18_sb %>%
   group_by(Crop_ID, Corn_weed_management) %>% # pool all plants from the same CropID x Corn weed mgt
   mutate(quantile_Biomass = ntile(log_Biomass , 6),
          quantile_Seed = ntile(log_Seed, 6)) %>%
-  dplyr::mutate(tag = ifelse(quantile_Biomass > quantile_Seed, "mismatched", "matched")) # check if Biomass and Seed quantiles are aligned
+  dplyr::mutate(tag = ifelse(quantile_Biomass > quantile_Seed, "mismatched", "matched"))  # check if Biomass and Seed quantiles are aligned
 
 #fecundity18_sb_log %>% filter(Crop_ID == "S2", Corn_weed_management == "low") %>% View()
 
@@ -59,7 +59,8 @@ fecundity18_sb_log_quantile_summ <- fecundity18_sb_log %>%
   summarize(geometric_mean_Biomass = mean(log_Biomass),
          geometric_mean_Seed = mean(log_Seed),
          mean_Seed = mean(Seed)) %>% #
-  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_"))
+  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, desc(quantile_Biomass)) #arrange by descending order of biomass because 1) biomass is the reproduction potential parameter, 2) cohorts that were suppressed more frequently by crop management may have their reproduction potential compromised, so arranging by biomass can accommodate this reality
 
 #View(fecundity18_sb_log_quantile_summ)
 
