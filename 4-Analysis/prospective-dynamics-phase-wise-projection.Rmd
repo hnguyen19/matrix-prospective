@@ -6,15 +6,15 @@ output:
     reference_docx: style_template.docx
 ---
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(purrr) # for map2()
+library(cowplot) #for plot_grid
+library(popbio)
 ```
 
-Scenario 1 settings:
 
-
-```{r periodic-matrices}
+```{r periodic-matrices, include=FALSE}
 
 ## Pre-planting tillage 
 spring_tillage <-  readRDS("../2-Data/Clean/pre-planting-tillage.RData")
@@ -34,7 +34,7 @@ summer_survival_scenario1 <- purrr::map2(summer_seed_survival_scenario1 , female
 
 ## Fecundity scenario 1
 
-fecundity_2019 <- readRDS("../2-Data/Clean/fecundity-mean-19-cohort.RData")
+fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
 
 ## Post-harvest tillage
 post_harvest_tillage <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
@@ -46,16 +46,15 @@ overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.
 ```
 
 
-```{r fecund-scenario2}
-## Fecundity scenario 2
 
-fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
-```
+The sensitivity and elasticity patterns were consistent between weed management regimes, but graphs are separated by weed management regimes for ease of view. Darker colors represent more intense influence.  
+
+In scenario one, using the 2018 fecundity rates, the probability that a seed in the soil successfully establish had the greatest effects on waterhemp population growth (Figures \@ref(fig:scenario1-phase-wise-sensitivities-conv) and \@ref(fig:scenario1-phase-wise-sensitivities-low)). The absolute change in waterhemp's population growth rates influenced by successful establishment in the cool-season crops were at a smaller magnitude than that of the warm-season crops. The number of seeds contributed to the soil seedbank intermediately affected the absolute change in waterhemp's population growth in the cool-season crops but minimally so in the warm-season crops. 
 
 
- ### Apply stoch.sens
- 
-```{r stoch-sens-scenario1}
+
+
+```{r stoch-sens-scenario1, include=FALSE}
 # Inside `stoch.sens()`: a list of projection matrix by each phase
 # Reorganize `mget()` output by matrix_id, by chronological sequence
 scenario1_projection_by_matrix_id <- pmap(list(spring_tillage,
@@ -67,7 +66,115 @@ scenario1_projection_by_matrix_id <- pmap(list(spring_tillage,
   simplify() %>%
   map(.,
     ~{names(.) <-  c("spring_tillage",
-                     "emergence_2019",
+                     "emergence",
+                     "summer_survival_Sosnoskie_2013",
+                     "fecundity_2018",
+                     "post_harvest_tillage",
+                     "overwinter_Sosnoskie_2013"); .})
+
+
+## all matrices at once
+scenario1_stoch.sens <- scenario1_projection_by_matrix_id %>%
+  map(., ~{stoch.sens(.)})
+
+```
+
+```{r scenario1-phase-wise-sensitivities, echo=FALSE}
+# Extract Sensitivities from 18 matrices
+# https://stackoverflow.com/questions/44176908/r-list-get-first-item-of-each-element
+scenario1_sensitivities <- sapply(scenario1_stoch.sens, function(x) x[1])
+
+## break `scenario1_sensitivities` into `conv` and `low` lists
+
+scenario1_sensitivities_conv <- scenario1_sensitivities[c(TRUE, FALSE)]
+scenario1_sensitivities_low <- scenario1_sensitivities[c(FALSE, TRUE)]
+```
+
+```{r scenario1-phase-wise-sensitivities-conv, echo=FALSE, fig.cap= "Sensitivities of eigen values to changes in each element of the population projection matrix, using 2018 fecundity rate. Each panel presents the sensitivities in each crop phase under or follow conventional weed management."}
+# https://statisticsglobe.com/mtext-function-r
+# need matrix col and row names
+par(mfrow=c(3,3))
+scenario1_sensitivities_conv_graph <- for(i in 1:9){
+  A_s_conv1 <- scenario1_sensitivities_conv[[i]]
+  A_s_conv1[A_s_conv1 == 0] <- NA
+  image2(A_s_conv1, cex=.5, box.offset=0.2, labels=c(1,8))
+    title(names(scenario1_sensitivities_conv[i]))
+}
+  mtext("2018 fecundity", side = 2, line = -1.5, cex = 1, outer = TRUE)
+
+```
+
+
+```{r scenario1-phase-wise-sensitivities-low, echo=FALSE, fig.cap= "Sensitivities of eigen values to changes in each element of the population projection matrix, using 2018 fecundity rate. Each panel presents the sensitivities in each crop phase under or follow low herbicide weed management."}
+par(mfrow=c(3,3))
+scenario1_sensitivities_low_graph <- for(i in 1:9){
+  A_s_low1 <- scenario1_sensitivities_low[[i]]
+  A_s_low1[A_s_low1 == 0] <- NA
+  image2(A_s_low1, cex=.5, box.offset=0.2)
+    title(names(scenario1_sensitivities_low[i]))
+}
+  mtext("2018 fecundity", side = 2, line = -1.5, cex = 1, outer = TRUE)
+```
+
+```{r scenario1-phase-wise-elasticities, echo=FALSE}
+# Extract Elasticities from 18 matrices
+# https://stackoverflow.com/questions/44176908/r-list-get-first-item-of-each-element
+scenario1_elasticities <- sapply(scenario1_stoch.sens, function(x) x[2])
+
+## break `scenario1_elasticities` into `conv` and `low` lists
+
+scenario1_elasticities_conv <- scenario1_elasticities[c(TRUE, FALSE)]
+scenario1_elasticities_low <- scenario1_elasticities[c(FALSE, TRUE)]
+```
+
+
+```{r scenario1-phase-wise-elasticities-conv, echo=FALSE, fig.cap= "Elasticities of eigen values to changes in each element of the population projection matrix, using 2018 fecundity rate. Each panel presents the elasticities in each crop phase under or follow conventional weed management."}
+# https://statisticsglobe.com/mtext-function-r
+par(mfrow=c(3,3))
+scenario1_elasticities_conv_graph <- for(i in 1:9){
+  A_e_conv1 <- scenario1_elasticities_conv[[i]]
+  A_e_conv1[A_e_conv1 == 0] <- NA
+  image2(A_e_conv1, cex=.5, box.offset=0.2)
+    title(names(scenario1_elasticities_conv[i]))
+}
+  mtext("2018 fecundity", side = 2, line = -1.5, cex = 1, outer = TRUE)
+
+```
+
+```{r scenario1-phase-wise-elasticities-low, echo=FALSE, fig.cap= "Elasticities of eigen values to changes in each element of the population projection matrix, using 2018 fecundity rate. Each panel presents the elasticities in each crop phase under or follow low herbicide weed management."}
+par(mfrow=c(3,3))
+scenario1_elasticities_low_graph <- for(i in 1:9){
+  A_e_low1 <- scenario1_elasticities_low[[i]]
+  A_e_low1[A_e_low1 == 0] <- NA
+  image2(A_e_low1, cex=.5, box.offset=0.2)
+    title(names(scenario1_elasticities_low[i]))
+}
+  mtext("2018 fecundity", side = 2, line = -1.5, cex = 1, outer = TRUE)
+```
+
+
+
+In scenario two, using the 2019 fecundity rates, the patterns in sensitivities and elasticities of waterhemp proportional population changes to proportional changes in projection matrices' elements were consistent with those in scenarios one ((Figures \@ref(fig:scenario2-phase-wise-elasticities-conv) and \@ref(fig:scenario2-phase-wise-elasticities-low)).  Noticeably, the success rate of plant cohort one to deposit seeds into the top soil stratum was less influential to that in the scenario one.  
+```{r fecund-scenario1, include=FALSE}
+## Fecundity scenario 1
+
+fecundity_2019 <- readRDS("../2-Data/Clean/fecundity-mean-19-cohort.RData")
+```
+
+
+```{r stoch-sens-scenario2, include=FALSE}
+# Inside `stoch.sens()`: a list of projection matrix by each phase
+# Reorganize `mget()` output by matrix_id, by chronological sequence
+scenario2_projection_by_matrix_id <- pmap(list(spring_tillage,
+                                               emergence_scenario1,
+                                               summer_survival_scenario1,
+                                               fecundity_2019,
+                                               post_harvest_tillage,
+                                               overwinter_scenario1), list) %>% 
+  simplify() %>%
+  map(.,
+    ~{names(.) <-  c("spring_tillage",
+                     "emergence",
                      "summer_survival_Sosnoskie_2013",
                      "fecundity_2019",
                      "post_harvest_tillage",
@@ -75,19 +182,95 @@ scenario1_projection_by_matrix_id <- pmap(list(spring_tillage,
 
 #works for one matrix_id
 
-scenario1_stoch.sens0 <- stoch.sens(scenario1_projection_by_matrix_id$A4_conv) #but result is different from `pmap`
+scenario2_stoch.sens0 <- stoch.sens(scenario2_projection_by_matrix_id$A4_conv) #but result is different from `map`
 
 ## all matrices at once
-scenario1_stoch.sens1 <- scenario1_projection_by_matrix_id %>%
+scenario2_stoch.sens1 <- scenario2_projection_by_matrix_id %>%
   map(., ~{stoch.sens(.)})
 
-scenario1_stoch.sens[1] # disagree with scenario1_stoch.sens2 but consistent with scenario1_stoch.sens0
+#scenario2_stoch.sens1[1] # consistent with scenario2_stoch.sens0 but disagree with scenario2_stoch.sens2 
 
-scenario1_stoch.sens2 <- map(scenario1_projection_by_matrix_id , ~{stoch.sens(.x)})
+#scenario2_stoch.sens2 <- map(scenario2_projection_by_matrix_id , ~{stoch.sens(.x)})
 
-scenario1_stoch.sens2[1] #  
+#scenario2_stoch.sens2[1] #  
 
+#error sapply(scenario2_stoch.sens1, function(x) {dimnames(x) <- list(LETTERS[1:8]);x})
+```
+
+```{r scenario2-phase-wise-sensitivities, echo=FALSE}
+# Extract Sensitivities from 18 matrices
+# https://stackoverflow.com/questions/44176908/r-list-get-first-item-of-each-element
+scenario2_sensitivities <- sapply(scenario2_stoch.sens1, function(x) x[1])
+
+## break `scenario2_sensitivities` into `conv` and `low` lists
+
+scenario2_sensitivities_conv <- scenario2_sensitivities[c(TRUE, FALSE)]
+scenario2_sensitivities_low <- scenario2_sensitivities[c(FALSE, TRUE)]
+```
+
+```{r scenario2-phase-wise-sensitivities-conv, echo=FALSE, fig.cap= "Sensitivities of eigen values to changes in each element of the population projection matrix. Each panel presents the sensitivities in each crop phase under or follow conventional weed management."}
+# https://statisticsglobe.com/mtext-function-r
+# need matrix col and row names
+par(mfrow=c(3,3))
+scenario2_sensitivities_conv_graph <- for(i in 1:9){
+  A_s_conv2 <- scenario2_sensitivities_conv[[i]]
+  A_s_conv2[A_s_conv2 == 0] <- NA
+  image2(A_s_conv2, cex=.5, box.offset=0.2, labels=c(1,8))
+    title(names(scenario2_sensitivities_conv[i]))
+}
+  mtext("2019 fecundity", side = 2, line = -1.5, cex = 1, outer = TRUE)
 
 ```
 
+```{r scenario2-phase-wise-sensitivities-low, echo=FALSE, fig.cap= "Sensitivities of eigen values to changes in each element of the population projection matrix. Each panel presents the sensitivities in each crop phase under or follow low herbicide weed management."}
+par(mfrow=c(3,3))
+scenario2_sensitivities_low_graph <- for(i in 1:9){
+  A_s_low2 <- scenario2_sensitivities_low[[i]]
+  A_s_low2[A_s_low2 == 0] <- NA
+  image2(A_s_low2, cex=.5, box.offset=0.2)
+    title(names(scenario2_sensitivities_low[i]))
+}
+  mtext("2019 fecundity", side = 2, line = -1.5, cex = 1, outer = TRUE)
+```
+
+
+
+```{r scenario2-phase-wise-elasticities, echo=FALSE}
+# Extract Elasticities from 18 matrices
+# https://stackoverflow.com/questions/44176908/r-list-get-first-item-of-each-element
+scenario2_elasticities <- sapply(scenario2_stoch.sens1, function(x) x[2])
+
+## break `scenario1_elasticities` into `conv` and `low` lists
+
+scenario2_elasticities_conv <- scenario2_elasticities[c(TRUE, FALSE)]
+scenario2_elasticities_low <- scenario2_elasticities[c(FALSE, TRUE)]
+```
+
+Also using the 2019 fecundity rates, the seedbank had the greatest proportional effects on waterhemp population growth in all crop phases. The influence of seedbank states on waterhemp population growth was consistent between weed management regimes (Figures \@ref(fig:scenario2-phase-wise-elasticities-conv) and \@ref(fig:scenario2-phase-wise-elasticities-low)). In general, the probability that a plant successfully contribute seeds to the soil surface was more influential to waterhemp population proportional change in warm-season crops than in cool-season crops.   
+
+
+
+```{r scenario2-phase-wise-elasticities-conv, echo=FALSE, fig.cap= "Elasticities of eigen values to changes in each element of the population projection matrix, using 2019 fecundity rate. Each panel presents the elasticities in each crop phase under or follow conventional weed management."}
+# https://statisticsglobe.com/mtext-function-r
+par(mfrow=c(3,3))
+scenario2_elasticities_conv_graph <- for(i in 1:9){
+  A_e_conv2 <- scenario2_elasticities_conv[[i]]
+  A_e_conv2[A_e_conv2 == 0] <- NA
+  image2(A_e_conv2, cex=.5, box.offset=0.2)
+    title(names(scenario2_elasticities_conv[i]))
+}
+  mtext("2019 fecundity", side = 2, line = -1.5, cex = 1, outer = TRUE)
+
+```
+
+```{r scenario2-phase-wise-elasticities-low, echo=FALSE, fig.cap= "Elasticities of eigen values to changes in each element of the population projection matrix, using 2019 fecundity rate. Each panel presents the elasticities in each crop phase under or follow low herbicide weed management."}
+par(mfrow=c(3,3))
+scenario2_elasticities_low_graph <- for(i in 1:9){
+  A_e_low2 <- scenario1_elasticities_low[[i]]
+  A_e_low2[A_e_low2 == 0] <- NA
+  image2(A_e_low2, cex=.5, box.offset=0.2)
+    title(names(scenario1_elasticities_low[i]))
+}
+  mtext("2019 fecundity", side = 2, line = -1.5, cex = 1, outer = TRUE)
+```
 

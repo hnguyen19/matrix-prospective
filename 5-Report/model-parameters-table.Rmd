@@ -1,0 +1,20 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+    reference_docx: style_template.docx
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(flextable)
+```
+
+The demographic parameters used in scenarios I and II of this population model dynamics are presented below.  
+
+```{r demographic-parameters}
+#ft <- flextable(head(airquality))
+
+# maybe make a table of graphs, each cell is a group of boxplot/histogram/dot-whisker, x-axis = Crop_ID
+```

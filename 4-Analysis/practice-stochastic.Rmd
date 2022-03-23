@@ -87,6 +87,18 @@ scenario1_stoch.sens3 <- stoch.sens(hudsonia[1:2])
 scenario1_stoch.sens3
 ```
 
+```{r}
+# 
+stoch.growth.rate(hudsonia)
+
+var2(hudsonia) #calculate the variance of elements at the same ij positions across the `hudsonia` list # might be useful for variance of projection matrices across systems.  
+```
+
+```{r}
+# how the population grow per year
+sapply(hudsonia, lambda)
+```
+
 ```{r phase-wise-projection-1}
 # The model clock starts at post-harvest tillage, when new seeds were incorporated into the soil 
 # List periodic matrices in chronologically reversed order for left-multiplication

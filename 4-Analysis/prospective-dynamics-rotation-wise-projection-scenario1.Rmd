@@ -1,0 +1,107 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+    reference_docx: style_template.docx
+---
+
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(purrr) # for map2()
+library(pracma)
+library(popbio)
+```
+
+```{r periodic-matrices-phase}
+## Pre-planting tillage 
+spring_tillage <-  readRDS("../2-Data/Clean/pre-planting-tillage.RData")
+
+## Emergence 
+emergence_scenario1 <- readRDS("../2-Data/Clean/emergence-prop-scenario1.RData")
+
+## Seed survival and plant survival 
+#### seed survival 
+
+summer_seed_survival_scenario1  <- readRDS("../2-Data/Clean/summer-seed-survival-scenario1.RData")
+
+#### plant survival
+#female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
+
+female_survival <- readRDS("../2-Data/Clean/summer-seedling-survival-scenario2.RData")
+#### combine seed and plant survivals into one matrix with element-wise multiplication 
+summer_survival_scenario1 <- purrr::map2(summer_seed_survival_scenario1 , female_survival, `*`)
+
+## Post-harvest tillage
+post_harvest_tillage <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
+
+## Overwinter survival 
+overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.RData")
+
+```
+
+
+```{r phase-wise-projection-1}
+## Fecundity scenario 1, start at spring tillage: give identical results as scenario1
+#try remove some matrices
+
+fecundity_2019 <- readRDS("../2-Data/Clean/fecundity-mean-19-cohort.RData")
+
+scenario1_projection_by_matrix_id <- tibble::lst(spring_tillage,
+                                               emergence_scenario1,
+                                               summer_survival_scenario1,
+                                               fecundity_2019,
+                                               post_harvest_tillage,
+                                               overwinter_scenario1)
+
+## List all periodic matrices within the same crop ID together  
+scenario1_projection_by_matrix_id_transpose <- transpose(scenario1_projection_by_matrix_id )
+
+# multiply all the periodic matrices within a crop ID 
+
+scenario1_phase_projection <- scenario1_projection_by_matrix_id_transpose  %>%
+  map(., ~{Reduce( "%*%", .)}) 
+
+# check 
+#lapply(scenario1_projection_by_matrix_id_transpose, 
+#       \(x) x[[1]] %*% x[[2]] %*% x[[3]] %*% x[[4]] %*% x[[5]] %*% x[[6]])
+
+```
+
+```{r rotation-group}
+scenario1_rotation_wise_4yr_conv <- scenario1_phase_projection[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
+
+#4-year, low
+scenario1_rotation_wise_4yr_low <- scenario1_phase_projection[c("A4_low", "O4_low", "S4_low", "C4_low")]
+
+#3-year, conventional
+scenario1_rotation_wise_3yr_conv <- scenario1_phase_projection[c("O3_conv", "S3_conv", "C3_conv")]
+
+#3-year, low
+scenario1_rotation_wise_3yr_low <- scenario1_phase_projection[c("O3_low", "S3_low", "C3_low")]
+
+#2year, conventional
+scenario1_rotation_wise_2yr_conv <- scenario1_phase_projection[c("S2_conv", "C2_conv")]
+
+#2year, low
+scenario1_rotation_wise_2yr_low <- scenario1_phase_projection[c("S2_low","C2_low")]
+
+scenario1_rotation_group <- tibble::lst(scenario1_rotation_wise_4yr_conv,
+                                     scenario1_rotation_wise_4yr_low,
+                                     scenario1_rotation_wise_3yr_conv,
+                                     scenario1_rotation_wise_3yr_low,
+                                     scenario1_rotation_wise_2yr_conv,
+                                     scenario1_rotation_wise_2yr_low)
+
+scenario1_rotation_wise_projection <- scenario1_rotation_group %>%
+  map(., ~{Reduce( "%*%", .)}) 
+
+scenario1_rotation_wise_eigen <- scenario1_rotation_wise_projection %>%
+  map(., ~{eigen.analysis(.)}) 
+
+scenario1_rotation_wise_eigen %>%
+  map(., ~{head(.,1)})
+```
+
+

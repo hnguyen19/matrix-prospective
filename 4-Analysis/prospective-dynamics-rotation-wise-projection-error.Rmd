@@ -48,26 +48,134 @@ overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.
 # The model clock starts at spring tillage
 #
 
-scenario1_projection_by_matrix_id <- pmap(list(spring_tillage,
-                                               emergence_scenario1,
-                                               summer_survival_scenario1,
-                                               fecundity_2019,
+scenario1_projection_by_matrix_id <- pmap(list(fecundity_2019,
                                                post_harvest_tillage,
                                                overwinter_scenario1), list) %>% 
   simplify() %>%
   map(.,
-    ~{names(.) <-  c("spring_tillage",
-                     "emergence",
-                     "summer_survival_Sosnoskie_2013",
-                     "fecundity_2019",
+    ~{names(.) <-  c("fecundity_2019",
+                     "post_harvest_tillage",
+                     "overwinter_Sosnoskie_2013"); .}) #wrong
+
+# multiply all the periodic matrices within a crop ID
+scenario1_phase_projection <- scenario1_projection_by_matrix_id  %>%
+  map(., ~{Reduce( "%*%", .)}) #not crossprod, because crossprod(X,Y) = t(X)%*%Y
+
+```
+
+
+```{r scenario1-rotation-wise-project}
+#### Improve: grab all elements with "4", "3", "2", ..., the shuffle conditionally 
+### How would waterhemp population grow in each cropping system?
+## Each rotation can be started at different crop phase
+## Need other numbers than lambda: Suffix in each sequence tells where the cycle start, further work in -shuffle.Rmd
+
+# rearrange scenario1_projection by rotation
+
+scenario1_rotation_wise_4yr_conv <- scenario1_phase_projection[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
+
+#4-year, low
+scenario1_rotation_wise_4yr_low <- scenario1_phase_projection[c("A4_low", "O4_low", "S4_low", "C4_low")]
+
+#3-year, conventional
+scenario1_rotation_wise_3yr_conv <- scenario1_phase_projection[c("O3_conv", "S3_conv", "C3_conv")]
+
+#3-year, low
+scenario1_rotation_wise_3yr_low <- scenario1_phase_projection[c("O3_low", "S3_low", "C3_low")]
+
+#2year, conventional
+scenario1_rotation_wise_2yr_conv <- scenario1_projection[c("S2_conv", "C2_conv")]
+
+#2year, low
+scenario1_rotation_wise_2yr_low <- scenario1_phase_projection[c("S2_low","C2_low")]
+
+# bind by rotation
+scenario1_list_rotation <- list(scenario1_rotation_wise_4yr_conv,
+                                     scenario1_rotation_wise_4yr_low,
+                                     scenario1_rotation_wise_3yr_conv,
+                                     scenario1_rotation_wise_3yr_low,
+                                     scenario1_rotation_wise_2yr_conv,
+                                     scenario1_rotation_wise_2yr_low) 
+names(scenario1_list_rotation) <- c("4_year_conv",
+                                    "4_year_low",
+                                    "3_year_conv",
+                                    "3_year_low",
+                                    "2_year_conv",
+                                    "2_year_low")
+
+# Rotation-wise projection: 
+lapply(scenario1_list_rotation, function(i){
+  Reduce("%*%",i)
+}) 
+
+# the above lapply returned the same as the map below
+
+scenario1_projection <- scenario1_list_rotation %>%
+  map(., ~{Reduce( "%*%", .)})
+
+# eigen analysis
+scenario1_rotation_eigen <- scenario1_projection  %>%
+  map(., ~{eigen.analysis(.)})
+```
+
+
+```{r scenario-1-4yr-only}
+scenario1_rotation_wise_4yr_conv <- scenario1_phase_projection[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
+
+#4-year, low
+scenario1_rotation_wise_4yr_low <- scenario1_phase_projection[c("A4_low", "O4_low", "S4_low", "C4_low")]
+
+scenario1_list_rotation <- list(scenario1_rotation_wise_4yr_conv,
+                                     scenario1_rotation_wise_4yr_low) 
+names(scenario1_list_rotation) <- c("4_year_conv",
+                                    "4_year_low")
+
+# Rotation-wise projection: 
+
+scenario1_rotation_projection <- scenario1_list_rotation %>%
+  map(.,~{Reduce("%*%", .)}) 
+```
+
+```{r phase-wise-projection-2}
+# The model clock starts at spring tillage
+#
+fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
+scenario2_projection_by_matrix_id <- pmap(list(fecundity_2018,
+                                               post_harvest_tillage,
+                                               overwinter_scenario1), list) %>% 
+  simplify() %>%
+  map(.,
+    ~{names(.) <-  c("fecundity_2018",
                      "post_harvest_tillage",
                      "overwinter_Sosnoskie_2013"); .}) 
 
 # multiply all the periodic matrices within a crop ID
-scenario1_projection <- scenario1_projection_by_matrix_id  %>%
+scenario2_phase_projection <- scenario2_projection_by_matrix_id  %>%
   map(., ~{Reduce( "%*%", .)}) #not crossprod, because crossprod(X,Y) = t(X)%*%Y
 
 ```
+
+```{r scenario-2-4yr-only}
+scenario2_rotation_wise_4yr_conv <- scenario2_phase_projection[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
+
+#4-year, low
+scenario2_rotation_wise_4yr_low <- scenario2_phase_projection[c("A4_low", "O4_low", "S4_low", "C4_low")]
+
+scenario2_list_rotation <- list(scenario2_rotation_wise_4yr_conv,
+                                     scenario2_rotation_wise_4yr_low) 
+names(scenario2_list_rotation) <- c("4_year_conv",
+                                    "4_year_low")
+
+# Rotation-wise projection: 
+
+scenario2_rotation_projection <- scenario2_list_rotation %>%
+  map(.,~{Reduce("%*%", .)})  #makes everything the same
+
+# need
+
+```
+
+
 
 ```{r scenario1-rotation-wise-project}
 #### Improve: grab all elements with "4", "3", "2", ..., the shuffle conditionally 

@@ -220,9 +220,9 @@ list_phaseg <- mget(paste0(c("fed_geo_m","surv_g","emerge_m"))) #need herb in be
 #everything before tillage
 prj1g <- flatten(tail(accumulate(list_phaseg, map2, crossprod), 1))
 
-prj1g_reduce <- lapply(list_phaseg, function(i){
-  Reduce("%*%",i)
-})
+flatten(tail(accumulate(list_phaseg, map2, `%*%`), 1))
+
+
 
 #apply tillage
 prj2g<- lapply(seq_along(prj1g), function(i){
@@ -281,7 +281,7 @@ rot_19g <- lapply(list_rot_19g, function(i){
 })
 
 rot_eigen_ana_19g <- lapply(rot_19g, function(i){
-  eigen.analysis(i)})
+  popbio::eigen.analysis(i)})
 ## annualized population growth rate
 
 
@@ -294,7 +294,7 @@ The annualized population growth rate and other demographic parameters for water
 2-year, conventional  
 
 ```{r annualized 19 geo 2yr c, echo=FALSE, warning=FALSE}
-
+library(pracma)
 #names(rot_eigen_ana_19)
 map(.x=rot_eigen_ana_19g$y2_c_19g,~nthroot(.x,2))
 ```

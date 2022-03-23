@@ -1,0 +1,153 @@
+---
+title: "See annualized projection matrices if the current sequences are shuffled"
+author: "Huong Nguyen"
+date: "3/14/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+How would waterhemp populations changes in each rotation if cool-seasoned and warm-seasoned crops were alternated?  
+
+```{r rotation-wise-project-1}
+
+#### Improve: grab all elements with "4", "3", "2", ..., the shuffle conditionally 
+### How would waterhemp population grow in each cropping system?
+## Each rotation can be started at different crop phase
+## Suffix in each sequence tells where the cycle start
+
+#4-year, conventional, these are just 4 ways to shuffle the cycle, which represents the experiment design
+
+### Explicitly test the stochasticity of matrices at different points in the current systems
+scenario1_rotation_wise_4yr_conv_corn <- phase_wise_project1[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
+
+scenario1_rotation_wise_4yr_conv_soybean <- phase_wise_project1[c("C4_conv", "A4_conv", "O4_conv", "S4_conv")]
+
+scenario1_rotation_wise_4yr_conv_oat <- phase_wise_project1[c("S4_conv", "C4_conv", "A4_conv", "O4_conv")]
+
+scenario1_rotation_wise_4yr_conv_alfalfa <- phase_wise_project1[c("O4_conv", "S4_conv", "C4_conv", "A4_conv")]
+
+
+#4-year, low
+scenario1_rotation_wise_4yr_low_corn <- phase_wise_project1[c("A4_low", "O4_low", "S4_low", "C4_low")]
+
+scenario1_rotation_wise_4yr_low_soybean <- phase_wise_project1[c("C4_low", "A4_low", "O4_low", "S4_low")]
+
+scenario1_rotation_wise_4yr_low_oat <- phase_wise_project1[c("S4_low", "C4_low", "A4_low", "O4_low")]
+
+scenario1_rotation_wise_4yr_low_alfalfa <- phase_wise_project1[c("O4_low", "S4_low", "C4_low", "A4_low")]
+
+#3-year, conventional
+scenario1_rotation_wise_3yr_conv_corn <- phase_wise_project1[c("O3_conv", "S3_conv", "C3_conv")]
+
+scenario1_rotation_wise_3yr_conv_soybean <- phase_wise_project1[c("C3_conv", "O3_conv", "S3_conv")]
+
+scenario1_rotation_wise_3yr_conv_oat <- phase_wise_project1[c("S3_conv", "C3_conv", "O3_conv")]
+
+#3-year, low
+scenario1_rotation_wise_3yr_low_corn <- phase_wise_project1[c("O3_low", "S3_low", "C3_low")]
+
+
+scenario1_rotation_wise_3yr_low_soybean <- phase_wise_project1[c("C3_low", "O3_low","S3_low")]
+
+scenario1_rotation_wise_3yr_low_oat <- phase_wise_project1[c("S3_low", "C3_conv", "O3_low")]
+
+#2year, conventional
+scenario1_rotation_wise_2yr_conv_corn <- phase_wise_project1[c("S2_conv", "C2_conv")]
+
+scenario1_rotation_wise_2yr_conv_soybean <- phase_wise_project1[c("C2_conv", "S2_conv")]
+
+#2year, low
+scenario1_rotation_wise_2yr_low_corn <- phase_wise_project1[c("S2_low","C2_low")]
+
+scenario1_rotation_wise_2yr_low_soybean <- phase_wise_project1[c("C2_low", "S2_low")]
+```
+
+```{r scenario1}
+### may erase later when everything works
+scenario1_list_rotation_corn <-  mget(paste0(c("scenario1_rotation_wise_4yr_conv_corn",
+                                           "scenario1_rotation_wise_4yr_low_corn",
+                                      "scenario1_rotation_wise_3yr_conv_corn",
+                                      "scenario1_rotation_wise_3yr_low_corn",
+                                      "scenario1_rotation_wise_2yr_conv_corn",
+                                      "scenario1_rotation_wise_2yr_low_corn")))
+
+
+scenario1_rotation_corn <- lapply(scenario1_list_rotation_corn, function(i){
+  Reduce("%*%",i)
+})
+
+scenario1_rotation_eigen <- lapply(scenario1_rotation , function(i){
+  popbio::eigen.analysis(i)})
+```
+
+```{r scenario1-projection-test, include=FALSE}
+## Testing if projection matrices turned out the same with different starting points in the current rotations: YES
+scenario1_list_rotation_4yr_test <-  mget(paste0(c("scenario1_rotation_wise_4yr_conv_corn",
+                                           "scenario1_rotation_wise_4yr_low_corn",
+                                          "scenario1_rotation_wise_4yr_conv_soybean",
+                                           "scenario1_rotation_wise_4yr_low_soybean",
+                                          "scenario1_rotation_wise_4yr_conv_oat",
+                                           "scenario1_rotation_wise_4yr_low_oat",
+                                          "scenario1_rotation_wise_4yr_conv_alfalfa",
+                                           "scenario1_rotation_wise_4yr_low_alfalfa")))
+
+scenario1_list_rotation_3yr_test <-  mget(paste0(c("scenario1_rotation_wise_3yr_conv_corn",
+                                      "scenario1_rotation_wise_3yr_low_corn",
+                                      "scenario1_rotation_wise_3yr_conv_soybean",
+                                      "scenario1_rotation_wise_3yr_low_soybean",
+                                      "scenario1_rotation_wise_3yr_conv_oat",
+                                      "scenario1_rotation_wise_3yr_low_oat")))
+                                      
+                                      
+scenario1_list_rotation_2yr <-  mget(paste0(c("scenario1_rotation_wise_2yr_conv_corn",
+                                      "scenario1_rotation_wise_2yr_low_corn",
+                                      "scenario1_rotation_wise_2yr_conv_soybean",
+                                      "scenario1_rotation_wise_2yr_low_soybean")))
+
+
+scenario1_project_4yr <- lapply(scenario1_list_rotation_4yr, function(i){
+  Reduce("%*%",i)
+})
+
+scenario1_project_4yr_eigen <- lapply(scenario1_project_4yr, function(i){
+  popbio::eigen.analysis(i)})
+
+scenario1_project_3yr <- lapply(scenario1_list_rotation_3yr, function(i){
+  Reduce("%*%",i)
+})
+
+scenario1_project_3yr_eigen <- lapply(scenario1_project_3yr, function(i){
+  popbio::eigen.analysis(i)})
+
+scenario1_project_2yr <- lapply(scenario1_list_rotation_2yr, function(i){
+  Reduce("%*%",i)
+})
+
+scenario1_project_2yr_eigen <- lapply(scenario1_project_2yr, function(i){
+  popbio::eigen.analysis(i)})
+```
+
+```{r scenario1-projection-annualized-4yr, include=FALSE}
+# Improve efficiency: do the nthroot all at once
+# https://stackoverflow.com/questions/13608336/lapply-over-nested-list-and-retain-naming-structure
+rapply(scenario1_project_4yr_eigen , function(x){nthroot(x,4)}, how = "list") # lambda = 0.755 starting at any point in the current sequence.  
+
+
+
+scenario1_rotation_wise_4yr_conv_oat_between_corn_soybean <- phase_wise_project1[c("A4_conv", "S4_conv","O4_conv", "C4_conv")]
+
+scenario1_list_rotation_conv_oat_between_corn_soybean <-  mget(paste0(c("scenario1_rotation_wise_4yr_conv_oat_between_corn_soybean")))
+
+
+scenario1_project_4yr_oat_between_corn_soybean  <- lapply(scenario1_list_rotation_conv_oat_between_corn_soybean,
+                                                          function(i){Reduce("%*%",i)})
+
+scenario1_rotation_wise_4yr_conv_oat_between_corn_soybean_eigen <- lapply(scenario1_project_4yr_oat_between_corn_soybean, function(i){
+  popbio::eigen.analysis(i)})
+
+rapply(scenario1_rotation_wise_4yr_conv_oat_between_corn_soybean_eigen, 
+       function(x){nthroot(x,4)}, how = "list") # lambda = 0.756796 if alternate cool- and warm-season crops.  
+```

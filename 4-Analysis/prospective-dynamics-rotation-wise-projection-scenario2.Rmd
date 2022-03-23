@@ -1,0 +1,155 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+    reference_docx: style_template.docx
+---
+
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(purrr) # for map2()
+library(pracma)
+library(popbio)
+library(tidyverse)
+```
+
+```{r periodic-matrices-phase, echo=FALSE}
+## Pre-planting tillage 
+spring_tillage <-  readRDS("../2-Data/Clean/pre-planting-tillage.RData")
+
+## Emergence 
+emergence_scenario1 <- readRDS("../2-Data/Clean/emergence-prop-scenario1.RData")
+
+## Seed survival and plant survival 
+#### seed survival 
+
+summer_seed_survival_scenario1  <- readRDS("../2-Data/Clean/summer-seed-survival-scenario1.RData")
+# the bottom left 6x6 diagonal are filled with 1 for convenient multiplication with summer_survival_scenario1
+
+#### plant survival
+female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
+#### combine seed and plant survivals into one matrix with element-wise multiplication 
+summer_survival_scenario1 <- purrr::map2(summer_seed_survival_scenario1 , female_survival, `*`)
+
+## Post-harvest tillage
+post_harvest_tillage <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
+
+## Overwinter survival 
+overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.RData")
+```
+
+
+```{r phase-wise-projection-2, echo=FALSE}
+## Fecundity scenario 2, start at spring tillage: give identical results as scenario1
+#try remove some matrices
+
+fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
+
+scenario2_projection_by_matrix_id <- tibble::lst(spring_tillage,
+                                               emergence_scenario1,
+                                               summer_survival_scenario1,
+                                               fecundity_2018,
+                                               post_harvest_tillage,
+                                               overwinter_scenario1)
+
+## List all periodic matrices within the same crop ID together  
+scenario2_projection_by_matrix_id_transpose <- transpose(scenario2_projection_by_matrix_id )
+
+# multiply all the periodic matrices within a crop ID 
+
+scenario2_phase_projection <- scenario2_projection_by_matrix_id_transpose  %>%
+  map(., ~{Reduce( "%*%", .)}) 
+
+# check 
+#lapply(scenario2_projection_by_matrix_id_transpose, 
+#       \(x) x[[1]] %*% x[[2]] %*% x[[3]] %*% x[[4]] %*% x[[5]] %*% x[[6]])
+
+```
+
+```{r rotation-group, echo=FALSE}
+scenario2_rotation_wise_4yr_conv <- scenario2_phase_projection[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
+
+#4-year, low
+scenario2_rotation_wise_4yr_low <- scenario2_phase_projection[c("A4_low", "O4_low", "S4_low", "C4_low")]
+
+#3-year, conventional
+scenario2_rotation_wise_3yr_conv <- scenario2_phase_projection[c("O3_conv", "S3_conv", "C3_conv")]
+
+#3-year, low
+scenario2_rotation_wise_3yr_low <- scenario2_phase_projection[c("O3_low", "S3_low", "C3_low")]
+
+#2year, conventional
+scenario2_rotation_wise_2yr_conv <- scenario2_phase_projection[c("S2_conv", "C2_conv")]
+
+#2year, low
+scenario2_rotation_wise_2yr_low <- scenario2_phase_projection[c("S2_low","C2_low")]
+
+scenario2_rotation_group <- tibble::lst(scenario2_rotation_wise_4yr_conv,
+                                     scenario2_rotation_wise_4yr_low,
+                                     scenario2_rotation_wise_3yr_conv,
+                                     scenario2_rotation_wise_3yr_low,
+                                     scenario2_rotation_wise_2yr_conv,
+                                     scenario2_rotation_wise_2yr_low)
+
+scenario2_rotation_wise_projection <- scenario2_rotation_group %>%
+  map(., ~{Reduce( "%*%", .)}) 
+
+scenario2_rotation_wise_eigen <- scenario2_rotation_wise_projection %>%
+  map(., ~{eigen.analysis(.)}) 
+```
+
+```{r scenario2-rotation-lambda, echo=FALSE}
+scenario2_rotation_wise_lambda <- scenario2_rotation_wise_eigen %>%
+  map(., ~{head(.,1)})
+```
+
+Using 2018 fecundity rates, waterhemp populations in all crop identity halved annually (Figures \@ref(fig:scenario2-lambda-annualized) and \@ref(fig:phase-lambda)). 
+```{r scenario2-lambda-annualized, echo=FALSE, fig.cap= "Annualized waterhemp population growth rate using 2018 fecundity rate."}
+scenario2_rotation_wise_lambda_4yr <- rapply(scenario2_rotation_wise_lambda[1:2],
+                                             function(x){nthroot(x,4)}, how = "list")
+
+scenario2_rotation_wise_lambda_3yr <- rapply(scenario2_rotation_wise_lambda[3:4],
+                                             function(x){nthroot(x,3)}, how = "list")
+
+scenario2_rotation_wise_lambda_2yr <- rapply(scenario2_rotation_wise_lambda[5:6],
+                                             function(x){nthroot(x,2)}, how = "list")       
+scenario2_lambda_df <- tibble::lst(scenario2_rotation_wise_lambda_4yr,
+                                  scenario2_rotation_wise_lambda_3yr,
+                                  scenario2_rotation_wise_lambda_2yr)%>%
+   plyr::ldply(., data.frame) %>% 
+  rename(conv = "lambda1", low = "lambda1.1")
+
+scenario2_lambda_df_long <- scenario2_lambda_df %>%
+  pivot_longer(!.id, names_to = "Corn_weed_management", values_to = "annualized_lambda") 
+  
+x_labs <- c("2-year", "3-year", "4-year")
+
+ggplot(scenario2_lambda_df_long, aes(y = annualized_lambda, x = .id , fill = Corn_weed_management)) + 
+  geom_bar(stat = "identity", position = "dodge") +
+  ylab("Annualized population growth rate") +
+  xlab("Rotation") +
+  scale_x_discrete(labels= x_labs) +
+  theme_bw()
+```
+
+ 
+
+```{r phase-lambda, echo=FALSE, fig.cap= "Waterhemp population growth rate in each crop phase using 2018 fecundity rate."}
+scenario2_phase_lambda_df <- scenario2_phase_projection %>%
+  map(.,~{lambda(.)}) %>%
+  plyr::ldply(., data.frame) %>%
+  rename(lambda = "X..i..") %>%
+  separate(.id, c("Crop_ID","Corn_weed_management"), sep = "_") %>%
+  mutate(Rotation = ifelse(endsWith(Crop_ID, "4"), "4-year",
+                           ifelse(endsWith(Crop_ID, "3"), "3-year", "2-year")))
+  
+
+
+ggplot(scenario2_phase_lambda_df, aes(y = lambda, x = Crop_ID, , fill = Corn_weed_management)) + 
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_grid(~Rotation, scales = "free", space = "free") +
+  ylab("Population growth rate") +
+  theme_bw()
+```

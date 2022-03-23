@@ -70,12 +70,12 @@ Each of the original 18 x 18 matrices was resized to 2 x 2 using the following s
 - Fill the remaining three elements with 0.
 - Run one pass of a tillage method to redistribute the seed column.
 - Divide each element of the redistributed seed column by 4800 to make a bottom-up vector.
-- Sum the first three elements of the bottom-up vector to have $T_{2,1}$ and the last sixteem elements to have $T_{2,2}$.
+- Sum the first three elements of the bottom-up vector to have $T_{2,1}$ and the last sixteen elements to have $T_{2,2}$.
 
 ```{r post-harvest-tillage-matrix}
 # Post-harvest tillage, imported from folder `Tillage-resized`
 chisel <- read_csv("../2-Data/Raw/Tillage-resized/chisel_2by2.csv", col_names = FALSE, show_col_types = FALSE)
-#names(chisel) <- NULL
+names(chisel) <- NULL
 
 moldboard <- read_csv("../2-Data/Raw/Tillage-resized/moldboard_2by2.csv", col_names = FALSE, show_col_types = FALSE)
 #names(moldboard) <- NULL
@@ -280,6 +280,18 @@ pre_planting_tillage_list_for_recruitment <- lapply(split(pre_planting_tillage_f
                    matrix(rep(0,48), nrow = 6))))
 
 #saveRDS(pre_planting_tillage_list_for_recruitment, file="../2-Data/Raw/pre-planting-tillage-for-recruitment.RData")
+```
+
+```{r total-prob-calculation}
+# Calculate total probability by assuming a seed column of 50 at the top and 50 at the bottom, then apply the relevant tillage 
+seed_column_example <- matrix(50, nrow =2)
+
+
+as.matrix(chisel) %*% seed_column_example
+
+as.matrix(moldboard) %*% seed_column_example
+
+as.matrix(field_cultivator) %*% seed_column_example
 ```
 
 ```{r summer-seed-survival-matrix}

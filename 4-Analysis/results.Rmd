@@ -1,0 +1,23 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+    reference_docx: style_template.docx
+bibliography: prospective-pop-dynamics.bib
+---
+
+# Results {-}
+
+## Sensitivities and elasticities of waterhemp population growth rate to projection matrices elements {-}
+```{r, child = "prospective-dynamics-phase-wise-projection.Rmd"}
+```
+
+## Waterhemp population growth rate in three different rotation systems {-}
+```{r, child = "prospective-dynamics-rotation-wise-projection-scenario2.Rmd"}
+```
+
+## Appendix {-}
+
+```{r, child = "scenario2-matrices.Rmd"}
+```
