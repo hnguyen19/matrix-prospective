@@ -8,6 +8,11 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## Introduction 
+Seedbank depletion can be promoted by inducing seed fatal germination so that seeds germinate, but the seedlings fail to reach the soil surface and thus die [@davisInfluenceSeedDepth2007], and by fostering granivore activities so that viable, dormant seeds are consumed or damaged [@bagavathiannanPostdispersalLossImportant2013; @kurstjensPreciseTillageSystems2007]. 
+
+
+
 ### Starting density  
 
 Emergence: use emergence density from 2018, 2019 and 2020 (Number_begin by cohort)

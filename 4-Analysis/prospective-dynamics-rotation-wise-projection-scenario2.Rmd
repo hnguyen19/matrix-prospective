@@ -50,7 +50,7 @@ fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
 scenario2_projection_by_matrix_id <- tibble::lst(spring_tillage,
                                                emergence_scenario1,
                                                summer_survival_scenario1,
-                                               fecundity_2018,
+                                               fecundity_2018_2,
                                                post_harvest_tillage,
                                                overwinter_scenario1)
 

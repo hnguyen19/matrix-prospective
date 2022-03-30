@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(purrr) # for map2()
 library(pracma)
 library(popbio)
+library(tidyverse)
 ```
 
 
@@ -27,7 +28,7 @@ emergence_scenario1 <- readRDS("../2-Data/Clean/emergence-prop-scenario1.RData")
 summer_seed_survival_scenario1  <- readRDS("../2-Data/Clean/summer-seed-survival-scenario1.RData")
 
 #### plant survival
-female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
+female_survival <- readRDS("../2-Data/Clean/summer-seedling-survival-scenario2.RData")
 #### combine seed and plant survivals into one matrix with element-wise multiplication 
 summer_survival_scenario1 <- purrr::map2(summer_seed_survival_scenario1 , female_survival, `*`)
 
@@ -63,11 +64,23 @@ scenario1_projection_by_matrix_id <- pmap(list(spring_tillage,
                      "post_harvest_tillage",
                      "overwinter_Sosnoskie_2013"); .}) 
 
+# assign row and column names
+#https://stackoverflow.com/questions/71612217/error-in-assign-dimnames-to-all-matrices-in-a-list/71612339#71612339
+
+scenario1_projection_by_matrix_id_dimnamed <- rapply(scenario1_projection_by_matrix_id, function(x)
+  {dimnames(x) <- rep(list(c("seed_top","seed_bottom",
+                             "plant_cohort_1", "plant_cohort_2",
+                             "plant_cohort_3", "plant_cohort_4",
+                             "plant_cohort_5", "plant_cohort_6")), 2); x}, how="list")
+
+
+
 # multiply all the periodic matrices within a crop ID
 scenario1_projection <- scenario1_projection_by_matrix_id  %>%
   map(., ~{Reduce( "%*%", .)}) #not crossprod, because crossprod(X,Y) = t(X)%*%Y
 
 ```
+
 
 ```{r scenario1-rotation-wise-project}
 #### Improve: grab all elements with "4", "3", "2", ..., the shuffle conditionally 
@@ -249,3 +262,49 @@ n_initial <- c(1000, 5000, rep(0,6))
 
 # sapply(scenario1_projection_by_matrix_id, function(x) sapply(x, pop.projection(x, n= n_initial, iterations = 20)))
 ```
+
+
+```{r phase-wise-projection-2}
+fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
+
+# The model clock starts at spring tillage
+#
+
+scenario2_projection_by_matrix_id <- pmap(list(spring_tillage,
+                                               emergence_scenario1,
+                                               summer_survival_scenario1,
+                                               fecundity_2018,
+                                               post_harvest_tillage,
+                                               overwinter_scenario1), list) %>% 
+  simplify() %>%
+  map(.,
+    ~{names(.) <-  c("spring_tillage",
+                     "emergence",
+                     "summer_survival_Sosnoskie_2013",
+                     "fecundity_2018",
+                     "post_harvest_tillage",
+                     "overwinter_Sosnoskie_2013"); .}) 
+
+# assign row and column names
+#https://stackoverflow.com/questions/71612217/error-in-assign-dimnames-to-all-matrices-in-a-list/71612339#71612339
+
+scenario2_projection_by_matrix_id_dimnamed <- rapply(scenario2_projection_by_matrix_id, function(x)
+  {dimnames(x) <- rep(list(c("seed_top","seed_bottom",
+                             "plant_cohort_1", "plant_cohort_2",
+                             "plant_cohort_3", "plant_cohort_4",
+                             "plant_cohort_5", "plant_cohort_6")), 2); x}, how="list")
+
+```
+
+```{r save-subsets}
+scenario1_projection_by_matrix_id_dimnamed_subset <- scenario1_projection_by_matrix_id_dimnamed[c("C2_conv", "S2_conv")] 
+
+saveRDS(scenario1_projection_by_matrix_id_dimnamed_subset , file="~/Documents/Dissertation/periodic-matrix-subset/subset1.RData")
+
+
+scenario2_projection_by_matrix_id_dimnamed_subset <- scenario2_projection_by_matrix_id_dimnamed[c("C2_conv", "S2_conv")] 
+
+saveRDS(scenario2_projection_by_matrix_id_dimnamed_subset , file="~/Documents/Dissertation/periodic-matrix-subset/subset2.RData")
+
+```
+

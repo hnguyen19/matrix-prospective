@@ -374,6 +374,26 @@ summer_seed_pred_grand_summ <- summer_seed_pred_clean %>%
 
 ```
 
+```{r seedling-survival-Hartzler-Buhler}
+seedling_survival_Hartzler_Buhler <- expand.grid(Crop_ID = c("C2","S2",
+                                                "C3","S3","O3",
+                                                "C4", "S4", "O4", "A4"),
+                                    Corn_weed_management = c("conv","low"),
+                                    Cohort = c(1:6))
+seedling_survival_Hartzler_Buhler_filled <- seedling_survival_Hartzler_Buhler%>%
+  mutate(seedling_survival = ifelse(Cohort %in%c(1,2), 0.9,
+                                    ifelse(Cohort %in% c(3,4), 0.55, 0.15)))%>%
+  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, Cohort)
+
+## need to check top 2x2
+seedling_survival_Hartzler_Buhler_raw_list <- lapply(split(seedling_survival_Hartzler_Buhler_filled , seedling_survival_Hartzler_Buhler_filled $matrix_id),
+       function(x) rbind(cbind(diag(1,2), matrix(0,nrow = 2, ncol = 6)),
+         cbind(matrix(0,nrow=6,ncol=2), diag(x$seedling_survival))))
+
+# saveRDS(seedling_survival_Hartzler_Buhler_raw_list, file="../2-Data/Clean/summer-seedling-survival-scenario2.RData")
+```
+
 ```{r}
 ## After model run: where does herbicide survival fit in?
 ## Using 2018 and 2019 survival as a starting point, partition matrices into HR and non-HR survival rate, sum them up

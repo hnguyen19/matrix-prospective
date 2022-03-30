@@ -34,7 +34,10 @@ summer_survival_scenario1 <- purrr::map2(summer_seed_survival_scenario1 , female
 
 ## Fecundity scenario 1
 
-fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
+# fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
+
+ fecundity_2018_2 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort-2.RData")
+
 
 ## Post-harvest tillage
 post_harvest_tillage <- readRDS("../2-Data/Clean/post-harvest-tillage.RData")
@@ -60,7 +63,7 @@ In scenario one, using the 2018 fecundity rates, the probability that a seed in 
 scenario1_projection_by_matrix_id <- pmap(list(spring_tillage,
                                                emergence_scenario1,
                                                summer_survival_scenario1,
-                                               fecundity_2018,
+                                               fecundity_2018_2,
                                                post_harvest_tillage,
                                                overwinter_scenario1), list) %>% 
   simplify() %>%
@@ -77,6 +80,25 @@ scenario1_projection_by_matrix_id <- pmap(list(spring_tillage,
 scenario1_stoch.sens <- scenario1_projection_by_matrix_id %>%
   map(., ~{stoch.sens(.)})
 
+```
+
+
+```{r test-phase-lambda}
+scenario1_projection_by_matrix_id$C2_conv %>%
+  map(., ~{popbio::lambda(.)})
+
+popbio::lambda(scenario1_projection_by_matrix_id$C2_conv$fecundity_2018)
+
+ev <- eigen(scenario1_projection_by_matrix_id$C2_conv$fecundity_2018);
+
+# print the modulus of the eigenvalues
+print(Mod(ev$values))
+
+# R is nice!  ev's are sorted in decreasing order
+ev$values[1]   
+  # eval vector is stored as complex numbers because some values are complex
+
+Re(ev$values[1])
 ```
 
 ```{r scenario1-phase-wise-sensitivities, echo=FALSE}
