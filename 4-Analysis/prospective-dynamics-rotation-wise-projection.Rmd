@@ -301,10 +301,15 @@ scenario1_projection_by_matrix_id_dimnamed_subset <- scenario1_projection_by_mat
 
 saveRDS(scenario1_projection_by_matrix_id_dimnamed_subset , file="~/Documents/Dissertation/periodic-matrix-subset/subset1.RData")
 
+write.csv(scenario1_projection_by_matrix_id_dimnamed_subset,
+          "~/Documents/Dissertation/periodic-matrix-subset/subset1.csv")
 
 scenario2_projection_by_matrix_id_dimnamed_subset <- scenario2_projection_by_matrix_id_dimnamed[c("C2_conv", "S2_conv")] 
 
 saveRDS(scenario2_projection_by_matrix_id_dimnamed_subset , file="~/Documents/Dissertation/periodic-matrix-subset/subset2.RData")
+
+write.csv(scenario2_projection_by_matrix_id_dimnamed_subset,
+          "~/Documents/Dissertation/periodic-matrix-subset/subset2.csv")
 
 ```
 
