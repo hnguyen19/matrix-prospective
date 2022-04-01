@@ -1,0 +1,23 @@
+Stage,Assumption,References
+All,Sex is stable throughout the life cycle.,(schaffnerObservationsExperimentsSex1935?); (murrayGeneticsSexDetermination1940?)
+,Equal growth rate across individuals of the same size and shape under the same treatments (crop x rotation x herbicide),"Chapter 8, Caswell, 2001"
+Seed,Equal germination probability across sexes,
+,The sex ratio is 1:1.,"Costea, 2005"
+,Sex is determined at seed formation,"Montgomery et al., 2019; 2021"
+,Seeds only emerge from the 0-2cm soil stratum,"Deduced collectively from the recommended sowing depth of 1-3 times the seed diameter (Chapter 3, foodandagricultureorganizationoftheunitednationsAridZoneForestry1989?) and AMATA seed size of 1 mm or less in diameter Costea, 2005."
+,Germination is fatal from the 2-20 cm soil stratum,
+,Equal decay rate in the soil across sexes,
+,Equal decay rate across all burial depths,"(buhlerEmergencePersistenceSeed2001a?), (steckelTillageCroppingSystem2007?)"
+,Equal palatability to granivores across sexes,
+,Granivore activities are an important threat.,"van der Laat et al., 2015"
+,,
+Young plant,Female plants are more likely to survive under stressful conditions than male plants.,Deduced collectively from the general 1:1 sex ratio (costeaBiologyInvasiveAlien2005?) and differentiated sex ratio at maturity across weed management systems at the experiment site in 2018.
+,Crops are the main competitors for resources.,Deduced from weeds being effectively suppressed under contrasting cropping systems at the experiment site (huntReducingFreshwaterToxicity2017?).
+,Competition with other weeds is negligible.,
+, Intraspecific competition is negligible.,
+,The weed control program catered to the specific crop is the main cause of mortality.,"Ryan et al., 2010"
+Mature plant,Pollen source is unlimited ,"pollens can stay viable for five days after dispersion (Liu et al., 2012) and substantial population density and sex ratio at the experiment site (Nguyen and Liebman, 2022a)"
+,50% of the seeds produced by each female plant are female.,"Costea, 2005"
+,Male : female ratio can deviate from 1:1 ratio under different conditions, more males than females observed at the experiment site when composted swine manure was applied(menalledImpactCompostedSwine2004?);  5 to 10 females per 1 male in a low-density population in Ohio (prattAmaranthusRudisTuberculatus2001?)
+,Genetic material exchange is more likely to occur within 0 to 50 meters around the pollen source.,(sarangiPollenmediatedGeneFlow2017?); (liuPollenBiologyDispersal2012?)
+,"Fitness cost is negligible in populations with resistance to atrazine, protoporphyrinogen oxidase inhibitors, 4?hydroxyphenylpryuvate dioxygenase inhibitors or glyphosate.","(wuLimitedFitnessCosts2018?); Sosnoskie et al., 2013"

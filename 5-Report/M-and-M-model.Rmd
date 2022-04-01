@@ -7,11 +7,14 @@ output:
 bibliography: prospective-pop-dynamics.bib
 ---
 
+
+```{r, include=FALSE}
+library(readr)
+library(flextable)
+```
+
 The general experiment design is provided in [@nguyenImpactCroppingSystem2022], but an updated diagram is provided below to cover tillage regimes.  
 
-```{r}
-
-```
 
 As mentioned in the previous section, contrasting herbicide regimes have been used for corn and soybean at the experiment site from 2008. 
 Soybean plots were managed by conventional herbicide starting in 2017 but the data files are organized to distinguish historical herbicide information for soybean plots because the herbicide change was recent while the legacy effect of weed control program on each subplot may last for a few years [@rasmussenLegacyPesticidePollution2015; @gibsonBenchmarkStudyGlyphosateresistant2016].  
@@ -97,29 +100,20 @@ Table 4.1 - Model parameters
 
 ### Model assumptions  
 
-Table 4.2 - Female-only population dynamics model assumptions for common waterhemp (*Amaranthus tuberculatus*)    
+    
 
-| **Stage** | **Assumption** | **References** |  
-|---------- | -------------- | -------------- |  
-| _All_ | Sex is stable throughout the life cycle. | @schaffnerObservationsExperimentsSex1935; @murrayGeneticsSexDetermination1940 |  
-|  | Individuals (seeds and plants) are evenly distributed spatially. | Seeds and plant densities are grid-sampled, 6x2 clusters of 3 soil cores and 4x2 quadrats, along field length x width, for seeds and plants, respectively. | 
-|  | Equal growth rate across individuals of the same size and shape under the same treatments (crop x rotation x herbicide) | Chapter 8, @caswellMatrixPopulationModels2001 | 
-| _Seed_ | Equal germination probability across sexes |  
-|  | The sex ratio is 1:1. |  @costeaBiologyInvasiveAlien2005 |  
-|  | Seeds only germinate from the 0-2cm soil layer | Deduced collectively from the recommended sowing depth of 1-3 times the seed diameter [Chapter 3, @foodandagricultureorganizationoftheunitednationsAridZoneForestry1989] and AMATA seed size of 1 mm or less in diameter [@costeaBiologyInvasiveAlien2005].  
-|  | Equal decay rate in the soil across sexes | 
-|  | Equal decay rate across all burial depths | @buhlerEmergencePersistenceSeed2001a, @steckelTillageCroppingSystem2007 | 
-|  | Equal palatability to granivores across sexes | 
-|  | Granivore activities are an important threat. | @vanderlaatPostdispersalWeedSeed2015 |  
-| _Young plant_ | Female plants are more likely to survive under stressful conditions than male plants. | Deduced collectively from the general 1:1 sex ratio [@costeaBiologyInvasiveAlien2005] and differentiated sex ratio at maturity across weed management systems at the experiment site in 2018. |  
-|  | Crops are the main competitors for resources. | Deduced from weeds being effectively suppressed under contrasting cropping systems at the experiment site [@huntReducingFreshwaterToxicity2017]. |   
-|  | Competition with other weeds and intraspecific competition is neglected. |
-|  | The weed control program is the main cause of mortality. | @huntReducingFreshwaterToxicity2017 |
-| _Mature plant_ | Pollen source is unlimited due to (i) the longevity and mobility of pollen grains and (ii) average plant density at the experiment site.  | @liuPollenBiologyDispersal2012 and personal observation  |  
-|  | 50% of the seeds produced by each female plant are female. | @costeaBiologyInvasiveAlien2005 | 
-|  | Male : female ratio can deviate from  1:1 ratio under different conditions: (i) more males than females observed at the experiment site when composted swine manure was applied (ii) 5 to 10 females per 1 male in a low-density population in Ohio. |  @menalledImpactCompostedSwine2004; @prattAmaranthusRudisTuberculatus2001 | 
-|  | Genetic material exchange is more likely to occur within 0 to 50 meters around the pollen source. | @sarangiPollenmediatedGeneFlow2017; @liuPollenBiologyDispersal2012 |  
-|  | Fitness cost is negligible in populations with resistance to atrazine, protoporphyrinogen oxidase inhibitors, 4‐hydroxyphenylpryuvate dioxygenase inhibitors or glyphosate. | @wuLimitedFitnessCosts2018 |  
+```{r assumptions, echo=FALSE}
+#https://ardata-fr.github.io/flextable-book/captions-and-cross-references.html
+
+assumptions <- read.csv("assumption-table.csv")
+
+assumptions_ft <-flextable(assumptions)
+
+assumptions_ft <- set_caption(assumptions_ft,
+                              "Female-only population dynamics model assumptions for common waterhemp (*Amaranthus tuberculatus*)")
+
+assumptions_ft 
+```
 
 ### Parameterization {-}
 
