@@ -1,0 +1,30 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+    reference_docx: style_template.docx
+bibliography: prospective-pop-dynamics.bib
+---
+
+*overview*  
+Common waterhemp (*Amaranthus tuberculatus* (Moq.) J.D. Sauer) is an agronomically challenging weed species whose soil seedbank can be rapidly replenished under favorable conditions [@davisWeedSeedPools2008]. A heuristic model for common waterhemp population dynamics in corn (*Zea mays* L.) and soybean (*Glycine max* (L.) Merr.) with or without rye (*Secale cereale* L.) cover crop in between the two crop phases concluded that cover crop could provide minimal suppression against common waterhemp abundance.
+
+The ultimate goal of any weed control program is to prevent the target population from growing. One approach to doing so is to deplete the soil seedbank. 
+Seedbank depletion can be promoted by inducing seed fatal germination so that seeds germinate, but the seedlings fail to reach the soil surface and thus die [@davisInfluenceSeedDepth2007], and by fostering granivore activities so that viable, dormant seeds are consumed or damaged [@bagavathiannanPostdispersalLossImportant2013; @kurstjensPreciseTillageSystems2007]. 
+Seedbank depletion can also be promoted by targeting attacking the weed population at multiple other life-history stages which eventually limits the total number of seeds entering the soil seedbank [@liebmanManyLittleHammers1997].
+Waterhemp can replenish its soil seedbank after just one year of prolific seed production so multiple tactics are required to effectively limit the number of seeds entering the soil seedbank [@davisWeedSeedPools2008].
+For waterhemp management, literature has stressed the importance of seed shattering reduction, removal of seeds on the soil surface, and customization of tillage systems because the persistence of waterhemp seedbank is highly dependent on the local crop management techniques [@bagavathiannanPostdispersalLossImportant2013; @korresSeedbankPersistencePalmer2018; @menalledEffectsCompostedSwine2005]. 
+
+
+Prospective analysis using a population matrix approach can be used to examine how a population would change over a period given the input parameters, but without extensive field trials [@caswellMatrixPopulationModels2001; @davisCroppingSystemEffects2002; @ullrichWeedPopulationDynamics2000].
+In this case, the input parameters for waterhemp population dynamics are seedbank density, emergence rate, seed and plant survival rates, fecundity, and seed viability loss. 
+I will use a periodic matrix model [@caswellMatrixPopulationModels2001; @cousensDynamicsWeedPopulations1995] to study waterhemp population dynamics because periodic matrices accommodate the examination of the effect of various events, i.e., crop management activities, that occur throughout the life cycle of waterhemp on the population change rate. 
+The periodic matrices are sub-divisions of an annual projection matrix: each is constructed based on critical points in a weed species' life cycle, which will provide a means to track when and where major changes in population dynamics happen.
+Details on periodic matrices construction and justification are provided in the next section.  
+
+*waterhemp in different contexts and information gaps*  
+Interseeding red clover with wheat followed by spring tillage delayed and reduced seedling emergence as compared with three other interseeding and tillage timing combinations by fall tillage [@davisCroppingSystemEffects2003].
+
+*importance of the present study*
+

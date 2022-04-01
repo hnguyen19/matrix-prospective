@@ -1,0 +1,141 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+    reference_docx: style_template.docx
+bibliography: prospective-pop-dynamics.bib
+---
+
+The general experiment design is provided in [@nguyenImpactCroppingSystem2022], but an updated diagram is provided below to cover tillage regimes.  
+
+```{r}
+
+```
+
+As mentioned in the previous section, contrasting herbicide regimes have been used for corn and soybean at the experiment site from 2008. 
+Soybean plots were managed by conventional herbicide starting in 2017 but the data files are organized to distinguish historical herbicide information for soybean plots because the herbicide change was recent while the legacy effect of weed control program on each subplot may last for a few years [@rasmussenLegacyPesticidePollution2015; @gibsonBenchmarkStudyGlyphosateresistant2016].  
+
+*Population transition matrices were calculated using Wood's quadratic programming method [Section 6.2, @caswellMatrixPopulationModels2001].*
+
+The waterhemp population is considered size-structured with overlapping cohorts.
+Cohorts in this experiment reflected the time stamps when the waterhemp sub-populations were surveyed.
+Two consecutive surveys were approximately two to three weeks apart, as the weather permitted.
+
+### Matrix form {-}   
+
+Overall, each transition matrix of eight rows by eight columns (8 x 8) consists of four blocks using the format of matrix 4.8 in [Chapter 4, @caswellMatrixPopulationModels2001]. 
+Each rotational transition matrix, $A$, is the product of two, three or four annual projection matrices, $P's$, corresponding to the number of crop phase in each rotation (2-year, 3-year, and 4-year). Each annual projection matrices, $P$, is the product of *six* periodic matrices, $B_h$ with $h = {1,2,...,6}$.s 
+
+The general form of any matrix (periodic subannual, annual, or rotational) is 
+
+$$
+\left[\begin{array}{c|c}
+  M_{s} & M_{p\,\,to\,\,s}  \\ \hline
+  M_{s\,\,to\,\,p} & M_{p} 
+\end{array} \right]
+$$
+
+where,  
+$M_s$, 2 x 2, is the transition within the seedbank population,   
+$M_p$, 6 x 6, is the transition within the aboveground population,  
+$M_{s\,\,to\,\,p}$, 6 x 2, is the transition from the seedbank to the aboveground population (emergence), and    
+$M_{p\,\,to\,\,s}$, 2 x 6, is the transition from the aboveground to the seedbank population (distribution of newly produced seeds to the soil seedbank)   
+
+Within a year, waterhemp population projection from time $\delta$ to $\delta+1$ is group-based and calculated as follow [Chapters 2, 3 and 4, @caswellMatrixPopulationModels2001].  
+$$N_{\delta+1} = B*N_\delta$$  
+where,  
+$\mathcal{B}$ is the square transition matrix from time $\delta$ to time $\delta+1$. The time interval can be year (as in the rotation-wise matrices) or month (as in phase-wise matrices); 
+$N$ is the population vector (in column matrix form) of eight rows and one column.  
+Waterhemp population transition in one crop phase, from pre-planting tillage to winter dormancy is calculated with 
+
+$$ N_{r_{c,\delta+1}} = N_{r_{c,\delta}}*\prod_{\delta=1}^\Delta A_\delta \;\;\;\;\;  [1]$$   
+where,   
+$r_{c}$ is the index for the $c^{th}$ crop phase in a particular rotation,   
+$N_{r_{c}}$ is the Leslie's population matrix in crop phase $c^{th}$ [@leslieUseMatricesCertain1945]   
+$A$ is the population transition matrix during summer    
+
+The main factors that contribute to the success of the control practices are tillage regime, chemical herbicide, cultivation practice and crops' competitiveness. 
+Among those four factors, crop competitiveness will not be factorized because this factor is dependent on other factors.  
+I will use matrices $A's$ dominant eigen values $\lambda$s when studying waterhemp population transition from crop $c^{th}$ to $(c+1)^{th}$.  
+The following parameters were collected and plugged into a general population model to examine when and where large changes in population dynamics might occur. 
+The list of parameters and the corresponding formula is presented in Table 4.1 below.    
+
+Table 4.1 - Model parameters  
+
+| Parameter | Formula | Notation | Definition |  Reference | 
+| --------- | ------------------------- | ------------------- | ----------------------------- | -------------- |   
+| Common indexes | | $i=\{1,2,...6\}$ | Cohort number, 1 to 6 |   
+| | | $d=\{1,2\}$ | Top (1) and bottom (2) soil strata |  
+| | | $\delta$ | The time between two consecutive measurements |  
+| | | $c$ | Crop: corn, soybean, oat, alfalfa |   
+| | | $r$ | Rotation: 2-,3-,4-year |   
+| | | $h$ | Herbicide: low or conventional |  
+| | | $N_{s_d}$ | Seedbank density at stratum $d^{th}$ |  
+| | | $N_{p_i}$ | Cohort $i^{th}$ plant density |  
+| --------- | ------------------------- | ------------------- | ----------------------------- | -------------- |   
+| Seedling establishment | $$ e_{i,(r,c,h)} = \frac{N_{p_i,(r,c,h)}} {N_{s,(r,c,h)}}$$ |  | The proportion of the seedbank's top stratum to germinate to cohort $i^{th}$ |   
+| Surface seedbank density | | $N_{s_1,(r,c,h)}$ | in Crop $c$, rotation $r$, herbicide $h$ |  
+| Seedling density | | $N_{p_i,(r,c,h)}(\delta)$ | in Crop $c$, rotation $r$, herbicide $h$ |  
+| --------- | ------------------------- | ------------------- | ----------------------------- | -------------- |      
+| Plant survival | $$ l_{i,(r,c,h)} = \frac{N_{p_i,(r,c,h)}(\delta+1)} {N_{p_i,(r,c,h)}(\delta)}$$ |  | The proportion seedling in each cohort that survives until the end of the crop season |    
+| Mature plant density | | $N_{p_i,(r,c,h)}(\delta+1)$ | in Crop $c$, rotation $r$, herbicide $h$ | 
+| --------- | ------------------------- | ------------------- | ----------------------------- | -------------- |   
+| Initial chemical resistance ratio | $$ log \frac {P[S=1]}{P[S=0]} = R^TX \;\; [2]$$ | | | Equation 3.16, @caswellMatrixPopulationModels2001; Table 8.1, @mortimerEvolutionHerbicideResistance1995 | 
+| | | $P[S]$ | probability of survival (1) or death (0) when exposed to an herbicide mechanism of action  | 
+| | | $R^T$ | vector of coefficient, transposed  | 
+| | | $X$ | vector of the threshold at which a population is considered resistant to a particular herbicide mechanism of action |
+| Resistance to individual herbicide mechanism of action | $$ R_m = R_0(1+\frac{F_\alpha}{b})^m  \;\; [3]$$ | | | [Table 8.1, @mortimerEvolutionHerbicideResistance1995] |  
+| | | $R_{\omega}$ | The fraction of resistant plant after n repetitions of exposure |
+| | | $q$ | average seed survival years in the soil | 
+| | | $\alpha$ | resistant:susceptible ratio |  
+| | | $F$ | fecundity of a surviving plant (presumably resistant) relative to a susceptible one | 
+| Resistance to multiple herbicide mechanisms of action | $$ R_{\omega}=\prod_{m=1}^M = R_{0m}(1+\frac{F_{\alpha m}}{q_m})^{nm}  \;\; [4]$$ |
+| Mechanisms of action | | $m$ | from 1 to M (M to be determined) |    
+| --------- | ------------------------- | ------------------- | ----------------------------- | -------------- |   
+| Tolerance to physical control | $R_{\phi} = l_i = R_{\omega}$ | This parameter is not directly measured but will be used to roughly estimate $R_{\omega}$ after it is screened by the Jha group | |   
+
+### Model assumptions  
+
+Table 4.2 - Female-only population dynamics model assumptions for common waterhemp (*Amaranthus tuberculatus*)    
+
+| **Stage** | **Assumption** | **References** |  
+|---------- | -------------- | -------------- |  
+| _All_ | Sex is stable throughout the life cycle. | @schaffnerObservationsExperimentsSex1935; @murrayGeneticsSexDetermination1940 |  
+|  | Individuals (seeds and plants) are evenly distributed spatially. | Seeds and plant densities are grid-sampled, 6x2 clusters of 3 soil cores and 4x2 quadrats, along field length x width, for seeds and plants, respectively. | 
+|  | Equal growth rate across individuals of the same size and shape under the same treatments (crop x rotation x herbicide) | Chapter 8, @caswellMatrixPopulationModels2001 | 
+| _Seed_ | Equal germination probability across sexes |  
+|  | The sex ratio is 1:1. |  @costeaBiologyInvasiveAlien2005 |  
+|  | Seeds only germinate from the 0-2cm soil layer | Deduced collectively from the recommended sowing depth of 1-3 times the seed diameter [Chapter 3, @foodandagricultureorganizationoftheunitednationsAridZoneForestry1989] and AMATA seed size of 1 mm or less in diameter [@costeaBiologyInvasiveAlien2005].  
+|  | Equal decay rate in the soil across sexes | 
+|  | Equal decay rate across all burial depths | @buhlerEmergencePersistenceSeed2001a, @steckelTillageCroppingSystem2007 | 
+|  | Equal palatability to granivores across sexes | 
+|  | Granivore activities are an important threat. | @vanderlaatPostdispersalWeedSeed2015 |  
+| _Young plant_ | Female plants are more likely to survive under stressful conditions than male plants. | Deduced collectively from the general 1:1 sex ratio [@costeaBiologyInvasiveAlien2005] and differentiated sex ratio at maturity across weed management systems at the experiment site in 2018. |  
+|  | Crops are the main competitors for resources. | Deduced from weeds being effectively suppressed under contrasting cropping systems at the experiment site [@huntReducingFreshwaterToxicity2017]. |   
+|  | Competition with other weeds and intraspecific competition is neglected. |
+|  | The weed control program is the main cause of mortality. | @huntReducingFreshwaterToxicity2017 |
+| _Mature plant_ | Pollen source is unlimited due to (i) the longevity and mobility of pollen grains and (ii) average plant density at the experiment site.  | @liuPollenBiologyDispersal2012 and personal observation  |  
+|  | 50% of the seeds produced by each female plant are female. | @costeaBiologyInvasiveAlien2005 | 
+|  | Male : female ratio can deviate from  1:1 ratio under different conditions: (i) more males than females observed at the experiment site when composted swine manure was applied (ii) 5 to 10 females per 1 male in a low-density population in Ohio. |  @menalledImpactCompostedSwine2004; @prattAmaranthusRudisTuberculatus2001 | 
+|  | Genetic material exchange is more likely to occur within 0 to 50 meters around the pollen source. | @sarangiPollenmediatedGeneFlow2017; @liuPollenBiologyDispersal2012 |  
+|  | Fitness cost is negligible in populations with resistance to atrazine, protoporphyrinogen oxidase inhibitors, 4‐hydroxyphenylpryuvate dioxygenase inhibitors or glyphosate. | @wuLimitedFitnessCosts2018 |  
+
+### Parameterization {-}
+
+#### Vertical redistribution of seeds, in pre-planting and post-harvest tillage {-}
+
+In fall 2019, 36 soil cores were collected for seedbank densities estimation at two soil strata, 0-2cm as the top (1), and 2-20 cm depth as the bottom (2). 
+
+
+The redistribution of female seeds that were produced at the end of the crop season is calculated per each crop phase under each rotation using the transition matrices corresponding to each tillage regime by @spokasSeedChaserVerticalSoil2007. No-till is represented by an identical matrix after  @cousensModelEffectsCultivation1990.    
+
+#### Seedling recruitment {-}
+Seedling recruitment was calculated as the proportion of emerged seedlings with regards to the top 0-2 cm top soil stratum: $N_{Apr\,through\,Oct\,2020}/N_{Nov\,2019}$, where $N_{in\,season\,2020}$ 
+
+#### In-season survival {-}
+
+#### Plant fecundity {-}
+
+#### Overwinter survival {-} 
+what assumptions, list in previous table

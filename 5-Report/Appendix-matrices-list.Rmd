@@ -1,0 +1,207 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+    reference_docx: style_template.docx
+---
+
+The structure of all periodic matrices used in different scenarios are listed below. All numbers are female-only.
+
+#### Population vector {-}
+
+The population vector includes densities of female individuals in different stage-position classes. *Seedbank densities at the 0-2 and 2-20 cm depths were calculated from 2019 data*
+*Need absolute densities or proportion?* Density
+
+$${N} = 
+\left[
+\begin{array}
+{rrr} 
+N_{s_1}  \\
+N_{s_2}  \\
+\hline 
+N_{p_1} \\
+... \\
+N_{p_6} 
+\end{array} \right]$$   
+
+where,
+$N_{s_i}$ is *viable* seed density at the top (i = 1) and bottom (i = 2) stratum, and        
+$N_{p_j}$ are plant densities at cohort $j^{th}$, $j=\{1,...,6\}$.   
+At the first time step (before emergence) and last time step (after senescence) in the model, $N_{p_j} = 0$.  
+
+
+ 
+The formula for seedling emergence is *move to m and m* 
+$$e_i = \frac{N_{p_i}}{N_{s_1}} \,\,\,\,[1]$$   
+where,  
+
+
+All the *six* periodic transition matrices are denominated by $B_h$ following Chapter 13 in @caswellMatrixPopulationModels2001.  
+
+#### Pre-planting tillage {-}  
+
+$$
+\mathbf{B_{1}} = \left[\begin{array}
+{rr|rrrrr} 
+st_{11} & st_{21} & 0 & ... & ... & ... & ... & 0\\
+st_{12} & st_{22} & 0 & ... & ... & ... & ... & 0\\
+\hline    
+0 & 0 & 0 & ... & ... & ... & ... &0\\
+... & ... & ... & ... & ... & ... & ... & ...\\ 
+... & ... & ... & ... & ... & ... & ... & ...\\ 
+... & ... & ... & ... & ... & ... & ... & ...\\ 
+... & ... & ... & ... & ... & ... & ... & ...\\ 
+0 & 0 & 0 & ... & ... & ... & ... & 0\\
+\end{array}\right]
+$$   
+where,  
+$st_{uv}$ is the probability of a seed moving across strata for $u \neq v$ and stay in the same stratum for $u = v$.  
+
+#### Recruitment {-}  
+
+The seedling recruitment matrix $B_{2}$ describes the emergence probability from the 0-2 cm stratum to each of the six cohorts.   
+
+
+$$
+\mathbf{B_{2}}=\left[\begin{array}
+{rr|rrrrr} 
+1-\sum_{i=1}^6 e_i & 0 & 0 & ... & ... & ... & ... & 0\\  
+0 & 1 & 0 & ... & ... & ... & ... & 0\\  
+\hline             
+e_1 & 0 & 0 & ... & ... & ... & ... & 0\\  
+... & ... & ... & ... & ... & ... & ... & ...\\  
+e_6 & 0 & 0 & ... & ... & ... & ... & 0\\  
+\end{array}\right]
+$$   
+
+#### In-season survival {-}  
+
+The diagonal of the top left section of matrix $B_{3}$ describes the survival probability of seeds at the top (0-2cm) and bottom (2-20cm) strata. 
+The diagonal of the bottom right section of matrix $B_{3}$ describes the cohort-specific survival probabilities of the emerged female seedlings to maturity.    
+
+$$
+\mathbf{B_{3}} = \left[\begin{array}
+{rr|rrrrr} 
+1-\mu_{1} & 0 & 0 & ... & 0 & 0 & ... & 0\\
+0 & 1-\mu_{2} & 0 & ... & 0 & 0 & ... & 0\\
+\hline             
+0 & 0 & l_1 & ... & ... & ...&...  & 0\\
+... & ... & 0 & l_2 & ... & ... & ... & 0\\ 
+... & ... & ... & ... & ... & ... & ... & 0\\ 
+0 & 0 & 0 & ... & ... & ...& 0 & l_6\\
+\end{array}\right]
+$$   
+
+$\mu_i$ is the mortality rate at stratum $i = \{1,2\}$ for top or bottom stratum.  
+$l_j$ is the survival rate of cohort $j$ ($j=\{1,2,...6\}$)  
+
+*move to the respective section of each scenario*
+In this matrix, we used $1 - \mu_1 = y = 98.9exp(-0.068x) \%$ and $1 - \mu_2 = y=99.5exp(-0.05x) \%$ with $x=12$ months, from Figures 1 and 3 in @sosnoskieGlyphosateResistanceDoes2013, respectively.  
+
+#### Fecundity {-}  
+
+The diagonal of the top left section of the fecundity matrix $B_{4}$ are 1's;  
+$f_j$ at the top row are cohort-specific fecundity. 
+
+
+
+$$
+\mathbf{B_{4}} = \left[\begin{array}
+{rr|rrrrr} 
+1 & 0 & f_1 & f_2 & ... & ... & ... & f_6\\
+0 & 1 & 0 & ... & ... & ... & ... & 0\\
+\hline   
+0 & 0 & 0 & ... & ... & ... & ... & 0\\
+... & ...&0&0&...&...&...&0\\
+... & ... & ... & ... & ... & ... & ... & ...\\ 
+0 & 0 & 0 & ... & ... & ... & 0 & 0\\
+\end{array}\right]
+$$     
+
+#### Post-harvest tillage {-}  
+
+Fall tillage, if applied, is implemented after crop harvest, weed biomass, and soil seedbank density surveys are completed. 
+
+
+$$
+\mathbf{B_{5}} = \left[\begin{array}
+{rr|rrrrr} 
+pt_{11} & pt_{21} & 0 & ... & ... & ... & ... & 0\\
+pt_{12} & pt_{22} & 0 & ... & ... & ... & ... & 0\\
+\hline    
+0 & 0 & 0 & ... & ... & ... & ... &0\\
+... & ... & ... & ... & ... & ... & ... & ...\\ 
+... & ... & ... & ... & ... & ... & ... & ...\\ 
+... & ... & ... & ... & ... & ... & ... & ...\\ 
+... & ... & ... & ... & ... & ... & ... & ...\\ 
+0 & 0 & 0 & ... & ... & ... & ... & 0\\
+\end{array}\right]
+$$   
+where,  
+$pt_{uv}$ is the probability of a seed moving across strata for $u \neq v$ and stay in the same stratum for $u = v$.  
+
+
+
+#### Overwinter survival {-}  
+
+The diagonal of the top left section of each matrix $B_{6}$ describes the overwinter survival probability of seeds at the top (0-2cm) and bottom (2-20cm) strata.  
+
+$$
+\mathbf{B_{6}} = \left[\begin{array}  
+{rr|rrrrr}   
+o_1 & 0 & 0 & ... & ... & ... & ... & 0\\  
+0 & o_2 & 0 & ... & ... & ... & ... & 0\\  
+\hline    
+0 & 0 & 0 & ... & ... & ... & ... &0\\  
+... & ... & ... & ... & ... & ... & ... & ...\\   
+... & ... & ... & ... & ... & ... & ... & ...\\   
+... & ... & ... & ... & ... & ... & ... & ...\\   
+... & ... & ... & ... & ... & ... & ... & ...\\   
+0 & 0 & 0 & ... & ... & ... & ... & 0\\  
+\end{array}\right]  
+$$    
+
+
+In this matrix, $x=6$ were used for corn and soybean, $x = 6.5$ for oat and $x = 7.5$ for alfalfa phases $o_1 = y = 98.9exp(-0.068x) \%$ and $o_2 = y=99.5exp(-0.05x) \%$ 
+
+with  months from Figures 1 and 3 in @sosnoskieGlyphosateResistanceDoes2013, respectively. The crop-specific overwinter survival rate was extrapolated from the third data point in each figure. The maximum values was used for crop phases that were followed by notill, means for ones followed by chisel, and minimum for ones followed by moldboard. That extrapolation was based on the assumption that the more aggressive the tillage regime is, the less granivory activities are disturbed.  
+Seed granivory results are highly dependent on specific field conditions [@vanderlaatPostdispersalWeedSeed2015; @forcellaDebitingSeedbankPriorities2003] so seed granivory will be used as a varying parameter in the model.
+
+
+**
+
+
+There are nine sets of transition matrices for 18 crop x rotation x herbicide treatments. 
+Each set contains five transition matrices, namely seedling establishment $E_{c,r,h}$, 
+survival of seedling to maturity and survival of non-germinated seed in the seedbank $L_{c,r,h}$, 
+fecundity $F_{c,r,h}$, 
+tillage $T_{c,r,h}$, 
+and overwinter survival $O_{c,r,h}$.  
+Each transition matrix shown below is in its general form. 
+Detailed conditions are listed in Table 3.  
+The aggregate population change, from germination to seed production, in each crop phase $P_{c,r,h}$ is the product of the five periodical transition matrices listed above,  
+$$P_{c,r,h}=O_{c,r,h}T_{c,r,h}F_{c,r,h}L_{c,r,h}E_{c,r,h}$$ 
+where,  
+
+$c$ denotes the phase number (corresponding to the order that a crop phase appear in each system),   
+$r$ denotes the total number of crop phases, $r=\{2,3,4\}$, and   
+$h$ denotes the herbicide regime in a specific treatment, $h=\{l,c\}$.  
+For $c$, corn is phase 1, soybean 2, oat 3, and alfalfa 4.   
+ 
+The whole-system net change per each rotation x herbicide treatment $A_{r,h}$ is the product of all the $P_{c,r,h}$ matrices within that treatment.  
+For example, $A_{2,c}=P_{2,2,c}P_{1,2,c}$ is the rotation-wise transition matrix for the 2 year rotation under conventional herbicide and 
+$A_{3,l}=P_{3,3,l}P_{2,3,l}P_{1,3,l}$ for the 3-year rotation under low herbicide.    
+
+
+The key output of the prospective analysis here is the population change rate, $\lambda$ ($\lambda >0$). 
+$\lambda$ is the dominant eigen vector of the annual projection matrix.
+$\lambda < 1$ means a population is decreasing but, $\lambda > 1$ means the population is growing. 
+Prospective analysis consists of the sensitivity and elasticity of $\lambda$ in response to varying input parameters. These analyses will be done by the default algorithm in the `popbio` package [@stubbenPopbioConstructionAnalysis2018]. 
+Let $a_{r,h}$ and $p_{c,r,h}$ denote the elements of each $A_{r,h}$ and $P_{c,r,h}$ matrices. The sensitivity of $\lambda$ is then the total derivative of $\lambda$ with regard to each of the vital rates in $P_{c,r,h}$ matrices [Equation 9.63, @caswellMatrixPopulationModels2001]. 
+Using the same notation, the elasticity of $\lambda$ is the proportional sensitivities [Equation 9.70, @caswellMatrixPopulationModels2001].  
+
+
+
+
+
