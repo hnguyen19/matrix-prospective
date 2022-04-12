@@ -29,7 +29,10 @@ summer_seed_survival_scenario1  <- readRDS("../2-Data/Clean/summer-seed-survival
 # the bottom left 6x6 diagonal are filled with 1 for convenient multiplication with summer_survival_scenario1
 
 #### plant survival
-female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
+#female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
+
+female_survival <- readRDS("../2-Data/Clean/summer-seedling-survival-scenario2.RData")
+
 #### combine seed and plant survivals into one matrix with element-wise multiplication 
 summer_survival_scenario1 <- purrr::map2(summer_seed_survival_scenario1 , female_survival, `*`)
 
@@ -48,11 +51,11 @@ overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.
 fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
 
 scenario2_projection_by_matrix_id <- tibble::lst(spring_tillage,
-                                               emergence_scenario1,
-                                               summer_survival_scenario1,
-                                               fecundity_2018_2,
+                                               overwinter_scenario1,
                                                post_harvest_tillage,
-                                               overwinter_scenario1)
+                                               fecundity_2018,
+                                               summer_survival_scenario1,
+                                               emergence_scenario1)
 
 ## List all periodic matrices within the same crop ID together  
 scenario2_projection_by_matrix_id_transpose <- transpose(scenario2_projection_by_matrix_id )
@@ -65,6 +68,8 @@ scenario2_phase_projection <- scenario2_projection_by_matrix_id_transpose  %>%
 # check 
 #lapply(scenario2_projection_by_matrix_id_transpose, 
 #       \(x) x[[1]] %*% x[[2]] %*% x[[3]] %*% x[[4]] %*% x[[5]] %*% x[[6]])
+
+
 
 ```
 
@@ -105,7 +110,7 @@ scenario2_rotation_wise_lambda <- scenario2_rotation_wise_eigen %>%
   map(., ~{head(.,1)})
 ```
 
-Using 2018 fecundity rates, waterhemp populations in all crop identity halved annually (Figures \@ref(fig:scenario2-lambda-annualized) and \@ref(fig:phase-lambda)). 
+Using 2018 fecundity rates, waterhemp populations in all crop identity increased annually, fastest in the 2-year rotation under low herbicide weed management (77 times) and slowest in the 4-year rotation under low herbicide weed management (2.2 times) (Figures \@ref(fig:scenario2-lambda-annualized)). 
 ```{r scenario2-lambda-annualized, echo=FALSE, fig.cap= "Annualized waterhemp population growth rate using 2018 fecundity rate."}
 scenario2_rotation_wise_lambda_4yr <- rapply(scenario2_rotation_wise_lambda[1:2],
                                              function(x){nthroot(x,4)}, how = "list")
@@ -128,7 +133,7 @@ x_labs <- c("2-year", "3-year", "4-year")
 
 ggplot(scenario2_lambda_df_long, aes(y = annualized_lambda, x = .id , fill = Corn_weed_management)) + 
   geom_bar(stat = "identity", position = "dodge") +
-  ylab("Annualized population growth rate") +
+  ylab("Annualized population growth rate with 2018 fecundity") +
   xlab("Rotation") +
   scale_x_discrete(labels= x_labs) +
   theme_bw()
@@ -136,7 +141,7 @@ ggplot(scenario2_lambda_df_long, aes(y = annualized_lambda, x = .id , fill = Cor
 
  
 
-```{r phase-lambda, echo=FALSE, fig.cap= "Waterhemp population growth rate in each crop phase using 2018 fecundity rate."}
+```{r phase-lambda, include=FALSE, fig.cap= "Waterhemp population growth rate in each crop phase using 2018 fecundity rate."}
 scenario2_phase_lambda_df <- scenario2_phase_projection %>%
   map(.,~{lambda(.)}) %>%
   plyr::ldply(., data.frame) %>%

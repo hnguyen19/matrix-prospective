@@ -46,23 +46,23 @@ overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.
 ```
 
 ```{r phase-wise-projection-1}
-# The model clock starts at spring tillage
+# The model clock starts at seed production (so this sub-annual matrix is listed right-most)
 #
 
-scenario1_projection_by_matrix_id <- pmap(list(spring_tillage,
+scenario1_projection_by_matrix_id <- pmap(list(post_harvest_tillage,
+                                               overwinter_scenario1,
+                                               spring_tillage,
                                                emergence_scenario1,
                                                summer_survival_scenario1,
-                                               fecundity_2019,
-                                               post_harvest_tillage,
-                                               overwinter_scenario1), list) %>% 
+                                               fecundity_2019), list) %>% 
   simplify() %>%
   map(.,
-    ~{names(.) <-  c("spring_tillage",
+    ~{names(.) <-  c("post_harvest_tillage",
+                     "overwinter_Sosnoskie_2013",
+                     "spring_tillage",
                      "emergence",
                      "summer_survival_Sosnoskie_2013",
-                     "fecundity_2019",
-                     "post_harvest_tillage",
-                     "overwinter_Sosnoskie_2013"); .}) 
+                     "fecundity_2019"); .}) 
 
 # assign row and column names
 #https://stackoverflow.com/questions/71612217/error-in-assign-dimnames-to-all-matrices-in-a-list/71612339#71612339
@@ -128,11 +128,11 @@ lapply(scenario1_list_rotation, function(i){
 
 # the above lapply returned the same as the map below
 
-scenario1_projection <- scenario1_list_rotation %>%
+scenario1_rot_projection <- scenario1_list_rotation %>%
   map(., ~{Reduce( "%*%", .)})
 
 # eigen analysis
-scenario1_rotation_eigen <- scenario1_projection  %>%
+scenario1_rotation_eigen <- scenario1_rot_projection  %>%
   map(., ~{eigen.analysis(.)})
 ```
 
@@ -270,20 +270,20 @@ fecundity_2018 <- readRDS("../2-Data/Clean/fecundity-mean-18-cohort.RData")
 # The model clock starts at spring tillage
 #
 
-scenario2_projection_by_matrix_id <- pmap(list(spring_tillage,
+scenario2_projection_by_matrix_id <- pmap(list(post_harvest_tillage,
+                                               overwinter_scenario1,
+                                               spring_tillage,
                                                emergence_scenario1,
                                                summer_survival_scenario1,
-                                               fecundity_2018,
-                                               post_harvest_tillage,
-                                               overwinter_scenario1), list) %>% 
+                                               fecundity_2018), list) %>% 
   simplify() %>%
   map(.,
-    ~{names(.) <-  c("spring_tillage",
+    ~{names(.) <-  c("post_harvest_tillage",
+                     "overwinter_Sosnoskie_2013",
+                     "spring_tillage",
                      "emergence",
                      "summer_survival_Sosnoskie_2013",
-                     "fecundity_2018",
-                     "post_harvest_tillage",
-                     "overwinter_Sosnoskie_2013"); .}) 
+                     "fecundity_2018"); .}) 
 
 # assign row and column names
 #https://stackoverflow.com/questions/71612217/error-in-assign-dimnames-to-all-matrices-in-a-list/71612339#71612339

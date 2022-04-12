@@ -12,9 +12,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(purrr) # for map2()
 library(pracma)
 library(popbio)
+library(tidyverse)
 ```
 
-```{r periodic-matrices-phase}
+```{r periodic-matrices-phase, include=FALSE}
 ## Pre-planting tillage 
 spring_tillage <-  readRDS("../2-Data/Clean/pre-planting-tillage.RData")
 
@@ -42,18 +43,18 @@ overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.
 ```
 
 
-```{r phase-wise-projection-1}
+```{r phase-wise-projection-1, include=FALSE}
 ## Fecundity scenario 1, start at spring tillage: give identical results as scenario1
 #try remove some matrices
 
 fecundity_2019 <- readRDS("../2-Data/Clean/fecundity-mean-19-cohort.RData")
 
 scenario1_projection_by_matrix_id <- tibble::lst(spring_tillage,
-                                               emergence_scenario1,
-                                               summer_survival_scenario1,
-                                               fecundity_2019,
-                                               post_harvest_tillage,
-                                               overwinter_scenario1)
+                                                 overwinter_scenario1,
+                                                 post_harvest_tillage,
+                                                 fecundity_2019,
+                                                 summer_survival_scenario1,
+                                               emergence_scenario1)
 
 ## List all periodic matrices within the same crop ID together  
 scenario1_projection_by_matrix_id_transpose <- transpose(scenario1_projection_by_matrix_id )
@@ -69,7 +70,7 @@ scenario1_phase_projection <- scenario1_projection_by_matrix_id_transpose  %>%
 
 ```
 
-```{r rotation-group}
+```{r rotation-group, include=FALSE}
 scenario1_rotation_wise_4yr_conv <- scenario1_phase_projection[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
 
 #4-year, low
@@ -105,3 +106,36 @@ scenario1_rotation_wise_eigen %>%
 ```
 
 
+```{r scenario1-rotation-lambda, echo=FALSE}
+scenario1_rotation_wise_lambda <- scenario1_rotation_wise_eigen %>%
+  map(., ~{head(.,1)})
+```
+
+Using 2019 fecundity rates, waterhemp populations in all crop identity is decreasing in all rotation, fastest in the 3-year rotation (Figures \@ref(fig:scenario1-lambda-annualized)). 
+```{r scenario1-lambda-annualized, echo=FALSE, fig.cap= "Annualized waterhemp population growth rate using 2019 fecundity rate."}
+scenario1_rotation_wise_lambda_4yr <- rapply(scenario1_rotation_wise_lambda[1:2],
+                                             function(x){nthroot(x,4)}, how = "list")
+
+scenario1_rotation_wise_lambda_3yr <- rapply(scenario1_rotation_wise_lambda[3:4],
+                                             function(x){nthroot(x,3)}, how = "list")
+
+scenario1_rotation_wise_lambda_2yr <- rapply(scenario1_rotation_wise_lambda[5:6],
+                                             function(x){nthroot(x,2)}, how = "list")       
+scenario1_lambda_df <- tibble::lst(scenario1_rotation_wise_lambda_4yr,
+                                  scenario1_rotation_wise_lambda_3yr,
+                                  scenario1_rotation_wise_lambda_2yr)%>%
+   plyr::ldply(., data.frame) %>% 
+  rename(conv = "lambda1", low = "lambda1.1")
+
+scenario1_lambda_df_long <- scenario1_lambda_df %>%
+  pivot_longer(!.id, names_to = "Corn_weed_management", values_to = "annualized_lambda") 
+  
+x_labs <- c("2-year", "3-year", "4-year")
+
+ggplot(scenario1_lambda_df_long, aes(y = annualized_lambda, x = .id , fill = Corn_weed_management)) + 
+  geom_bar(stat = "identity", position = "dodge") +
+  ylab("Annualized population growth rate with 2019 fecundity") +
+  xlab("Rotation") +
+  scale_x_discrete(labels= x_labs) +
+  theme_bw()
+```

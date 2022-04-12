@@ -1,0 +1,38 @@
+---
+title: "Untitled"
+author: "Huong Nguyen"
+date: "3/24/2022"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+A = list(a = matrix(1:4, 2), b = matrix(2:5, 2))
+
+G = list(a = matrix(10:13, 2), b = matrix(5:8, 2))
+
+M_1 = list(a = matrix(10:13, 2), b = matrix(5:8, 2))
+
+M_2 = list(a = matrix(2:5, 2), b = matrix(5:8, 2))
+
+dlist4 <- tibble::lst(A, G, M_1, M_2)
+```
+
+```{r}
+lapply(dlist4, function(x) dimnames(x) = list(c("seed","plant"), c("seed","plant")))
+
+lapply(dlist4, function(x) {colnames(x) <- letters[1:2]; x})
+
+lapply(dlist4, function(x) {dimnames(x) = list(c("seed","plant"), c("seed","plant")); x})
+
+Map(function(x) {dimnames(x) <- list(c("seed","plant"), c("seed","plant")); x}, dlist4)
+
+for(i in seq_along(dlist4)) {
+        dimnames(dlist4[i]) <- list(c("seed","plant"), c("seed","plant"))
+}
+
+rapply(dlist4, function(x) {dimnames(x) <- rep(list(c("seed","plant")), 2); x}, how="list")
+```
