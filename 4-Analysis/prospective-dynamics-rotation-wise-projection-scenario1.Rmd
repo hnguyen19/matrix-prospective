@@ -44,17 +44,16 @@ overwinter_scenario1 <- readRDS("../2-Data/Clean/winter-seed-survival-scenario1.
 
 
 ```{r phase-wise-projection-1, include=FALSE}
-## Fecundity scenario 1, start at spring tillage: give identical results as scenario1
-#try remove some matrices
+## Circle starts at spring tillage Fecundity scenario 1 - 2019 rates
 
 fecundity_2019 <- readRDS("../2-Data/Clean/fecundity-mean-19-cohort.RData")
 
-scenario1_projection_by_matrix_id <- tibble::lst(spring_tillage,
-                                                 overwinter_scenario1,
+scenario1_projection_by_matrix_id <- tibble::lst(overwinter_scenario1,
                                                  post_harvest_tillage,
                                                  fecundity_2019,
                                                  summer_survival_scenario1,
-                                               emergence_scenario1)
+                                               emergence_scenario1,
+                                               spring_tillage)
 
 ## List all periodic matrices within the same crop ID together  
 scenario1_projection_by_matrix_id_transpose <- transpose(scenario1_projection_by_matrix_id )
@@ -101,8 +100,6 @@ scenario1_rotation_wise_projection <- scenario1_rotation_group %>%
 scenario1_rotation_wise_eigen <- scenario1_rotation_wise_projection %>%
   map(., ~{eigen.analysis(.)}) 
 
-scenario1_rotation_wise_eigen %>%
-  map(., ~{head(.,1)})
 ```
 
 
@@ -138,4 +135,11 @@ ggplot(scenario1_lambda_df_long, aes(y = annualized_lambda, x = .id , fill = Cor
   xlab("Rotation") +
   scale_x_discrete(labels= x_labs) +
   theme_bw()
+```
+
+```{r sensitivities-for-lambda-var}
+```
+
+```{r elasticity-2yr}
+
 ```
