@@ -140,6 +140,30 @@ ggplot(scenario1_lambda_df_long, aes(y = annualized_lambda, x = .id , fill = Cor
 ```{r sensitivities-for-lambda-var}
 ```
 
+```{r functions, include=FALSE}
+# https://stackoverflow.com/questions/15795318/efficient-way-to-create-a-circulant-matrix-in-r
+
+circ<-function(x) { 
+    n<-length(x)
+    matrix(x[matrix(1:n,n+1,n+1,byrow=T)[c(1,n:2),1:n]],n,n)
+}
+```
+
 ```{r elasticity-2yr}
+# pick all phases in the 2yr conventional treatment
+all_periods_2yr_conv <- scenario1_projection_by_matrix_id_transpose[c("S2_conv", "C2_conv")]
+#View(all_periods_2yr_conv)
+
+# rearrange the phases in a chain
+all_periods_2yr_conv_chain <- unlist(all_periods_2yr_conv, recursive = FALSE)
+
+# make a reference grid 
+ref_2yr_conv <- names(all_periods_2yr_conv_chain)
+
+circ_2yr_conv <- circ(ref_2yr_conv)
+
+full_circ_2yr_conv <- purrr::map(1:12,~all_periods_2yr_conv_chain[circ_2yr_conv[.x,]])
+# name the nested list by the last element in each nested list
+
 
 ```
