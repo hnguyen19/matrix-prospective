@@ -77,6 +77,7 @@ scenario1_rotation_wise_4yr_low <- scenario1_phase_projection[c("A4_low", "O4_lo
 
 #3-year, conventional
 scenario1_rotation_wise_3yr_conv <- scenario1_phase_projection[c("O3_conv", "S3_conv", "C3_conv")]
+View(scenario1_rotation_wise_3yr_conv)
 
 #3-year, low
 scenario1_rotation_wise_3yr_low <- scenario1_phase_projection[c("O3_low", "S3_low", "C3_low")]
@@ -149,6 +150,8 @@ circ<-function(x) {
 ```
 
 ```{r circ-2yr-arrange}
+### conventional 
+
 # pick all phases in the 2yr conventional treatment
 all_periods_2yr_conv <- scenario1_projection_by_matrix_id_transpose[c("S2_conv", "C2_conv")]
 #View(all_periods_2yr_conv)
@@ -169,9 +172,266 @@ names(full_circ_2yr_conv) <- paste0(circ_2yr_conv[,12],"_contribution")
 
 # check if nested lists names matches their last elements' names: YES
 # View( full_circ_2yr_conv) check
+
+# remove the last subannual matrix from the chain in full_circ_2yr_conv
+until_circ_2yr_conv <- full_circ_2yr_conv  %>%
+  map(., ~{head(.,11)})
+
+### low
+
+# pick all phases in the 2yr conventional treatment
+all_periods_2yr_low <- scenario1_projection_by_matrix_id_transpose[c("S2_low", "C2_low")]
+#View(all_periods_2yr_conv)
+
+# rearrange the phases in a chain
+all_periods_2yr_low_chain <- unlist(all_periods_2yr_low, recursive = FALSE)
+
+# make a reference grid 
+ref_2yr_low <- names(all_periods_2yr_low_chain)
+
+circ_2yr_low <- circ(ref_2yr_low)
+
+full_circ_2yr_low <- purrr::map(1:12,~all_periods_2yr_low_chain[circ_2yr_low[.x,]])
+# name the nested list by the last element in each nested list
+# the last element in each nested list appear in the same order as circ_2yr_low[,12]
+
+names(full_circ_2yr_low) <- paste0(circ_2yr_low[,12],"_contribution") 
+
+# check if nested lists names matches their last elements' names: YES
+# View( full_circ_2yr_low) 
+
+# remove the last subannual matrix from the chain in full_circ_2yr_low
+until_circ_2yr_low <- full_circ_2yr_low %>%
+  map(., ~{head(.,11)})
 ```
 
-```{r sensitivities-2yr-for-lambda-var}
-full_circ_2yr_conv %>% 
+```{r LTRE-2yr}
+## In all LTRE procedures, the conventional treatment is the reference matrix and low the
+
+# left matrix multiplication of all chains (as defined by starting point, aka the right-most matrix of the chain) THROUGH the right-most matrix --> matrix A's
+A2_conv_contribution <- full_circ_2yr_conv %>% 
   map(., ~{Reduce( "%*%", .)}) 
+
+A2_low_contribution <- full_circ_2yr_low %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+A2_contribution <- lst(A2_conv_contribution, A2_low_contribution)
+
+A2_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), A2_contribution), '/', length(A2_contribution))
+
+# Sensitivities with regards to the right-most matrix --> matrix S_a's
+A2_avg_sens <- A2_avg_contribution %>%
+  map(., ~{sensitivity(.)})
+
+# left matrix multiplication of all chains (as defined by starting point, aka the right-most matrix of the chain) UNTIL the right-most matrix appear --> matrix D's
+
+D2_conv_contribution <- until_circ_2yr_conv %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+D2_low_contribution <- until_circ_2yr_low %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+D2_contribution <- lst(D2_conv_contribution, D2_low_contribution)
+
+D2_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), D2_contribution), '/', length(D2_contribution))
+
+#sensitivities with respect to the right-most matrix in each chain
+contribution_2yr <- purrr::map2(D2_avg_contribution, A2_avg_sens, `%*%`)
+```
+
+```{r circ-3yr-arrange}
+### conventional 
+
+# pick all phases in the 3yr conventional treatment
+all_periods_3yr_conv <- scenario1_projection_by_matrix_id_transpose[c("O3_conv", "S3_conv", "C3_conv")]
+#View(all_periods_3yr_conv)
+
+# rearrange the phases in a chain
+all_periods_3yr_conv_chain <- unlist(all_periods_3yr_conv, recursive = FALSE)
+
+# make a reference grid 
+ref_3yr_conv <- names(all_periods_3yr_conv_chain)
+
+circ_3yr_conv <- circ(ref_3yr_conv)
+
+full_circ_3yr_conv <- purrr::map(1:18,~all_periods_3yr_conv_chain[circ_3yr_conv[.x,]])
+# name the nested list by the last element in each nested list
+# the last element in each nested list appear in the same order as circ_3yr_conv[,12]
+
+names(full_circ_3yr_conv) <- paste0(circ_3yr_conv[,18],"_contribution") 
+
+# check if nested lists names matches their last elements' names: YES
+# View( full_circ_2yr_conv) check
+
+# remove the last subannual matrix from the chain in full_circ_3yr_conv
+until_circ_3yr_conv <- full_circ_3yr_conv  %>%
+  map(., ~{head(.,11)})
+
+### low
+
+# pick all phases in the 3yr low treatment
+all_periods_3yr_low <- scenario1_projection_by_matrix_id_transpose[c("O3_low", "S3_low", "C3_low")]
+#View(all_periods_2yr_conv)
+
+# rearrange the phases in a chain
+all_periods_3yr_low_chain <- unlist(all_periods_3yr_low, recursive = FALSE)
+
+# make a reference grid 
+ref_3yr_low <- names(all_periods_3yr_low_chain)
+
+circ_3yr_low <- circ(ref_3yr_low)
+
+full_circ_3yr_low <- purrr::map(1:18,~all_periods_3yr_low_chain[circ_3yr_low[.x,]])
+# name the nested list by the last element in each nested list
+# the last element in each nested list appear in the same order as circ_3yr_low[,12]
+
+names(full_circ_3yr_low) <- paste0(circ_3yr_low[,18],"_contribution") 
+
+# check if nested lists names matches their last elements' names: YES
+# View( full_circ_3yr_low) 
+
+# remove the last subannual matrix from the chain in full_circ_3yr_low
+until_circ_3yr_low <- full_circ_3yr_low %>%
+  map(., ~{head(.,11)})
+```
+
+```{r LTRE-3yr}
+## In all LTRE procedures, the conventional treatment is the reference matrix and low the
+
+# left matrix multiplication of all chains (as defined by starting point, aka the right-most matrix of the chain) THROUGH the right-most matrix --> matrix A's
+A3_conv_contribution <- full_circ_3yr_conv %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+A3_low_contribution <- full_circ_3yr_low %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+A3_contribution <- lst(A3_conv_contribution, A3_low_contribution)
+
+A3_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), A3_contribution), '/', length(A3_contribution))
+
+# Sensitivities with regards to the right-most matrix --> matrix S_a's
+A3_avg_sens <- A3_avg_contribution %>%
+  map(., ~{sensitivity(.)})
+
+# left matrix multiplication of all chains (as defined by starting point, aka the right-most matrix of the chain) UNTIL the right-most matrix appear --> matrix D's
+
+D3_conv_contribution <- until_circ_3yr_conv %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+D3_low_contribution <- until_circ_3yr_low %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+D3_contribution <- lst(D3_conv_contribution, D3_low_contribution)
+
+D3_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), D3_contribution), '/', length(D3_contribution))
+
+contribution_3yr <- purrr::map2(D3_avg_contribution, A3_avg_sens, `%*%`)
+```
+
+```{r circ-4yr-arrange}
+### conventional 
+
+# pick all phases in the 4yr conventional treatment
+all_periods_4yr_conv <- scenario1_projection_by_matrix_id_transpose[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
+# View(all_periods_4yr_conv)
+
+# rearrange the phases in a chain
+all_periods_4yr_conv_chain <- unlist(all_periods_4yr_conv, recursive = FALSE)
+
+# make a reference grid 
+ref_4yr_conv <- names(all_periods_4yr_conv_chain)
+
+circ_4yr_conv <- circ(ref_4yr_conv)
+
+full_circ_4yr_conv <- purrr::map(1:24,~all_periods_4yr_conv_chain[circ_4yr_conv[.x,]])
+# name the nested list by the last element in each nested list
+# the last element in each nested list appear in the same order as circ_4yr_conv[,12]
+
+names(full_circ_4yr_conv) <- paste0(circ_4yr_conv[,24],"_contribution") 
+
+# check if nested lists names matches their last elements' names: YES
+# View( full_circ_4yr_conv) check
+
+# remove the last subannual matrix from the chain in full_circ_3yr_conv
+until_circ_4yr_conv <- full_circ_4yr_conv  %>%
+  map(., ~{head(.,11)})
+
+### low
+
+# pick all phases in the 3yr low treatment
+all_periods_4yr_low <- scenario1_projection_by_matrix_id_transpose[c("A4_low", "O4_low", "S4_low", "C4_low")]
+#View(all_periods_4yr_conv)
+
+# rearrange the phases in a chain
+all_periods_4yr_low_chain <- unlist(all_periods_4yr_low, recursive = FALSE)
+
+# make a reference grid 
+ref_4yr_low <- names(all_periods_4yr_low_chain)
+
+circ_4yr_low <- circ(ref_4yr_low)
+
+full_circ_4yr_low <- purrr::map(1:24,~all_periods_4yr_low_chain[circ_4yr_low[.x,]])
+# name the nested list by the last element in each nested list
+# the last element in each nested list appear in the same order as circ_4yr_low[,12]
+
+names(full_circ_4yr_low) <- paste0(circ_4yr_low[,24],"_contribution") 
+
+# check if nested lists names matches their last elements' names: YES
+# View( full_circ_4yr_low) 
+
+# remove the last subannual matrix from the chain in full_circ_4yr_low
+until_circ_4yr_low <- full_circ_4yr_low %>%
+  map(., ~{head(.,11)})
+```
+
+
+```{r LTRE-4yr}
+## In all LTRE procedures, the conventional treatment is the reference matrix and low the
+
+# left matrix multiplication of all chains (as defined by starting point, aka the right-most matrix of the chain) THROUGH the right-most matrix --> matrix A's
+A4_conv_contribution <- full_circ_4yr_conv %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+A4_low_contribution <- full_circ_4yr_low %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+A4_contribution <- lst(A4_conv_contribution, A4_low_contribution)
+
+A4_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), A4_contribution), '/', length(A4_contribution))
+
+# Sensitivities with regards to the right-most matrix --> matrix S_a's
+A4_avg_sens <- A4_avg_contribution %>%
+  map(., ~{sensitivity(.)})
+
+# left matrix multiplication of all chains (as defined by starting point, aka the right-most matrix of the chain) UNTIL the right-most matrix appear --> matrix D's
+
+D4_conv_contribution <- until_circ_4yr_conv %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+D4_low_contribution <- until_circ_4yr_low %>% 
+  map(., ~{Reduce( "%*%", .)}) 
+
+D4_contribution <- lst(D4_conv_contribution, D4_low_contribution)
+
+D4_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), D4_contribution), '/', length(D4_contribution))
+
+D4_avg_contribution_transposed <- D4_avg_contribution %>% map(.,~{t(.)})
+                                     
+contribution_4yr <- purrr::map2(D4_avg_contribution_transposed, A4_avg_sens, `%*%`)
+# remove "conv" in all names
+contribution_4yr_raw_names <- names( contribution_4yr )
+
+contribution_4yr_names <- gsub('conv.', '', contribution_4yr_raw_names)
+
+names(contribution_4yr) <- contribution_4yr_names
+```
+
+```{r elasticity-4yr}
+## calculate elasticity, see p. 121
+
+# Elasticities with regards to the right-most matrix --> 
+A4_conv_elas <- A4_conv_contribution %>%
+  map(., ~{elasticity(.)})
+
+# lambda
 ```
