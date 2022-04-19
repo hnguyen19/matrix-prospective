@@ -237,6 +237,13 @@ D2_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), D2_contribution), '/',
 
 #sensitivities with respect to the right-most matrix in each chain
 contribution_2yr <- purrr::map2(D2_avg_contribution, A2_avg_sens, `%*%`)
+
+# remove "conv" in all names
+contribution_2yr_raw_names <- names( contribution_2yr )
+
+contribution_2yr_names <- gsub('conv.', '', contribution_2yr_raw_names)
+
+names(contribution_2yr) <- contribution_2yr_names
 ```
 
 ```{r circ-3yr-arrange}
@@ -326,6 +333,13 @@ D3_contribution <- lst(D3_conv_contribution, D3_low_contribution)
 D3_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), D3_contribution), '/', length(D3_contribution))
 
 contribution_3yr <- purrr::map2(D3_avg_contribution, A3_avg_sens, `%*%`)
+
+# remove "conv" in all names
+contribution_3yr_raw_names <- names( contribution_3yr )
+
+contribution_3yr_names <- gsub('conv.', '', contribution_3yr_raw_names)
+
+names(contribution_3yr) <- contribution_3yr_names
 ```
 
 ```{r circ-4yr-arrange}
@@ -431,6 +445,9 @@ names(contribution_4yr) <- contribution_4yr_names
 
 # Elasticities with regards to the right-most matrix --> 
 A4_conv_elas <- A4_conv_contribution %>%
+  map(., ~{elasticity(.)})
+
+A4_low_elas <- A4_low_contribution %>%
   map(., ~{elasticity(.)})
 
 # lambda
