@@ -153,16 +153,17 @@ circ<-function(x) {
 ```{r circ-2yr-arrange}
 ### conventional 
 
-# pick all phases in the 2yr conventional treatment
+# pick all phases in the 2yr conventional treatment and arrange in backward order, i.e., first subannual matrix in the first crop phase at the right-most (or bottom) position of the list
 all_periods_2yr_conv <- scenario1_projection_by_matrix_id_transpose[c("S2_conv", "C2_conv")]
 #View(all_periods_2yr_conv)
 
-# rearrange the phases in a chain
+# remove the phase bounded structure in a chain, making a chain of 12 subannual matrices for the 2-year rotation
 all_periods_2yr_conv_chain <- unlist(all_periods_2yr_conv, recursive = FALSE)
 
-# make a reference grid 
+# make a reference grid, based on a chain starting at the spring_tillage matrix
 ref_2yr_conv <- names(all_periods_2yr_conv_chain)
 
+# create circular rotation of the first subannual matrix in each chain
 circ_2yr_conv <- circ(ref_2yr_conv)
 
 full_circ_2yr_conv <- purrr::map(1:12,~all_periods_2yr_conv_chain[circ_2yr_conv[.x,]])
@@ -177,7 +178,7 @@ names(full_circ_2yr_conv) <- paste0(circ_2yr_conv[,12],"_contribution")
 # remove the last subannual matrix from the chain in full_circ_2yr_conv
 until_circ_2yr_conv <- full_circ_2yr_conv  %>%
   map(., ~{head(.,11)})
-
+# until_circ_2yr_conv contains 12 chains of 11 matrices each. In term of contribution to changes in lambda, each chain starts at the subannual matrix following the matrix of interest. The `until` and `though` designation is detailed in Caswell and Trevisan 1994. 
 ### low
 
 # pick all phases in the 2yr conventional treatment
@@ -210,6 +211,8 @@ until_circ_2yr_low <- full_circ_2yr_low %>%
 ## In all LTRE procedures, the conventional treatment is the reference matrix and low the
 
 # left matrix multiplication of all chains (as defined by starting point, aka the right-most matrix of the chain) THROUGH the right-most matrix --> matrix A's
+
+# The product of each list in the full_circ_2yr_xx is 
 A2_conv_contribution <- full_circ_2yr_conv %>%  
   map(., ~{Reduce( "%*%", .)}) 
 
