@@ -199,7 +199,7 @@ full_circ_2yr_low <- purrr::map(1:12,~all_periods_2yr_low_chain[circ_2yr_low[.x,
 names(full_circ_2yr_low) <- paste0(circ_2yr_low[,12],"_contribution") 
 
 # check if nested lists names matches their last elements' names: YES
-# View( full_circ_2yr_low) 
+# View( full_circ_2yr_low): each chain's product is identified by the right-most matrix 
 
 # remove the last subannual matrix from the chain in full_circ_2yr_low
 until_circ_2yr_low <- full_circ_2yr_low %>%
@@ -210,7 +210,7 @@ until_circ_2yr_low <- full_circ_2yr_low %>%
 ## In all LTRE procedures, the conventional treatment is the reference matrix and low the
 
 # left matrix multiplication of all chains (as defined by starting point, aka the right-most matrix of the chain) THROUGH the right-most matrix --> matrix A's
-A2_conv_contribution <- full_circ_2yr_conv %>% 
+A2_conv_contribution <- full_circ_2yr_conv %>%  
   map(., ~{Reduce( "%*%", .)}) 
 
 A2_low_contribution <- full_circ_2yr_low %>% 
