@@ -70,30 +70,30 @@ scenario1_phase_projection <- scenario1_projection_by_matrix_id_transpose  %>%
 ```
 
 ```{r rotation-group, include=FALSE}
-scenario1_rotation_wise_4yr_conv <- scenario1_phase_projection[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
-
-#4-year, low
-scenario1_rotation_wise_4yr_low <- scenario1_phase_projection[c("A4_low", "O4_low", "S4_low", "C4_low")]
-
-#3-year, conventional
-scenario1_rotation_wise_3yr_conv <- scenario1_phase_projection[c("O3_conv", "S3_conv", "C3_conv")]
-View(scenario1_rotation_wise_3yr_conv)
-
-#3-year, low
-scenario1_rotation_wise_3yr_low <- scenario1_phase_projection[c("O3_low", "S3_low", "C3_low")]
-
 #2year, conventional
 scenario1_rotation_wise_2yr_conv <- scenario1_phase_projection[c("S2_conv", "C2_conv")]
 
 #2year, low
 scenario1_rotation_wise_2yr_low <- scenario1_phase_projection[c("S2_low","C2_low")]
+#3-year, conventional
+scenario1_rotation_wise_3yr_conv <- scenario1_phase_projection[c("O3_conv", "S3_conv", "C3_conv")]
+#View(scenario1_rotation_wise_3yr_conv)
 
-scenario1_rotation_group <- tibble::lst(scenario1_rotation_wise_4yr_conv,
-                                     scenario1_rotation_wise_4yr_low,
+#3-year, low
+scenario1_rotation_wise_3yr_low <- scenario1_phase_projection[c("O3_low", "S3_low", "C3_low")]
+
+scenario1_rotation_wise_4yr_conv <- scenario1_phase_projection[c("A4_conv", "O4_conv", "S4_conv", "C4_conv")]
+
+#4-year, low
+scenario1_rotation_wise_4yr_low <- scenario1_phase_projection[c("A4_low", "O4_low", "S4_low", "C4_low")]
+
+
+scenario1_rotation_group <- tibble::lst(scenario1_rotation_wise_2yr_conv,
+                                     scenario1_rotation_wise_2yr_low,
                                      scenario1_rotation_wise_3yr_conv,
                                      scenario1_rotation_wise_3yr_low,
-                                     scenario1_rotation_wise_2yr_conv,
-                                     scenario1_rotation_wise_2yr_low)
+                                     scenario1_rotation_wise_4yr_conv,
+                                     scenario1_rotation_wise_4yr_low)
 
 scenario1_rotation_wise_projection <- scenario1_rotation_group %>%
   map(., ~{Reduce( "%*%", .)}) 
@@ -111,17 +111,18 @@ scenario1_rotation_wise_lambda <- scenario1_rotation_wise_eigen %>%
 
 Using 2019 fecundity rates, waterhemp populations in all crop identity is decreasing in all rotation, fastest in the 3-year rotation (Figures \@ref(fig:scenario1-lambda-annualized)). 
 ```{r scenario1-lambda-annualized, echo=FALSE, fig.cap= "Annualized waterhemp population growth rate using 2019 fecundity rate."}
-scenario1_rotation_wise_lambda_4yr <- rapply(scenario1_rotation_wise_lambda[1:2],
-                                             function(x){nthroot(x,4)}, how = "list")
+scenario1_rotation_wise_lambda_2yr <- rapply(scenario1_rotation_wise_lambda[1:2],
+                                             function(x){nthroot(x,2)}, how = "list")    
 
 scenario1_rotation_wise_lambda_3yr <- rapply(scenario1_rotation_wise_lambda[3:4],
                                              function(x){nthroot(x,3)}, how = "list")
 
-scenario1_rotation_wise_lambda_2yr <- rapply(scenario1_rotation_wise_lambda[5:6],
-                                             function(x){nthroot(x,2)}, how = "list")       
-scenario1_lambda_df <- tibble::lst(scenario1_rotation_wise_lambda_4yr,
-                                  scenario1_rotation_wise_lambda_3yr,
-                                  scenario1_rotation_wise_lambda_2yr)%>%
+scenario1_rotation_wise_lambda_4yr <- rapply(scenario1_rotation_wise_lambda[5:6],
+                                             function(x){nthroot(x,4)}, how = "list")
+   
+scenario1_lambda_df <- tibble::lst(scenario1_rotation_wise_lambda_2yr,
+                                   scenario1_rotation_wise_lambda_3yr,
+                                   scenario1_rotation_wise_lambda_4yr)%>%
    plyr::ldply(., data.frame) %>% 
   rename(conv = "lambda1", low = "lambda1.1")
 
@@ -413,7 +414,7 @@ A4_contribution <- lst(A4_conv_contribution, A4_low_contribution)
 
 A4_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), A4_contribution), '/', length(A4_contribution))
 
-# Sensitivities with regards to the right-most matrix --> matrix S_a's
+# Sensitivities with regards to the right-most matrix --> matrix S_A's
 A4_avg_sens <- A4_avg_contribution %>%
   map(., ~{sensitivity(.)})
 
@@ -430,25 +431,39 @@ D4_contribution <- lst(D4_conv_contribution, D4_low_contribution)
 D4_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), D4_contribution), '/', length(D4_contribution))
 
 D4_avg_contribution_transposed <- D4_avg_contribution %>% map(.,~{t(.)})
-                                     
-contribution_4yr <- purrr::map2(D4_avg_contribution_transposed, A4_avg_sens, `%*%`)
+
+## contribution of each sub-annual matrix to lambda's sensitivities, matrix S_B's                                     
+sens_contribution_4yr <- purrr::map2(D4_avg_contribution_transposed, A4_avg_sens, `%*%`)
 # remove "conv" in all names
-contribution_4yr_raw_names <- names( contribution_4yr )
+sens_contribution_4yr_raw_names <- names( sens_contribution_4yr )
 
-contribution_4yr_names <- gsub('conv.', '', contribution_4yr_raw_names)
+sens_contribution_4yr_names <- gsub('conv.', '', sens_contribution_4yr_raw_names)
 
-names(contribution_4yr) <- contribution_4yr_names
+names(sens_contribution_4yr) <- sens_contribution_4yr_names
 ```
 
 ```{r elasticity-4yr}
 ## calculate elasticity, see p. 121
 
-# Elasticities with regards to the right-most matrix --> 
-A4_conv_elas <- A4_conv_contribution %>%
-  map(., ~{elasticity(.)})
+## NEED NEW NAMES FOR ALL THE LIST
+# lambda at scenario1_rotation_wise_lambda 
+lambda_4yr_conv <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_4yr_conv$lambda1 
 
-A4_low_elas <- A4_low_contribution %>%
-  map(., ~{elasticity(.)})
+lambda_4yr_low <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_4yr_low$lambda1 
+# Elasticity contribution left: check if all_periods_4yr_conv_chain is the appropriate element 
+# The right-most matrix of all_periods_4yr_conv_chain is C4_spring_tillage
+# why is the order of "all_periods_4yr_conv_chain" and "sens_contribution_4yr" opposite?
 
-# lambda
+
+A4_conv_elas_left <-  all_periods_4yr_conv_chain %>%
+  map(., ~{./lambda_4yr_conv})
+
+A4_low_elas_left <-  all_periods_4yr_low_chain %>%
+  map(., ~{./lambda_4yr_low})
+
+# Elasticity contribution right: S_B's sens_contribution_4yr
+
+# Elasticity
+elas_contribution_4yr_conv <- Map(\(x, y) Reduce(`%*%`, list(x, y)), A4_conv_elas_left, sens_contribution_4yr)
+
 ```
