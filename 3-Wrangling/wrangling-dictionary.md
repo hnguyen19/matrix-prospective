@@ -2,7 +2,8 @@
 
 FLOW-fecundity-matrix-organization.Rmd:  
 + Turn 18 equations for fecundity estimation from aboveground dried biomass (in AMATA-fecundity) to 18 matrices: 
-- Each cohort within he same crop identity crossed with corn weed management need its own prediction equation for fecundity. The whole  
+- Each cohort within the same crop identity crossed with corn weed management need its own prediction equation for fecundity. 
+- seeds_18_emm lists model-based means and var of biomass and number of seed for 2018 data.
 
 This effort requires partitioning the cohort by plant size. Partitioning can be done coarsely by grouping 2019 plant size and fecundity, then apply the same classifying rule on 2018 plant size.  
 
