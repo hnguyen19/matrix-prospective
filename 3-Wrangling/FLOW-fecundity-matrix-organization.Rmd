@@ -162,7 +162,7 @@ fecundity_mean_19_list <-  lapply(split(female_19_est_quantile_summ_expand, fema
                          rbind(matrix(c(x$mean_Seed,rep(0,6)), byrow = T, nrow=2))),
        matrix(rep(0,48), nrow = 6, byrow = T))))
 
-## Save the 18  2019 fecundity matrices as a list 
+## Save the 2019 fecundity matrices as a list 
 # saveRDS(fecundity_mean_19_list, file="../2-Data/Clean/fecundity-mean-19-cohort.RData")
 
 
