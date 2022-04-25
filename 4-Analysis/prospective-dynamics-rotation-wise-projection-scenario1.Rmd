@@ -262,6 +262,8 @@ D2_low_contribution <- until_circ_2yr_low %>%
 
 D2_contribution <- lst(D2_conv_contribution, D2_low_contribution)
 
+### Do I really need D_avg? ###
+
 D2_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), D2_contribution), '/', length(D2_contribution))
 
 D2_avg_contribution_transposed <- D2_avg_contribution %>%
