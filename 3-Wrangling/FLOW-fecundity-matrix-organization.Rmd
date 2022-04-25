@@ -81,14 +81,10 @@ fecundity_mean_18_list <-  lapply(split(fecundity18_sb_log_quantile_summ, fecund
 ## Save the 18 2018 fecundity matrices as a list 
 # saveRDS(fecundity_mean_18_list, file="../2-Data/Clean/fecundity-mean-18-cohort.RData")
 
-fecundity_mean_18_list_2 <- lapply(split(fecundity18_sb_log_quantile_summ, female_19_est_quantile_summ_expand$matrix_id),
-       function(x)rbind(cbind(diag(1,2), matrix(0,nrow = 2, ncol = 6)), cbind(matrix(0,nrow = 6, ncol = 2) ,diag(x$mean_Seed,6))))
-  
-# saveRDS(fecundity_mean_18_list_2, file="../2-Data/Clean/fecundity-mean-18-cohort-2.RData")
 ```
 
 ```{r save-fecundity, include=FALSE}
-# Estimated marginal means of fecundity 
+# Estimated marginal means and var of 2018 fecundity 
 # Since the effects of corn weed management and crop identity on fecundity were mediated by biomass 
 # at = list(Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08), from cut(fecundity18_sb_log_quantile_summ$geometric_mean_Biomass, 5)
 # need to refine the cut() to reflect appropriate size bin partitioning, especially the big plants
@@ -98,10 +94,14 @@ seeds_18_emm <- emmeans(allcrops.biom.seed.gls, ~
                        Crop_ID * Corn_weed_management | Biomass,
                      at = list(Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08)))  # 6 bins, as pooled by the whole experiment
 
-seeds_18_emm_df <- seeds_18_emm %>%
+## convert log-scaled numbers back to original 
+seeds_18_emm_original <- summary(seeds_18_emm, type = "response")
+
+seeds_18_emm_df <- seeds_18_emm_original  %>%
   as.data.frame() %>%
-  rename(ln_seed = emmean) %>%
-  mutate(Seed_original = exp(ln_seed) - 1)
+  rename(Seed_mean = response,
+         Seed_SE = SE) %>%
+  mutate(Seed_var = Seed_SE^2)
 
 View(seeds_18_emm_df)
 ```
