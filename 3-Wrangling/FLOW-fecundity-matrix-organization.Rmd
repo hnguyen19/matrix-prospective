@@ -37,9 +37,7 @@ allcrops.biom.seed.gls <- gls(log(Seed+1) ~ Block +
   correlation=corCompSymm(form= ~1 | bt), #identifies each treatment within block
   data=fecundity18_sb)
 
-# Partition plant size and fecundity into 6 bins
-
-#hist(log(fecundity18_sb$Biomass), bin = 6)
+# Partition plant size and fecundity into 6 bins with hist(log(fecundity18_sb$Biomass), bin = 6)
 
 fecundity18_sb_log <- fecundity18_sb %>% 
   mutate(log_Biomass = log(Biomass + 0.005),
@@ -71,12 +69,12 @@ fecundity18_sb_log_quantile_summ <- fecundity18_sb_log %>%
 
 # cut(fecundity18_sb_log_quantile_summ$geometric_mean_Biomass, 5)
 
-# Write a list of 8 x 8 matrices
+# Write a list of 8 x 8 matrices, data-based
 
-fecundity_mean_18_list <-  lapply(split(fecundity18_sb_log_quantile_summ, fecundity18_sb_log_quantile_summ$matrix_id),
-       function(x)(rbind(cbind(diag(1,2),
-                         rbind(matrix(c(x$mean_Seed,rep(0,6)), byrow = T, nrow=2))),
-       matrix(rep(0,48), nrow = 6, byrow = T))))
+#fecundity_mean_18_list <-  lapply(split(fecundity18_sb_log_quantile_summ, fecundity18_sb_log_quantile_summ$matrix_id),
+#       function(x)(rbind(cbind(diag(1,2),
+#                         rbind(matrix(c(x$mean_Seed,rep(0,6)), byrow = T, nrow=2))),
+#       matrix(rep(0,48), nrow = 6, byrow = TRUE))))
 
 ## Save the 18 2018 fecundity matrices as a list 
 # saveRDS(fecundity_mean_18_list, file="../2-Data/Clean/fecundity-mean-18-cohort.RData")
@@ -86,33 +84,48 @@ fecundity_mean_18_list <-  lapply(split(fecundity18_sb_log_quantile_summ, fecund
 ```{r save-fecundity, include=FALSE}
 # Estimated marginal means and var of 2018 fecundity 
 # Since the effects of corn weed management and crop identity on fecundity were mediated by biomass 
-# at = list(Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08), from cut(fecundity18_sb_log_quantile_summ$geometric_mean_Biomass, 5)
+# at = list(log_Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08), from cut(fecundity18_sb_log_quantile_summ$geometric_mean_Biomass, 5)
 # need to refine the cut() to reflect appropriate size bin partitioning, especially the big plants
 
-# Need cutting by Crop_ID
+# log_Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08) is equivalent to list(Biomass = c( 0.04, 0.28, 2.28, 18.36, 148.41, 1187.97))
 seeds_18_emm <- emmeans(allcrops.biom.seed.gls, ~ 
                        Crop_ID * Corn_weed_management | Biomass,
-                     at = list(Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08)))  # 6 bins, as pooled by the whole experiment
+                     at = list(Biomass = c( 0.04, 0.28, 2.28, 18.36, 148.41, 1187.97)),
+                     type = "response")  # 6 bins, as **pooled** by the whole experiment
 
-## convert log-scaled numbers back to original 
-seeds_18_emm_original <- summary(seeds_18_emm, type = "response")
 
-seeds_18_emm_df <- seeds_18_emm_original  %>%
-  as.data.frame() %>%
-  rename(Seed_mean = response,
-         Seed_SE = SE) %>%
-  mutate(Seed_var = Seed_SE^2)
+## convert emmeans output to dataframe
+seeds_18_emm_df <- seeds_18_emm %>%
+  as.data.frame() %>% #equivalent to print(.,export = TRUE) but more convenient
+  rename(mean_seed = response,
+         SE_seed = SE) %>%
+  mutate(var_seed = SE_seed^2) %>%
+  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, desc(mean_seed)) 
 
-View(seeds_18_emm_df)
+# View(seeds_18_emm_df)
+
+# Write a list of 8 x 8 mean matrices, model based
+
+fecundity_mean_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_id),
+       function(x)(rbind(cbind(diag(1,2),
+                         rbind(matrix(c(x$mean_seed,rep(0,6)), byrow = TRUE, nrow=2))),
+       matrix(rep(0,48), nrow = 6, byrow = TRUE))))
+
+## Save the 18 2018 fecundity matrices as a list 
+# saveRDS(fecundity_mean_18_list, file="../2-Data/Clean/fecundity-mean-18-cohort.RData")
+
+## cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
+fecundity_var_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_id),
+       function(x) diag(x$var_seed,6))
+
+# saveRDS(fecundity_var_18_list, file="../2-Data/Clean/fecundity-var-18-cohort.RData")
 ```
 
 
-The calculation of fecundity from 2019 aboveground mass data is 
+The calculation of fecundity (F) from 2019 aboveground mass (X) data is from [@nguyenImpactCroppingSystem2022], in which each crop identity crossed with corn weed management treatment is of the form $ F = aX + b$. Variance of mean fecundity was the summation of variance of intercept and slope, because they are fixed
 
-$$ F = aX + b$$
-where, 
-F is the fecundity a cohort 
-a is the Intercept from [@nguyenImpactCroppingSystem2022]
+
 ```{r amata-fecundity-equation, include=FALSE}
 fecundity_eq <- read_csv("../2-Data/Raw/fecund_eq.csv")
 
