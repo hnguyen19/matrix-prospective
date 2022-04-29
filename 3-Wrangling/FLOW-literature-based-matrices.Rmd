@@ -138,7 +138,7 @@ relevant for the no till
 
 
 
-```{r off-season-viability-matrix, echo=FALSE}
+```{r off-season-viability-matrix-Sosnoskie, echo=FALSE}
 # After seed rain and post-harvest vertical redistribution
 #################### Scenario 1: Sosnoskie et al. 2013 -  No distinguishable cover crop effect
 # Assign 6 months of summer to corn and soybean, 5.5 months of summer to oat and 4.5 month of summer to alfalfa per the observation at Marsden that oat and alfalfa delayed waterhemp emergence.
@@ -159,7 +159,9 @@ overwinter_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13_coho
 off_season_scenario1 <- overwinter_Sosnoskie_13_cohort_list 
 
 # saveRDS(off_season_scenario1 , file="../2-Data/Clean/winter-seed-survival-scenario1.RData")
+```
 
+```{r off-season-viability-matrix-Korres, echo=FALSE}
 #################### Scenario 2: Korres et al., 2018 - No crop environment effect
 
 overwinter_Korres_18 <-  expand.grid(Crop_ID = c("C2","S2",
