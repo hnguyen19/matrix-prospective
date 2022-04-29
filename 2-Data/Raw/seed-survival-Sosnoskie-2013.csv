@@ -1,4 +1,4 @@
-Corn_weed_management,from_Phase,to_Phase,winter_month,summer_month,Stratum,Coefficient_a,Coefficient_a_se,Coefficient_b,Coefficient_b_SE
+Corn_weed_management,from_Phase,to_Phase,winter_month,summer_month,Stratum,Coefficient_a,Coefficient_a_SE,Coefficient_b,Coefficient_b_SE
 low,C2,S2,6,6,Top,98.9,2.9,-0.068,0.004
 low,S2,C2,6,6,Top,98.9,2.9,-0.068,0.004
 low,C3,S3,6,6,Top,98.9,2.9,-0.068,0.004

@@ -6,7 +6,7 @@ output:
     reference_docx: style_template.docx
 ---
 
-Matrices in this document is listed chronologically, from natural seed rain (at AMATA senescence) to new seed production. 
+Matrices in this document are listed chronologically, from natural seed rain (at AMATA senescence) to new seed production. 
 
 ```{r, include=FALSE, message=FALSE}
 library(emmeans)
@@ -128,6 +128,12 @@ $o_1 = y = 98.9 e^{-0.068x} \%$ and $o_2 = y = 99.5 e^{-0.05x} \%$ from Figures 
 
 The x values are filled with the gap in months between active growing of the preceding and succeeding crop phases, such as 6 months from corn harvest to soybean planting and 9 month from oat harvest to alfalfa active growing, etc.  
 
+The variance of off-season seed viability is calculated with $Var(g(x)) = [g'(X)]^2 \sigma^2_X$
+
+following linearization of exponential function on page 29/125 <https://pdixon.stat.iastate.edu/stat511/notes/part%205.pdf>, and
+Var of transformed function of X here <https://stats.stackexchange.com/questions/57715/expected-value-and-variance-of-loga>
+
+
 
 Scenario 2: Using AMATA undisturbed seedbank behavior
 
@@ -136,7 +142,7 @@ relevant for the no till
  
 *Each scenario of overwinter or summer seed viability was examined by holding all the values in the empirical matrices constant.*
 
-The variance of off-season seed viability is calculated with 
+
 
 
 ```{r off-season-viability-matrix-Sosnoskie, echo=FALSE}
