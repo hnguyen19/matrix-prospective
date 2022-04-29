@@ -136,6 +136,7 @@ relevant for the no till
  
 *Each scenario of overwinter or summer seed viability was examined by holding all the values in the empirical matrices constant.*
 
+The variance of off-season seed viability is calculated with 
 
 
 ```{r off-season-viability-matrix-Sosnoskie, echo=FALSE}
