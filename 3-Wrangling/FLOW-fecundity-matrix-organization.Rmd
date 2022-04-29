@@ -123,13 +123,13 @@ fecundity_var_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_i
 ```
 
 
-The calculation of fecundity (F) from 2019 aboveground mass (X) data is from [@nguyenImpactCroppingSystem2022], in which each crop identity crossed with corn weed management treatment is of the form $ F = aX + b$. Variance of mean fecundity was the summation of variance of intercept and slope, because they are fixed
+The calculation of fecundity (F) from 2019 aboveground mass (X) data is from [@nguyenImpactCroppingSystem2022], in which each crop identity crossed with corn weed management treatment is of the form $ F = aX + b$ and $Var(F) = a^2Var(X) + Var(b) $. Theoretically, $Var(b) = 0$, but the variance of the error term ($Var(\epsilon)$) has been absorbed into $Var(X)$ and $Var(b)$. 
 
 
 ```{r amata-fecundity-equation, include=FALSE}
 fecundity_eq <- read_csv("../2-Data/Raw/fecund_eq.csv")
 
-### import 2019 biomass 
+### import 2019 biomass, Weight here is on the original scale 
 female_19 <- read_csv("../2-Data/Raw/female_19.csv") # 1365 entries
 
 #replace NA with 0, 0 will be corrected by log(Biomass + 0.0005) in the later step
@@ -141,26 +141,49 @@ female_19_est <- left_join(fecundity_eq, female_19,
 
 # Seed = a * log(Weight) + b
 # a = log(Biomass + 0.005)_estimate /// b = (Intercept)_estimate
+# log is actually ln
 
-female_19_est$Seed <- exp(log(female_19_est$Weight + 0.0005)*female_19_est$`log(Biomass + 0.005)_estimate` + female_19_est$`(Intercept)_estimate`)
+##### estimate individual fecundity from weight #####
+female_19_est_individual_fecundity <-  female_19_est %>% 
+  rename(a = `log(Biomass + 0.005)_estimate`,
+         SE_a = `log(Biomass + 0.005)_std.error`,
+         b = `(Intercept)_estimate`,
+         SE_b = `(Intercept)_std.error`)  %>%
+  mutate(var_a = SE_a^2,
+         var_b = SE_b^2,
+         var_Weight = var(Weight), #pooled variance of biomass, need cohort-based, CropID x corn weed mgt var later
+    Seed_log = a*log(Weight + 0.005) + b,
+    var_Seed_log = (a^2)*var_Weight + var_b, #pooled variance of number of seeds
+    Seed = exp(Seed_log),
+    var_Seed = exp(var_Seed_log)) 
 
-female_19_est_quantile_summ <- female_19_est %>% 
+
+##### summarize by cohort, crop ID and corn weed management #####
+# group by CropID x corn weed management and partition each group into 6 cohorts, assuming that cohort is best represented by individual size 
+# plants from the same CropID x corn weed management share the same slope and intercept
+# the combination of slope x intercept id is the same as Crop ID x corn weed management id
+female_19_est_quantile_summ <- female_19_est_individual_fecundity %>% 
   group_by(Corn_weed_management, Crop_ID) %>% # pool all plants from the same CropID x Corn weed mgt
-  mutate(quantile_Biomass = ntile(`log(Biomass + 0.005)_estimate` , 6),
+  mutate(quantile_Weight = ntile(Weight , 6),
          quantile_Seed = ntile(Seed, 6)) %>%
-  group_by(quantile_Biomass, Corn_weed_management, Crop_ID) %>%
-  summarize( mean_Seed = mean(Seed))  %>% 
+  group_by(quantile_Weight, Corn_weed_management, Crop_ID) %>%
+ mutate( var_Weight_cohort = var(Weight),
+           var_Seed_log_cohort = (a^2)*var_Weight_cohort + var_b) %>%
+   group_by(quantile_Weight, Corn_weed_management, Crop_ID) %>%
+  summarize(mean_Seed_cohort = mean(Seed),
+            var_Seed_log_cohort = mean(var_Seed_log_cohort),
+            var_Seed_cohort = exp(var_Seed_log_cohort)) %>% 
   mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_"))
 
 # check combinations for non-zero entries: 78
-table(female_19_est_quantile_summ$quantile_Biomass, female_19_est_quantile_summ$Crop_ID)
+table(female_19_est_quantile_summ$quantile_Weight, female_19_est_quantile_summ$Crop_ID)
 
 # Fill cohorts 2 until 6 in soybeans with zeros 
 
 female_19_seed_placeholder <- expand.grid(Crop_ID = c("S2", "S3", "S4"),
             Corn_weed_management = c("conv","low"),
-            quantile_Biomass = c(2:6),
-            mean_Seed = 0)
+            quantile_Weight = c(2:6),
+            mean_Seed_cohort = 0)
 
 female_19_seed_placeholder$matrix_id <- paste(female_19_seed_placeholder$Crop_ID,
                                           female_19_seed_placeholder$Corn_weed_management,
@@ -169,16 +192,20 @@ female_19_seed_placeholder$matrix_id <- paste(female_19_seed_placeholder$Crop_ID
 female_19_est_quantile_summ_expand <- rbind(female_19_est_quantile_summ, female_19_seed_placeholder)
 
 
-# Save estimated fecundity in 2019 as a list
+# Save 2019 estimated fecundity as a list
 fecundity_mean_19_list <-  lapply(split(female_19_est_quantile_summ_expand, female_19_est_quantile_summ_expand$matrix_id),
        function(x)(rbind(cbind(diag(1,2),
-                         rbind(matrix(c(x$mean_Seed,rep(0,6)), byrow = T, nrow=2))),
-       matrix(rep(0,48), nrow = 6, byrow = T))))
+                         rbind(matrix(c(x$mean_Seed_cohort,rep(0,6)), byrow = TRUE, nrow=2))),
+       matrix(rep(0,48), nrow = 6, byrow = TRUE))))
 
 ## Save the 2019 fecundity matrices as a list 
 # saveRDS(fecundity_mean_19_list, file="../2-Data/Clean/fecundity-mean-19-cohort.RData")
 
 
+## 2019 cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
+fecundity_var_19_list  <-  lapply(split(female_19_est_quantile_summ_expand, female_19_est_quantile_summ_expand$matrix_id),
+       function(x) diag(x$var_Seed_cohort,6))
 
+# saveRDS(fecundity_var_19_list, file="../2-Data/Clean/fecundity-var-19-cohort.RData")
 
 ```
