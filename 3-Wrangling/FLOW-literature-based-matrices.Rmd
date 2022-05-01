@@ -129,16 +129,18 @@ $o_1 = y = 98.9 e^{-0.068x} \%$ and $o_2 = y = 99.5 e^{-0.05x} \%$ from Figures 
 
 The x values are filled with the gap in months between active growing of the preceding and succeeding crop phases, such as 6 months from corn harvest to soybean planting and 9 month from oat harvest to alfalfa active growing, etc.  
 
+Since the raw data in Sosnoskie et al., 2013 is not accessible, the variance of Y at each X was visually assessed from figures 1 and 3 @sosnoskieGlyphosateResistanceDoes2013.
 
+In a more sophisticated, but unproductive effort: 
 Functions $y = ae^{-bx}$ are first linearized as $Y^* = ln(Y) = ln(a) -bx$ following the linearization formulae on page 29/125 <https://pdixon.stat.iastate.edu/stat511/notes/part%205.pdf>, and
 
 $Var(Y^*) = Var[ln(a) - bx] = Var[ln(a)] + Var[bx] = \frac{1}{a^2}Var(a) + x^2Var(b)$ because $x$ are random numbers representing the number of months seeds are buried
 
-The variance of off-season seed viability is calculated with $Var(g(Y)) = [g'(Y)]^2 \sigma^2_Y$, so $Var[ln(Y)] = \frac{1}{Y^2}\sigma^2_Y$
 
-Using the delta method to find Var(Y) from Var(ln(Y)) (Var(Y) here is the variance of Variance)
+Applying the delta method to find Var(Y) from Var(ln(Y)), $Var(Y) = \frac{Var[ln(Y)]}{Y^2}$^, with $Var(Y)$ being visually estimated from the error bars in figures 1 and 3 @sosnoskieGlyphosateResistanceDoes2013. Does Y need to be normally distributed for  $Var(Y) = \frac{Var[ln(Y)]}{Y^2}$ to hold?
 
 Var of transformed function of X here <https://stats.stackexchange.com/questions/57715/expected-value-and-variance-of-loga>
+<https://stats.stackexchange.com/questions/418313/variance-of-x-and-variance-of-logx-how-to-relate-them>
 
 Scenario 2: Using AMATA undisturbed seedbank behavior
 
