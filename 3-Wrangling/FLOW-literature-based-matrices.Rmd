@@ -129,7 +129,7 @@ $o_1 = y = 98.9 e^{-0.068x} \%$ and $o_2 = y = 99.5 e^{-0.05x} \%$ from Figures 
 
 The x values are filled with the gap in months between active growing of the preceding and succeeding crop phases, such as 6 months from corn harvest to soybean planting and 9 month from oat harvest to alfalfa active growing, etc.  
 
-Since the raw data in Sosnoskie et al., 2013 is not accessible, the variance of Y at each X was visually assessed from figures 1 and 3 @sosnoskieGlyphosateResistanceDoes2013.
+Since the raw data in Sosnoskie et al., 2013 is not available, the variance of Y at each X was visually assessed from figures 1 and 3 @sosnoskieGlyphosateResistanceDoes2013.
 
 In a more sophisticated, but unproductive effort: 
 Functions $y = ae^{-bx}$ are first linearized as $Y^* = ln(Y) = ln(a) -bx$ following the linearization formulae on page 29/125 <https://pdixon.stat.iastate.edu/stat511/notes/part%205.pdf>, and
