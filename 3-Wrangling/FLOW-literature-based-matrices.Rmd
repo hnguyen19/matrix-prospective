@@ -156,27 +156,33 @@ relevant for the no till
 # After seed rain and post-harvest vertical redistribution
 #################### Scenario 1: Sosnoskie et al. 2013 -  No distinguishable cover crop effect
 # Assign 6 months of summer to corn and soybean, 5.5 months of summer to oat and 4.5 month of summer to alfalfa per the observation at Marsden that oat and alfalfa delayed waterhemp emergence.
-
+# By eye-balling, SE(top survial ) = 5% and SE(bottom survival) = 7%, so var_survival(top) = 0.025 and var_survival(bottom) = 0.049
+ 
 overwinter_Sosnoskie_13 <- read_csv("../2-Data/Raw/seed-survival-Sosnoskie-2013.csv", show_col_types = FALSE)
 
 overwinter_Sosnoskie_13_cohort <- overwinter_Sosnoskie_13 %>%
   mutate(Seed_overwinter = Coefficient_a*exp(Coefficient_b*winter_month),
          Seed_overwinter_prop = Seed_overwinter/100,
+         var_overwinter_survival = ifelse(Stratum == "Top", 0.025, 0.049),
          matrix_id = paste(from_Phase,Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, desc(Stratum)) #Matrices are identified by the crop species that presented before the month of December in a particular plot.
 
 ## Save overwinter survival mean
 
-overwinter_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13_cohort, overwinter_Sosnoskie_13_cohort$matrix_id),
+overwinter_mean_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13_cohort, overwinter_Sosnoskie_13_cohort$matrix_id),
        function(x)(rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
                          matrix(rep(0,12), nrow = 2)),
                    matrix(rep(0,48), nrow = 6))))
                          
-off_season_scenario1 <- overwinter_Sosnoskie_13_cohort_list 
 
-# saveRDS(off_season_scenario1 , file="../2-Data/Clean/winter-seed-survival-scenario1.RData")
+# saveRDS(overwinter_mean_Sosnoskie_13_cohort_list, file="../2-Data/Clean/winter-mean-seed-survival-scenario1.RData")
 
 ## Save overwinter survival variance 
+
+var_overwinter_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13_cohort, overwinter_Sosnoskie_13_cohort$matrix_id),
+       function(x) diag(x$var_overwinter_survival,2))
+
+# saveRDS(var_overwinter_Sosnoskie_13_cohort_list , file="../2-Data/Clean/winter-var-seed-survival-scenario1.RData")
 ```
 
 ```{r off-season-viability-matrix-Korres, echo=FALSE}
@@ -324,19 +330,31 @@ as.matrix(field_cultivator) %*% seed_column_example
 
 summer_seed_survival_Sosnoskie_13 <- overwinter_Sosnoskie_13 
 
+# The same coefficients a and b were used on summer seed survival
 summer_seed_survival_Sosnoskie_13_cohort <- summer_seed_survival_Sosnoskie_13  %>%
-  mutate(Seed_overwinter = Coefficient_a*exp(Coefficient_b*summer_month),
-         Seed_overwinter_prop = Seed_overwinter/100,
+  mutate(Seed_summer_survive = Coefficient_a*exp(Coefficient_b*summer_month),
+         Seed_summer_prop = Seed_summer_survive/100,
+          var_summer_survival = ifelse(Stratum == "Top", 0.025, 0.049),
          matrix_id = paste(from_Phase,Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, desc(Stratum)) #Matrices are identified by the crop species that presented before the month of December in a particular plot.
 
 ## fill the bottom left 6x6 matrix's diagonal with 1's to perform element wise multiplication with female-survival in prospective-dynamics.Rmd 
-summer_seed_survival_Sosnoskie_13_cohort_list  <- lapply(split(summer_seed_survival_Sosnoskie_13_cohort , summer_seed_survival_Sosnoskie_13_cohort$matrix_id),
-       function(x) rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
+mean_summer_seed_survival_Sosnoskie_13_cohort_list  <- lapply(split(summer_seed_survival_Sosnoskie_13_cohort , summer_seed_survival_Sosnoskie_13_cohort$matrix_id),
+       function(x) rbind(cbind(diag(x$Seed_summer_prop, 2), 
                          matrix(rep(0,12), nrow = 2)), cbind(matrix(0,nrow = 6, ncol = 2), diag(1,6))))
 
+## Save summer seed survival means
 
-# saveRDS(summer_seed_survival_Sosnoskie_13_cohort_list, file="../2-Data/Clean/summer-seed-survival-scenario1.RData")
+# saveRDS(mean_summer_seed_survival_Sosnoskie_13_cohort_list, file="../2-Data/Clean/mean-summer-seed-survival-scenario1.RData")
+
+## fill the bottom left 6x6 matrix's diagonal with 1's to perform element wise multiplication with female-survival in prospective-dynamics.Rmd 
+var_summer_seed_survival_Sosnoskie_13_cohort_list  <- lapply(split(summer_seed_survival_Sosnoskie_13_cohort , summer_seed_survival_Sosnoskie_13_cohort$matrix_id),
+       function(x) rbind(cbind(diag(x$var_summer_survival, 2), 
+                         matrix(rep(0,12), nrow = 2)), cbind(matrix(0,nrow = 6, ncol = 2), diag(1,6))))
+
+## Save summer seed survival variance
+
+#saveRDS(var_summer_seed_survival_Sosnoskie_13_cohort_list , file="../2-Data/Clean/var-summer-seed-survival-scenario1.RData")
 
 ####################### Scenario 2: Buhler and Harzler 2001  findings are actually survival after one year. These numbers might be inflated if an overwinter matrix is already in place. This matrix might serve as a combined matrix of seed survival for the whole year. 
 summer_seed_survival_scenario2 <- expand.grid(Crop_ID = c("C2","S2",
@@ -345,20 +363,37 @@ summer_seed_survival_scenario2 <- expand.grid(Crop_ID = c("C2","S2",
                                     Corn_weed_management = c("conv","low"),
                                     Stratum = c("Top", "Bottom"))
 
-## Fill in the proportion of retrieved seeds and viability of retrieved seeds 1 year after burial 
+## Fill in the proportion of retrieved seeds and viability of retrieved seeds 1 year after burial ## Assuming no crop effects
 summer_seed_survival_scenario2_filled <- summer_seed_survival_scenario2 %>%
   mutate(retrieved_prop = 0.65,
+         number_buried = 2000, #2000 seed buried when exp started
          retrieved_viability = 0.8,
+         number_retrieved = retrieved_prop*2000,
+         number_viable =  retrieved_viability*number_retrieved,
+         var_retrieved = number_buried*retrieved_prop*(1-retrieved_prop),
+         var_viable = number_viable*retrieved_viability*(1-retrieved_viability),
          original_survival_prop = retrieved_prop*retrieved_viability,
+         var_original_survival = var_viable*(number_retrieved^2) + var_retrieved*(number_viable^2),
          matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
     arrange(matrix_id, desc(Stratum))
 
-summer_seed_survival_scenario2_filled_list <- lapply(split(summer_seed_survival_scenario2_filled, summer_seed_survival_scenario2_filled$matrix_id),
+mean_summer_seed_survival_scenario2_filled_list <- lapply(split(summer_seed_survival_scenario2_filled, summer_seed_survival_scenario2_filled$matrix_id),
        function(x) rbind(cbind(diag(x$original_survival_prop, 2), 
                          matrix(rep(0,12), nrow = 2)), cbind(matrix(0,nrow = 6, ncol = 2), diag(1,6))))
 
-# saveRDS(summer_seed_survival_scenario2_filled_list, file="../2-Data/Clean/summer-seed-survival-scenario2.RData")
+# saveRDS(mean_summer_seed_survival_scenario2_filled_list, file="../2-Data/Clean/mean-summer-seed-survival-scenario2.RData")
+
+var_summer_seed_survival_scenario2_filled_list <- lapply(split(summer_seed_survival_scenario2_filled, summer_seed_survival_scenario2_filled$matrix_id),
+       function(x) rbind(cbind(diag(x$var_original_survival, 2), 
+                         matrix(rep(0,12), nrow = 2)), cbind(matrix(0,nrow = 6, ncol = 2), diag(1,6))))
+
+# saveRDS(var_summer_seed_survival_scenario2_filled_list, file="../2-Data/Clean/var-summer-seed-survival-scenario2.RData")
 ```
+
+Assuming that the probability of a seed retrieved(X) is independent of its viability(Y): $Var(XY) = E(X^2)Var(Y) + E(Y^2)Var(X)$ <https://stats.stackexchange.com/questions/397839/varxy-if-x-and-y-are-independent-random-variables>
+
+Variance of a binomial variable is calculated as $Var(X_i) = np_i(1-p_i)$
+var(retrieved) = n_ori *
 
 ```{r summer-seed-predation}
 ## may be optional 
