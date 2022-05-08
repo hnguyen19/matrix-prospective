@@ -44,8 +44,67 @@ fresh_seed_viability_Korres <- expand.grid(Crop_ID = c("C2","S2",
 
 ```
 
-SeedChaser is a Java application that simulates how seeds are moved vertically by a tillage method. The SeedChaser tillage matrices relevant to this exercices are field cultivator, moldboard, chisel, and disk. The Seed Chaser matrices describe seed movement in 1 cm increament from 0 to 18 cm depth while our soil samples were taken down to 20 cm depth. We assume that the 2 - 18 cm depth in the Seed Chaser matrices describe the seed movement dynamics in our 2 - 20 cm depth when the corresponding tillage method is applied.  
+SeedChaser is a Java application that simulates how seeds are moved vertically by a tillage method. The Seed Chaser tillage matrices relevant to this exercise are field cultivator, moldboard, and chisel. The Seed Chaser matrices describe seed movement in 1 cm increment from 0 to 20 cm depth while our soil samples were taken down to 20 cm depth. The raw data was provided by Dr. Kurt Spokas.
 
+The overall mechanism of resizing the matrices is the law of total probability. Each column in the original and the resized matrices sums to 1. To resize a 20x20 matrix to a 2x2 matrix using the raw Seed Chaser data, four summations were performed:  
+- Seeds that stay at the top 2 cm stratum, $X_{1,1}$, is the summation of the top left 3x3 section in the original post-tillage matrix.
+- Seeds that move from the top 2 cm stratum to the bottom 18 cm stratum, $X_{1,2}$, is the summation of the bottom left 18x3 section in the original post-tillage matrix.
+- Seeds that move from the bottom 18 cm stratum to the top 2 cm stratum, $X_{2,1}$, is the summation of the top right 3x18 section in the original post-tillage matrix.
+- Seeds that stay at the bottom 18 cm stratum, $X_{2,2}$, is the summation of the bottom right 18x18 section in the original post-tillage matrix.
+
+
+The mean proportion of each $P_{ij}$, the probability that a seed moves from stratum $i$ to stratum$j$ was pooled over all the replications for each tillage method: $P_{i,j} = \frac{X_{i,j}}{n_{.j}}$, where $X_{ij}$ is the corresponding number of seeds moving from stratum $i$ to stratum $j$ and $n_{.j}$ is the total number of seed at stratum $j$ (top or bottom).
+
+The variance of P[i,j] is calculated with $Var(\frac{X_{ij}}{n_{.j}}) = \frac{p_{ij}(1-p_{ij})}{n_{.j}}$  
+```{r post-harvest-tillage-matrix-new}
+notill_mean <- diag(1,2)
+notill_var <- diag(0,2)
+
+moldboard_mean <- matrix(c(0.017857143,	0.072961329,
+0.982142857,	0.927038671), byrow = TRUE, nrow = 2)
+
+moldboard_var <- matrix(c(5.5269e-05,	1.43463e-05,
+5.5269e-05,	1.43463e-05), byrow = TRUE, nrow = 2)
+
+chisel_mean <- matrix(c(0.589108911,	0.103123159,
+0.410891089,	0.896876841), byrow = TRUE, nrow = 2)
+
+chisel_var <- matrix(c(0.000599157,	5.45013e-05,
+0.000599157,	5.45013e-05), byrow = TRUE, nrow = 2)
+
+
+phX1 <- c(rep(chisel_mean[,1],6), rep(notill_mean[,1],8), rep(moldboard_mean[,1],4)) 
+phX2 <- c(rep(chisel_mean[,2],6), rep(notill_mean[,2],8), rep(moldboard_mean[,2],4)) 
+matrix_id <- c(rep("C2_low", 2), rep("C2_conv",2),
+                                    rep("C3_low", 2), rep("C3_conv",2),
+                                    rep("C4_low", 2), rep("C4_conv",2),
+                                    rep("S2_low", 2), rep("S2_conv",2),
+                                    rep("S3_low", 2), rep("S3_conv",2),
+                                    rep("S4_low", 2), rep("S4_conv",2),
+                                    rep("O4_low", 2), rep("O4_conv",2),
+                                    rep("A4_low", 2), rep("A4_conv",2),
+                                    rep("O3_low", 2), rep("O3_conv",2))
+
+mean_post_harvest_tillage_df <- data_frame(phX1, phX2, matrix_id)
+
+mean_post_harvest_tillage_list <- lapply(split(mean_post_harvest_tillage_df , mean_post_harvest_tillage_df$matrix_id),
+       function(x)(rbind(cbind(matrix(c(x$phX1, x$phX2), byrow = FALSE, nrow=2),
+                   matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+
+# saveRDS(mean_post_harvest_tillage_list , file="../2-Data/Clean/mean-post-harvest-tillage.RData")
+
+phV1 <- c(rep(chisel_var[,1],6), rep(notill_var[,1],8), rep(moldboard_var[,1],4)) 
+phV2 <- c(rep(chisel_var[,2],6), rep(notill_var[,2],8), rep(moldboard_var[,2],4)) 
+
+var_post_harvest_tillage_df <- data_frame(phV1, phV2, matrix_id)
+
+var_post_harvest_tillage_list <- lapply(split(var_post_harvest_tillage_df, var_post_harvest_tillage_df$matrix_id),
+       function(x) matrix(c(x$phV1, x$phV2), byrow = FALSE, nrow=2)
+# saveRDS(var_post_harvest_tillage_list, file="../2-Data/Clean/var-post-harvest-tillage.RData")
+```
+
+Before the raw data was available, the following steps were performed
 The overall mechanism of resizing the matrices is the law of total probability. Each column in the original and the resized matrices sums to 1. For example: 
 
 $$ 
@@ -56,7 +115,7 @@ P[top | bottom] is the probability that a seed move from the bottom stratum to t
 P[top | depth i] is the probability that a seed move from depth i to the top stratum, and  
 P[depth i | bottom] is the probability that a seed at depth i remain in the bottom stratum.  
 
-Each of the original 18 x 18 matrices was resized to 2 x 2 using the following steps: 
+Each of the original 20 x 20 matrices was resized to 2 x 2 using the following steps: 
 + Round 1: Calculation of the probability of a seed in the top 0 - 2 cm stratum remains in the top ($T_{1,1}$) and the probability that that it moves to the bottom 2 - 20 cm stratum ($T_{1,2}$). 
 
 - Distribute 4800 seeds evenly from 0 to 2 cm by filling 1600 to the first three elements of a 18 x 1 vector.
@@ -73,7 +132,9 @@ Each of the original 18 x 18 matrices was resized to 2 x 2 using the following s
 - Divide each element of the redistributed seed column by 4800 to make a bottom-up vector.
 - Sum the first three elements of the bottom-up vector to have $T_{2,1}$ and the last sixteen elements to have $T_{2,2}$.
 
-```{r post-harvest-tillage-matrix}
+```{r post-harvest-tillage-matrix-old, include=FALSE}
+
+## Old matrices, when raw data wasn't available
 # Post-harvest tillage, imported from folder `Tillage-resized`
 chisel <- read_csv("../2-Data/Raw/Tillage-resized/chisel_2by2.csv", col_names = FALSE, show_col_types = FALSE)
 names(chisel) <- NULL
@@ -113,6 +174,8 @@ post_harvest_tillage_list <- lapply(split(post_harvest_tillage, post_harvest_til
 ```
 
 
+
+### Off-season survival 
 
 Multiple scenarios of off-season seed survival at the top and bottom stratum were used. Our exhaustive search in the current literature has returned few crop environments: corn, soybean, and rye cover crop. 
 
@@ -232,8 +295,56 @@ off_season_scenario3 <- overwinter_Steckel_07_cohort_list
 
 ```
 
+### Prep-planting tillage matrices  
+The field cultivator mean and variance matrices were calculated using the same procedure as for chisel and moldboard ploughs.
 
-```{r pre-planting-tillage-matrix-for-model}
+```{r pre-planting-tillage-matrix-new}
+#consider dataframe instead of matrix
+
+field_cultivator_mean <- as.data.frame(matrix(c(0.594855305,	0.149901381,
+0.405144695,	0.850098619), byrow = TRUE, nrow = 2))
+
+field_cultivator_var <- as.data.frame(matrix(c(0.000774928,	0.000125672,
+0.000774928,	0.000125672), byrow = TRUE, nrow = 2))
+
+# expand a column each
+
+X1 = c(rep(field_cultivator_mean[,1],16), rep(notill_mean[,1],2))
+X2 = c(rep(field_cultivator_mean[,2],16), rep(notill_mean[,2],2))
+matrix_id <- c(rep("C2_low", 2), rep("C2_conv",2),
+                                    rep("C3_low", 2), rep("C3_conv",2),
+                                    rep("C4_low", 2), rep("C4_conv",2),
+                                    rep("S2_low", 2), rep("S2_conv",2),
+                                    rep("S3_low", 2), rep("S3_conv",2),
+                                    rep("S4_low", 2), rep("S4_conv",2),
+                                    rep("O4_low", 2), rep("O4_conv",2),
+                                    rep("O3_low", 2), rep("O3_conv",2),
+                                    rep("A4_low", 2), rep("A4_conv",2))
+
+mean_pre_planting_tillage_df <- data_frame(X1,X2, matrix_id)
+
+## save mean list
+mean_pre_planting_tillage_list <- lapply(split(mean_pre_planting_tillage_df, mean_pre_planting_tillage_df$matrix_id),
+      function(x)(rbind(cbind(matrix(c(x$X1, x$X2), byrow = FALSE, nrow=2),
+                   matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6))))
+
+#saveRDS(mean_pre_planting_tillage_list, file="../2-Data/Clean/mean-pre-planting-tillage.RData")
+
+## save var list
+V1 = c(rep(field_cultivator_var[,1],16), rep(notill_var[,1],2))
+V2 = c(rep(field_cultivator_var[,2],16), rep(notill_var[,2],2))
+
+var_pre_planting_tillage_df <- data_frame(V1,V2, matrix_id)
+
+## save mean list
+var_pre_planting_tillage_list <- lapply(split(var_pre_planting_tillage_df, var_pre_planting_tillage_df$matrix_id),
+      function(x) matrix(c(x$V1, x$V2), byrow = FALSE, nrow=2))
+
+#saveRDS(var_pre_planting_tillage_list, file="../2-Data/Clean/var-pre-planting-tillage.RData")
+```
+
+```{r pre-planting-tillage-matrix, include=FALSE}
 # Pre-planting tillage
 
 field_cultivator <- read_csv("../2-Data/Raw/Tillage-resized/fieldcultivator_2by2.csv", col_names = FALSE, show_col_types = FALSE)
@@ -393,11 +504,11 @@ var_summer_seed_survival_scenario2_filled_list <- lapply(split(summer_seed_survi
 Assuming that the probability of a seed retrieved(X) is independent of its viability(Y): $Var(XY) = E(X^2)Var(Y) + E(Y^2)Var(X)$ <https://stats.stackexchange.com/questions/397839/varxy-if-x-and-y-are-independent-random-variables>
 
 Variance of a binomial variable is calculated as $Var(X_i) = np_i(1-p_i)$
-var(retrieved) = n_ori *
+
 
 ```{r summer-seed-predation}
 ## may be optional 
-summer_seed_pred <- read_csv("../2-Data/Raw/seed-predation-van-der-Laat-2015.csv", na = ".",,
+summer_seed_pred <- read_csv("../2-Data/Raw/seed-predation-van-der-Laat-2015.csv", na = ".",
                              show_col_types = FALSE)
 
 summer_seed_pred_clean <- summer_seed_pred %>%
@@ -429,24 +540,119 @@ summer_seed_pred_grand_summ <- summer_seed_pred_clean %>%
 
 ```
 
-```{r seedling-survival-Hartzler-Buhler}
-seedling_survival_Hartzler_Buhler <- expand.grid(Crop_ID = c("C2","S2",
-                                                "C3","S3","O3",
-                                                "C4", "S4", "O4", "A4"),
+```{r seedling-survival-Hartzler-et-al}
+# a corn table: from Nordby and Hartzler 2004: Table 3, 100 - Mortality for 76 cm row spacing in corn
+# note: this pub has height, shoot dry wt and individual fecundity, too
+# Number of plant/cohort = 30 (highlighted, pg 257)
+# Assume WH cohort 1 at VE, cohorts 2 and 3 at V3, cohorts 4 and 5 at V5, cohort 6 at V8
+# Var = SE^2
+
+seedling_survival_corn <- expand.grid(Crop_ID = c("C2","C3","C4"),
                                     Corn_weed_management = c("conv","low"),
                                     Cohort = c(1:6))
-seedling_survival_Hartzler_Buhler_filled <- seedling_survival_Hartzler_Buhler%>%
-  mutate(seedling_survival = ifelse(Cohort %in%c(1,2), 0.9,
-                                    ifelse(Cohort %in% c(3,4), 0.55, 0.15)))%>%
+
+seedling_survival_corn_filled <- seedling_survival_corn %>%
+  mutate(mean_seedling_survival = ifelse(Cohort == 1, 0.84,
+                                    ifelse(Cohort %in% c(2,3), 0.48,
+                                           ifelse(Cohort %in% c(4,5), 0.04, 0.01)))) %>%
+  mutate(var_seedling_survival = ifelse(Cohort == 1, 0.09,
+                                    ifelse(Cohort %in% c(2,3), 0.09,
+                                           ifelse(Cohort %in% c(4,5), 0.09, 0.09)))) %>%
   mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, Cohort)
 
-## need to check top 2x2
-seedling_survival_Hartzler_Buhler_raw_list <- lapply(split(seedling_survival_Hartzler_Buhler_filled , seedling_survival_Hartzler_Buhler_filled $matrix_id),
-       function(x) rbind(cbind(diag(1,2), matrix(0,nrow = 2, ncol = 6)),
-         cbind(matrix(0,nrow=6,ncol=2), diag(x$seedling_survival))))
+# a soybean table: from Nordby and Hartzler 2004: fig 1, pg 244
+# note: this pub has height, shoot dry wt and individual fecundity, too
+# Number of plant/cohort = 60 (highlighted, pg 243)
+# Survival (Y) = 95.4 + 0.058x - 0.034x^2 (X = days after planting)
+# one cohort is 15 days after the other
+# Var = SE^2
+# Cohort i (i from 1 to 6): cohort 1 at x = 14, cohort i+1 at x + 14. 
 
-# saveRDS(seedling_survival_Hartzler_Buhler_raw_list, file="../2-Data/Clean/summer-seedling-survival-scenario2.RData")
+seedling_survival_soybean <- expand.grid(Crop_ID = c("S2","S3","S4"),
+                                    Corn_weed_management = c("conv","low"),
+                                    Cohort = c(1:6))
+
+
+View(seedling_survival_soybean)
+
+
+seedling_survival_soybean_filled <- seedling_survival_soybean %>%
+  mutate(days_after_planting = ifelse(Cohort == 1, 14,
+                                      ifelse(Cohort == 2, 28,
+                                             ifelse(Cohort == 3, 42,
+                                                    ifelse(Cohort == 4, 56,
+                                                           ifelse(Cohort == 5, 70, 84)))))) %>%
+  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, Cohort) %>%
+  mutate(const. = 95.4, # the constant variable in the y = a + bx + cx^2
+         x_squared = days_after_planting^2,
+         mean_seedling_survival = (const. + 0.058*days_after_planting - 0.034*(x_squared))/100 ,
+         number_of_plant = 60,
+         var_seedling_survival = mean_seedling_survival*(1-mean_seedling_survival)) 
+
+seedling_survival_soybean_filled$mean_seedling_survival<- pmax(seedling_survival_soybean_filled$mean_seedling_survival,0)
+    
+seedling_survival_soybean_filled <- seedling_survival_soybean_filled %>%
+  mutate(var_seedling_survival = ifelse(mean_seedling_survival > 0, mean_seedling_survival*(1-mean_seedling_survival), 0))
+
+seedling_survival_soybean_filled_select <- seedling_survival_soybean_filled%>%
+  select(Crop_ID, Corn_weed_management, Cohort, mean_seedling_survival, var_seedling_survival, matrix_id)
+
+### oat table
+
+seedling_survival_oat <- expand.grid(Crop_ID = c("O3","O4"),
+                                    Corn_weed_management = c("conv","low"),
+                                    Cohort = c(1:6))
+
+
+## assuming the cohort-specific waterhemp seedling survival rates in oat was reciprocal to those in corn,
+## in which the earlier cohorts in oat experience lower survival rate 
+seedling_survival_oat_filled <- seedling_survival_oat %>%
+  mutate(mean_seedling_survival = ifelse(Cohort %in% c(1,2), 0.1,
+                                         ifelse(Cohort %in% c(3,4), 0.5, 0.9)),
+    var_seedling_survival = 0.09) %>%
+    mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, Cohort)
+
+
+### alfalfa table
+
+## assuming the first 4 cohorts survival rate was 0.1 and the last two 0.5
+## 0.1 because of frequent hay cut and shading
+## 0.5 after the last hay cut, but colder and shading 
+## assuming the same var(survival) in corn as in alfalfa
+seedling_survival_alfalfa <- expand.grid(Crop_ID = c("A4"),
+                                    Corn_weed_management = c("conv","low"),
+                                    Cohort = c(1:6))
+
+seedling_survival_alfalfa_filled <- seedling_survival_alfalfa %>%
+  mutate(mean_seedling_survival = ifelse(Cohort %in% c(1, 2, 3, 4), 0.1, 0.5),
+    var_seedling_survival = 0.09)%>%
+    mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
+  arrange(matrix_id, Cohort)
+
+
+## combine 4 crop-specific tables
+seedling_survival_Hartzler_et_al <- rbind(seedling_survival_corn_filled,
+                                          seedling_survival_soybean_filled_select,
+                                          seedling_survival_oat_filled,
+                                          seedling_survival_alfalfa_filled)
+
+View(seedling_survival_Hartzler_et_al)
+
+## need to check top 2x2
+mean_seedling_survival_Hartzler_et_al_raw_list <- lapply(split(seedling_survival_Hartzler_et_al, seedling_survival_Hartzler_et_al$matrix_id),
+       function(x) rbind(cbind(diag(1,2), matrix(0,nrow = 2, ncol = 6)),
+         cbind(matrix(0,nrow=6,ncol=2), diag(x$mean_seedling_survival))))
+
+# saveRDS(mean_seedling_survival_Hartzler_et_al_raw_list, file="../2-Data/Clean/mean-summer-seedling-survival-scenario2.RData")
+
+var_seedling_survival_Hartzler_et_al_raw_list <- lapply(split(seedling_survival_Hartzler_et_al, seedling_survival_Hartzler_et_al$matrix_id),
+       function(x) rbind(cbind(diag(1,2), matrix(0,nrow = 2, ncol = 6)),
+         cbind(matrix(0,nrow=6,ncol=2), diag(x$var_seedling_survival))))
+
+# saveRDS(var_seedling_survival_Hartzler_et_al_raw_list, file="../2-Data/Clean/var-summer-seedling-survival-scenario2.RData")
 ```
 
 ```{r}

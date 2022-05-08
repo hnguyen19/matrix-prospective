@@ -26,7 +26,7 @@ SC_till_matrix <- lapply(SC_till,function(i){
 
 names(SC_till_matrix ) <- c("chisel","disc", "field_cultivator", "moldboard")
 
-# seeds in the top stratum moved downward
+# seeds in the top stratum moved downward, left multiplication
 SC_top_down <- lapply(SC_till_matrix ,"%*%",top_only)
 
 SC_top_down_pct <- lapply(SC_top_down ,"/",4800)
