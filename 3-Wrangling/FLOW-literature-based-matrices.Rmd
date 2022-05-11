@@ -99,7 +99,8 @@ phV2 <- c(rep(chisel_var[,2],6), rep(notill_var[,2],8), rep(moldboard_var[,2],4)
 
 var_post_harvest_tillage_df <- data_frame(phV1, phV2, matrix_id)
 
-var_post_harvest_tillage_list <- lapply(split(var_post_harvest_tillage_df, var_post_harvest_tillage_df$matrix_id),
+var_post_harvest_tillage_list <- lapply(split(var_post_harvest_tillage_df, 
+                                              var_post_harvest_tillage_df$matrix_id),
        function(x) matrix(c(x$phV1, x$phV2), byrow = FALSE, nrow=2)
 # saveRDS(var_post_harvest_tillage_list, file="../2-Data/Clean/var-post-harvest-tillage.RData")
 ```
@@ -219,7 +220,7 @@ relevant for the no till
 # After seed rain and post-harvest vertical redistribution
 #################### Scenario 1: Sosnoskie et al. 2013 -  No distinguishable cover crop effect
 # Assign 6 months of summer to corn and soybean, 5.5 months of summer to oat and 4.5 month of summer to alfalfa per the observation at Marsden that oat and alfalfa delayed waterhemp emergence.
-# By eye-balling, SE(top survial ) = 5% and SE(bottom survival) = 7%, so var_survival(top) = 0.025 and var_survival(bottom) = 0.049
+# By eye-balling, SE(top survival ) = 5% and SE(bottom survival) = 7%, so var_survival(top) = 0.025 and var_survival(bottom) = 0.049
  
 overwinter_Sosnoskie_13 <- read_csv("../2-Data/Raw/seed-survival-Sosnoskie-2013.csv", show_col_types = FALSE)
 
@@ -238,14 +239,14 @@ overwinter_mean_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13
                    matrix(rep(0,48), nrow = 6))))
                          
 
-# saveRDS(overwinter_mean_Sosnoskie_13_cohort_list, file="../2-Data/Clean/winter-mean-seed-survival-scenario1.RData")
+# saveRDS(overwinter_mean_Sosnoskie_13_cohort_list, file="../2-Data/Clean/mean-winter-seed-survival-scenario1.RData")
 
 ## Save overwinter survival variance 
 
 var_overwinter_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13_cohort, overwinter_Sosnoskie_13_cohort$matrix_id),
        function(x) diag(x$var_overwinter_survival,2))
 
-# saveRDS(var_overwinter_Sosnoskie_13_cohort_list , file="../2-Data/Clean/winter-var-seed-survival-scenario1.RData")
+# saveRDS(var_overwinter_Sosnoskie_13_cohort_list , file="../2-Data/Clean/var-winter-seed-survival-scenario1.RData")
 ```
 
 ```{r off-season-viability-matrix-Korres, echo=FALSE}
@@ -298,7 +299,7 @@ off_season_scenario3 <- overwinter_Steckel_07_cohort_list
 ### Prep-planting tillage matrices  
 The field cultivator mean and variance matrices were calculated using the same procedure as for chisel and moldboard ploughs.
 
-```{r pre-planting-tillage-matrix-new}
+```{r pre-planting-tillage-matrix-for-model}
 #consider dataframe instead of matrix
 
 field_cultivator_mean <- as.data.frame(matrix(c(0.594855305,	0.149901381,
@@ -377,14 +378,9 @@ pre_planting_tillage_list_for_model <- lapply(split(pre_planting_tillage_for_mod
 
 
 ```{r pre-planting-tillage-matrix-for-recruitment-prop}
-## Sequence
+## Sequence: copy from mean_pre_planting_tillage_df
 
-pre_planting_tillage_for_recruitment <- rbindlist(list(field_cultivator, field_cultivator , field_cultivator, field_cultivator,
-                                               field_cultivator, field_cultivator , field_cultivator, field_cultivator,
-                                               field_cultivator, field_cultivator , field_cultivator, field_cultivator,
-                                               field_cultivator, field_cultivator , field_cultivator, field_cultivator,
-                                               no_till, no_till),
-                              use.names = TRUE, fill = FALSE)
+pre_planting_tillage_for_recruitment <- mean_pre_planting_tillage_df
 
 # All phases received pre-planting field cultivator, except A4
 pre_planting_tillage_for_recruitment$from_Phase <- c(rep("C2_low", 2), rep("C2_conv",2),
@@ -407,6 +403,7 @@ pre_planting_tillage_for_recruitment$to_Phase <-c(rep("S2_low",2), rep("S2_conv"
                                                   rep("C3_low",2), rep("C3_conv",2),
                                                   rep("C4_low",2), rep("C4_conv",2))
 
+# The matrix_id is identified by the phase that the cycle is moving from 
 pre_planting_tillage_for_recruitment$matrix_id <- pre_planting_tillage_for_recruitment$from_Phase
 
 
@@ -417,6 +414,8 @@ pre_planting_tillage_list_for_recruitment <- lapply(split(pre_planting_tillage_f
                    matrix(rep(0,48), nrow = 6))))
 
 #saveRDS(pre_planting_tillage_list_for_recruitment, file="../2-Data/Raw/pre-planting-tillage-for-recruitment.RData")
+
+#This list is continued in Script FLOW-recruitment-matrix-organization
 ```
 
 ```{r total-prob-calculation}
@@ -588,13 +587,13 @@ seedling_survival_soybean_filled <- seedling_survival_soybean %>%
   mutate(const. = 95.4, # the constant variable in the y = a + bx + cx^2
          x_squared = days_after_planting^2,
          mean_seedling_survival = (const. + 0.058*days_after_planting - 0.034*(x_squared))/100 ,
-         number_of_plant = 60,
-         var_seedling_survival = mean_seedling_survival*(1-mean_seedling_survival)) 
+         number_of_plant = 60) 
 
 seedling_survival_soybean_filled$mean_seedling_survival<- pmax(seedling_survival_soybean_filled$mean_seedling_survival,0)
     
 seedling_survival_soybean_filled <- seedling_survival_soybean_filled %>%
-  mutate(var_seedling_survival = ifelse(mean_seedling_survival > 0, mean_seedling_survival*(1-mean_seedling_survival), 0))
+  mutate(var_seedling_survival = ifelse(mean_seedling_survival > 0,
+                                         mean_seedling_survival*(1-mean_seedling_survival)/number_of_plant, 0))
 
 seedling_survival_soybean_filled_select <- seedling_survival_soybean_filled%>%
   select(Crop_ID, Corn_weed_management, Cohort, mean_seedling_survival, var_seedling_survival, matrix_id)
