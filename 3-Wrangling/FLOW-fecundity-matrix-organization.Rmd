@@ -129,11 +129,12 @@ The calculation of fecundity (F) from 2019 aboveground mass (X) data is from [@n
 ```{r amata-fecundity-equation, include=FALSE}
 fecundity_eq <- read_csv("../2-Data/Raw/fecund_eq.csv")
 
+
 ### import 2019 biomass, Weight here is on the original scale 
 female_19 <- read_csv("../2-Data/Raw/female_19.csv") # 1365 entries, no entries for soybeans
 
 
-table(female_19$Plot, female_19$Crop_ID)
+# table(female_19$Plot, female_19$Crop_ID) returns no Plot number for soybeans because none of the waterhemp plants there survived
 #replace NA with 0, 0 will be corrected by log(Biomass + 0.0005) in the later step
 
 ### estimate 2019 fecundity 
@@ -141,13 +142,13 @@ female_19_est <- left_join(fecundity_eq, female_19,
                            by = c("Corn_weed_management", "Crop_ID" )) %>% #now 1371 entries, with 6 NA for soybeans 
   replace_na(list(Weight = 0)) 
 
-# table(female_19_est$Plot, female_19_est$Crop_ID) returns no Plot number for soybeans because none of them survived
+# table(female_19_est$Plot, female_19_est$Crop_ID) returns no Plot number for soybeans because none of the waterhemp plants there survived
 
-## check if any NA
-female_19_est_NA <- female_19_est %>% extract(!complete.cases(.), )
+## check if any NA:
+# female_19_est_NA <- female_19_est %>% tidyr::extract(!complete.cases(.), ) # doesn't work consistently
 
-## make a blank data frame with 2019 soybean plot designation for placeholders
-female_19_soy_blank <- expand.grid()
+female_19_est_NA <- female_19_est[!complete.cases(female_19_est),]
+
 
 
 # Seed = a * log(Weight) + b
@@ -181,8 +182,6 @@ female_19_est_quantile_summ <- female_19_est_individual_fecundity %>%
   mutate(var_Weight_cohort = var(Weight),
          var_Seed_log_cohort = (a^2)*var_Weight_cohort + var_b) 
 
-female_19_est_quantile_summ_NA <- female_19_est_quantile_summ %>%
-    extract(!complete.cases(.), )
 
 
 female_19_est_quantile_cohort <- female_19_est_quantile_summ %>%
@@ -197,12 +196,13 @@ table(female_19_est_quantile_summ$quantile_Weight, female_19_est_quantile_summ$C
 
 # Fill cohorts 2 until 6 in soybeans with zeros 
 
-female_19_seed_placeholder <- expand.grid(Crop_ID = c("S2", "S3", "S4"),
+female_19_soy_seed_placeholder <- expand.grid(Crop_ID = c("S2", "S3", "S4"),
             Corn_weed_management = c("conv","low"),
             quantile_Weight = c(2:6),
-            mean_Seed_cohort = 0)
+            mean_Seed_cohort = 0,
+            var_Seed_cohort = 0) #assuming var(0) = 0
 
-female_19_seed_placeholder$matrix_id <- paste(female_19_seed_placeholder$Crop_ID,
+female_19_soy_seed_placeholder$matrix_id <- paste(female_19_soy_seed_placeholder$Crop_ID,
                                           female_19_seed_placeholder$Corn_weed_management,
                                           sep = "_")
 
@@ -211,11 +211,14 @@ female_19_est_quantile_summ_expand <- rbind(female_19_est_quantile_summ, female_
 female_19_est_quantile_summ_expand_sorted <- female_19_est_quantile_summ_expand %>%
   arrange(matrix_id, desc(mean_Seed_cohort)) 
 
+##issue: only soybean rows are saved
+
+table(female_19_est_quantile_summ_expand_sorted$matrix_id )
 
 # Save 2019 estimated fecundity as a list
 mean_fecundity_19_list <- lapply(split(female_19_est_quantile_summ_expand_sorted, female_19_est_quantile_summ_expand_sorted$matrix_id),
        function(x) rbind(cbind(diag(1,2),
-                         rbind(matrix(c(x$mean_Seed_cohort,rep(0,6)), byrow = TRUE, nrow=2))),
+                         rbind(matrix(c(x$mean_Seed_cohort, rep(0,6)), byrow = TRUE, nrow=2))),
        matrix(rep(0,48), nrow = 6, byrow = TRUE))) 
 
 ## Save the 2019 fecundity matrices as a list 
