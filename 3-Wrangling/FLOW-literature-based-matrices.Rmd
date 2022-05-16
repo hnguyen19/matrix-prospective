@@ -63,14 +63,14 @@ notill_var <- diag(0,2)
 moldboard_mean <- matrix(c(0.017857143,	0.072961329,
 0.982142857,	0.927038671), byrow = TRUE, nrow = 2)
 
-moldboard_var <- matrix(c(5.5269e-05,	1.43463e-05,
-5.5269e-05,	1.43463e-05), byrow = TRUE, nrow = 2)
+moldboard_var <- matrix(c(5.5269e-05,	-1.43463e-05,
+-5.5269e-05,	1.43463e-05), byrow = TRUE, nrow = 2)
 
 chisel_mean <- matrix(c(0.589108911,	0.103123159,
 0.410891089,	0.896876841), byrow = TRUE, nrow = 2)
 
-chisel_var <- matrix(c(0.000599157,	5.45013e-05,
-0.000599157,	5.45013e-05), byrow = TRUE, nrow = 2)
+chisel_var <- matrix(c(0.000599157,	-5.45013e-05,
+-0.000599157,	5.45013e-05), byrow = TRUE, nrow = 2)
 
 
 phX1 <- c(rep(chisel_mean[,1],6), rep(notill_mean[,1],8), rep(moldboard_mean[,1],4)) 
@@ -101,7 +101,10 @@ var_post_harvest_tillage_df <- data_frame(phV1, phV2, matrix_id)
 
 var_post_harvest_tillage_list <- lapply(split(var_post_harvest_tillage_df, 
                                               var_post_harvest_tillage_df$matrix_id),
-       function(x) matrix(c(x$phV1, x$phV2), byrow = FALSE, nrow=2)
+       function(x) rbind(cbind(matrix(c(x$phV1, x$phV2), byrow = FALSE, nrow=2),
+                               matrix(rep(0,12), nrow = 2)),
+                         matrix(rep(0,48), nrow = 6)))
+
 # saveRDS(var_post_harvest_tillage_list, file="../2-Data/Clean/var-post-harvest-tillage.RData")
 ```
 
@@ -134,6 +137,7 @@ Each of the original 20 x 20 matrices was resized to 2 x 2 using the following s
 - Sum the first three elements of the bottom-up vector to have $T_{2,1}$ and the last sixteen elements to have $T_{2,2}$.
 
 ```{r post-harvest-tillage-matrix-old, include=FALSE}
+## remove later?
 
 ## Old matrices, when raw data wasn't available
 # Post-harvest tillage, imported from folder `Tillage-resized`
@@ -171,7 +175,6 @@ post_harvest_tillage_list <- lapply(split(post_harvest_tillage, post_harvest_til
                    matrix(rep(0,12), nrow = 2)),
                    matrix(rep(0,48), nrow = 6))))
 
-# saveRDS(post_harvest_tillage_list, file="../2-Data/Clean/post-harvest-tillage.RData")
 ```
 
 
@@ -234,9 +237,9 @@ overwinter_Sosnoskie_13_cohort <- overwinter_Sosnoskie_13 %>%
 ## Save overwinter survival mean
 
 overwinter_mean_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13_cohort, overwinter_Sosnoskie_13_cohort$matrix_id),
-       function(x)(rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
+       function(x) rbind(cbind(diag(x$Seed_overwinter_prop, 2), 
                          matrix(rep(0,12), nrow = 2)),
-                   matrix(rep(0,48), nrow = 6))))
+                   matrix(rep(0,48), nrow = 6)))
                          
 
 # saveRDS(overwinter_mean_Sosnoskie_13_cohort_list, file="../2-Data/Clean/mean-winter-seed-survival-scenario1.RData")
@@ -244,7 +247,9 @@ overwinter_mean_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13
 ## Save overwinter survival variance 
 
 var_overwinter_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13_cohort, overwinter_Sosnoskie_13_cohort$matrix_id),
-       function(x) diag(x$var_overwinter_survival,2))
+       function(x) rbind(cbind(diag(x$var_overwinter_survival,2), 
+                         matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6)))
 
 # saveRDS(var_overwinter_Sosnoskie_13_cohort_list , file="../2-Data/Clean/var-winter-seed-survival-scenario1.RData")
 ```
@@ -305,10 +310,10 @@ The field cultivator mean and variance matrices were calculated using the same p
 field_cultivator_mean <- as.data.frame(matrix(c(0.594855305,	0.149901381,
 0.405144695,	0.850098619), byrow = TRUE, nrow = 2))
 
-field_cultivator_var <- as.data.frame(matrix(c(0.000774928,	0.000125672,
-0.000774928,	0.000125672), byrow = TRUE, nrow = 2))
+field_cultivator_var <- as.data.frame(matrix(c(0.000774928,	-0.000125672,
+-0.000774928,	0.000125672), byrow = TRUE, nrow = 2))
 
-# expand a column each
+# Make a long dataframe of field cultivator and notill according to the crop id
 
 X1 = c(rep(field_cultivator_mean[,1],16), rep(notill_mean[,1],2))
 X2 = c(rep(field_cultivator_mean[,2],16), rep(notill_mean[,2],2))
@@ -326,9 +331,9 @@ mean_pre_planting_tillage_df <- data_frame(X1,X2, matrix_id)
 
 ## save mean list
 mean_pre_planting_tillage_list <- lapply(split(mean_pre_planting_tillage_df, mean_pre_planting_tillage_df$matrix_id),
-      function(x)(rbind(cbind(matrix(c(x$X1, x$X2), byrow = FALSE, nrow=2),
+      function(x) rbind(cbind(matrix(c(x$X1, x$X2), byrow = FALSE, nrow=2),
                    matrix(rep(0,12), nrow = 2)),
-                   matrix(rep(0,48), nrow = 6))))
+                   matrix(rep(0,48), nrow = 6)))
 
 #saveRDS(mean_pre_planting_tillage_list, file="../2-Data/Clean/mean-pre-planting-tillage.RData")
 
@@ -340,9 +345,11 @@ var_pre_planting_tillage_df <- data_frame(V1,V2, matrix_id)
 
 ## save mean list
 var_pre_planting_tillage_list <- lapply(split(var_pre_planting_tillage_df, var_pre_planting_tillage_df$matrix_id),
-      function(x) matrix(c(x$V1, x$V2), byrow = FALSE, nrow=2))
+      function(x) rbind(cbind(matrix(c(x$V1, x$V2), byrow = FALSE, nrow=2),
+                   matrix(rep(0,12), nrow = 2)),
+                   matrix(rep(0,48), nrow = 6)))
 
-#saveRDS(var_pre_planting_tillage_list, file="../2-Data/Clean/var-pre-planting-tillage.RData")
+# saveRDS(var_pre_planting_tillage_list, file="../2-Data/Clean/var-pre-planting-tillage.RData")
 ```
 
 ```{r pre-planting-tillage-matrix, include=FALSE}
@@ -383,25 +390,25 @@ pre_planting_tillage_list_for_model <- lapply(split(pre_planting_tillage_for_mod
 pre_planting_tillage_for_recruitment <- mean_pre_planting_tillage_df
 
 # All phases received pre-planting field cultivator, except A4
-pre_planting_tillage_for_recruitment$from_Phase <- c(rep("C2_low", 2), rep("C2_conv",2),
-                                    rep("C3_low", 2), rep("C3_conv",2),
-                                    rep("C4_low", 2), rep("C4_conv",2),
-                                    rep("S2_low", 2), rep("S2_conv",2),
-                                    rep("S3_low", 2), rep("S3_conv",2),
-                                    rep("S4_low", 2), rep("S4_conv",2),
-                                    rep("O4_low", 2), rep("O4_conv",2),
-                                    rep("O3_low", 2), rep("O3_conv",2),
-                                    rep("A4_low", 2), rep("A4_conv",2))
+pre_planting_tillage_for_recruitment$from_Phase <- c(rep("C2_low", 2), rep("C2_conv", 2),
+                                    rep("C3_low", 2), rep("C3_conv", 2),
+                                    rep("C4_low", 2), rep("C4_conv", 2),
+                                    rep("S2_low", 2), rep("S2_conv", 2),
+                                    rep("S3_low", 2), rep("S3_conv", 2),
+                                    rep("S4_low", 2), rep("S4_conv", 2),
+                                    rep("O4_low", 2), rep("O4_conv", 2),
+                                    rep("O3_low", 2), rep("O3_conv", 2),
+                                    rep("A4_low", 2), rep("A4_conv", 2))
 
-pre_planting_tillage_for_recruitment$to_Phase <-c(rep("S2_low",2), rep("S2_conv",2),
-                                                  rep("S3_low",2), rep("S3_conv",2),
-                                                  rep("S4_low",2), rep("S4_conv",2),
-                                                  rep("C2_low",2), rep("C2_conv",2),
-                                                  rep("O3_low",2), rep("O3_conv",2),
-                                                  rep("O4_low",2), rep("O4_conv",2),
-                                                  rep("A4_low",2), rep("A4_conv",2),
-                                                  rep("C3_low",2), rep("C3_conv",2),
-                                                  rep("C4_low",2), rep("C4_conv",2))
+pre_planting_tillage_for_recruitment$to_Phase <-c(rep("S2_low", 2), rep("S2_conv", 2),
+                                                  rep("S3_low", 2), rep("S3_conv", 2),
+                                                  rep("S4_low", 2), rep("S4_conv", 2),
+                                                  rep("C2_low", 2), rep("C2_conv", 2),
+                                                  rep("O3_low", 2), rep("O3_conv", 2),
+                                                  rep("O4_low", 2), rep("O4_conv", 2),
+                                                  rep("A4_low", 2), rep("A4_conv", 2),
+                                                  rep("C3_low", 2), rep("C3_conv", 2),
+                                                  rep("C4_low", 2), rep("C4_conv", 2))
 
 # The matrix_id is identified by the phase that the cycle is moving from 
 pre_planting_tillage_for_recruitment$matrix_id <- pre_planting_tillage_for_recruitment$from_Phase
@@ -409,11 +416,11 @@ pre_planting_tillage_for_recruitment$matrix_id <- pre_planting_tillage_for_recru
 
 
 pre_planting_tillage_list_for_recruitment <- lapply(split(pre_planting_tillage_for_recruitment, pre_planting_tillage_for_recruitment$matrix_id),
-       function(x)(rbind(cbind(matrix(c(x$X1, x$X2), byrow = FALSE, nrow=2),
+       function(x) rbind(cbind(matrix(c(x$X1, x$X2), byrow = FALSE, nrow = 2),
                    matrix(rep(0,12), nrow = 2)),
-                   matrix(rep(0,48), nrow = 6))))
+                   matrix(rep(0,48), nrow = 6)))
 
-#saveRDS(pre_planting_tillage_list_for_recruitment, file="../2-Data/Raw/pre-planting-tillage-for-recruitment.RData")
+# saveRDS(pre_planting_tillage_list_for_recruitment, file="../2-Data/Raw/pre-planting-tillage-for-recruitment.RData")
 
 #This list is continued in Script FLOW-recruitment-matrix-organization
 ```
@@ -464,7 +471,7 @@ var_summer_seed_survival_Sosnoskie_13_cohort_list  <- lapply(split(summer_seed_s
 
 ## Save summer seed survival variance
 
-#saveRDS(var_summer_seed_survival_Sosnoskie_13_cohort_list , file="../2-Data/Clean/var-summer-seed-survival-scenario1.RData")
+# saveRDS(var_summer_seed_survival_Sosnoskie_13_cohort_list , file="../2-Data/Clean/var-summer-seed-survival-scenario1.RData")
 
 ####################### Scenario 2: Buhler and Harzler 2001  findings are actually survival after one year. These numbers might be inflated if an overwinter matrix is already in place. This matrix might serve as a combined matrix of seed survival for the whole year. 
 summer_seed_survival_scenario2 <- expand.grid(Crop_ID = c("C2","S2",
@@ -480,8 +487,8 @@ summer_seed_survival_scenario2_filled <- summer_seed_survival_scenario2 %>%
          retrieved_viability = 0.8,
          number_retrieved = retrieved_prop*2000,
          number_viable =  retrieved_viability*number_retrieved,
-         var_retrieved = number_buried*retrieved_prop*(1-retrieved_prop),
-         var_viable = number_viable*retrieved_viability*(1-retrieved_viability),
+         var_retrieved = retrieved_prop*(1-retrieved_prop)/number_buried,
+         var_viable = retrieved_viability*(1-retrieved_viability)/number_viable,
          original_survival_prop = retrieved_prop*retrieved_viability,
          var_original_survival = var_viable*(number_retrieved^2) + var_retrieved*(number_viable^2),
          matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
@@ -573,7 +580,7 @@ seedling_survival_soybean <- expand.grid(Crop_ID = c("S2","S3","S4"),
                                     Cohort = c(1:6))
 
 
-View(seedling_survival_soybean)
+#View(seedling_survival_soybean)
 
 
 seedling_survival_soybean_filled <- seedling_survival_soybean %>%
@@ -638,7 +645,7 @@ seedling_survival_Hartzler_et_al <- rbind(seedling_survival_corn_filled,
                                           seedling_survival_oat_filled,
                                           seedling_survival_alfalfa_filled)
 
-View(seedling_survival_Hartzler_et_al)
+# View(seedling_survival_Hartzler_et_al)
 
 ## need to check top 2x2
 mean_seedling_survival_Hartzler_et_al_raw_list <- lapply(split(seedling_survival_Hartzler_et_al, seedling_survival_Hartzler_et_al$matrix_id),

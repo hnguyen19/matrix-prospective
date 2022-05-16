@@ -197,5 +197,5 @@ var_covar_emerge_prop_20_list <-  purrr::map2(var_emerge_prop_matrix_list,
                                          covar_emerge_prop_matrix_list_m, `+`)
 
 ### write the emergence proportion var-covar matrix
- saveRDS(var_covar_emerge_prop_20_list , file="../2-Data/Clean/var-emergence-prop-scenario1.RData")
+# saveRDS(var_covar_emerge_prop_20_list , file="../2-Data/Clean/var-emergence-prop-scenario1.RData")
 ```

@@ -130,14 +130,25 @@ The calculation of fecundity (F) from 2019 aboveground mass (X) data is from [@n
 fecundity_eq <- read_csv("../2-Data/Raw/fecund_eq.csv")
 
 ### import 2019 biomass, Weight here is on the original scale 
-female_19 <- read_csv("../2-Data/Raw/female_19.csv") # 1365 entries
+female_19 <- read_csv("../2-Data/Raw/female_19.csv") # 1365 entries, no entries for soybeans
 
+
+table(female_19$Plot, female_19$Crop_ID)
 #replace NA with 0, 0 will be corrected by log(Biomass + 0.0005) in the later step
 
 ### estimate 2019 fecundity 
 female_19_est <- left_join(fecundity_eq, female_19, 
                            by = c("Corn_weed_management", "Crop_ID" )) %>% #now 1371 entries, with 6 NA for soybeans 
   replace_na(list(Weight = 0)) 
+
+# table(female_19_est$Plot, female_19_est$Crop_ID) returns no Plot number for soybeans because none of them survived
+
+## check if any NA
+female_19_est_NA <- female_19_est %>% extract(!complete.cases(.), )
+
+## make a blank data frame with 2019 soybean plot designation for placeholders
+female_19_soy_blank <- expand.grid()
+
 
 # Seed = a * log(Weight) + b
 # a = log(Biomass + 0.005)_estimate /// b = (Intercept)_estimate
@@ -165,10 +176,16 @@ female_19_est_individual_fecundity <-  female_19_est %>%
 female_19_est_quantile_summ <- female_19_est_individual_fecundity %>% 
   group_by(Corn_weed_management, Crop_ID) %>% # pool all plants from the same CropID x Corn weed mgt
   mutate(quantile_Weight = ntile(Weight , 6),
-         quantile_Seed = ntile(Seed, 6)) %>%
-  group_by(quantile_Weight, Corn_weed_management, Crop_ID) %>%
- mutate( var_Weight_cohort = var(Weight),
-           var_Seed_log_cohort = (a^2)*var_Weight_cohort + var_b) %>%
+         quantile_Seed = ntile(Seed, 6))  %>%
+    group_by(quantile_Weight, Corn_weed_management, Crop_ID) %>%
+  mutate(var_Weight_cohort = var(Weight),
+         var_Seed_log_cohort = (a^2)*var_Weight_cohort + var_b) 
+
+female_19_est_quantile_summ_NA <- female_19_est_quantile_summ %>%
+    extract(!complete.cases(.), )
+
+
+female_19_est_quantile_cohort <- female_19_est_quantile_summ %>%
    group_by(quantile_Weight, Corn_weed_management, Crop_ID) %>%
   summarize(mean_Seed_cohort = mean(Seed),
             var_Seed_log_cohort = mean(var_Seed_log_cohort),
@@ -191,21 +208,25 @@ female_19_seed_placeholder$matrix_id <- paste(female_19_seed_placeholder$Crop_ID
 
 female_19_est_quantile_summ_expand <- rbind(female_19_est_quantile_summ, female_19_seed_placeholder)
 
+female_19_est_quantile_summ_expand_sorted <- female_19_est_quantile_summ_expand %>%
+  arrange(matrix_id, desc(mean_Seed_cohort)) 
+
 
 # Save 2019 estimated fecundity as a list
-fecundity_mean_19_list <-  lapply(split(female_19_est_quantile_summ_expand, female_19_est_quantile_summ_expand$matrix_id),
-       function(x)(rbind(cbind(diag(1,2),
+mean_fecundity_19_list <- lapply(split(female_19_est_quantile_summ_expand_sorted, female_19_est_quantile_summ_expand_sorted$matrix_id),
+       function(x) rbind(cbind(diag(1,2),
                          rbind(matrix(c(x$mean_Seed_cohort,rep(0,6)), byrow = TRUE, nrow=2))),
-       matrix(rep(0,48), nrow = 6, byrow = TRUE))))
+       matrix(rep(0,48), nrow = 6, byrow = TRUE))) 
 
 ## Save the 2019 fecundity matrices as a list 
-# saveRDS(fecundity_mean_19_list, file="../2-Data/Clean/fecundity-mean-19-cohort.RData")
+# saveRDS(mean_fecundity_19_list, file="../2-Data/Clean/mean-fecundity-19-cohort.RData")
 
 
 ## 2019 cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
-fecundity_var_19_list  <-  lapply(split(female_19_est_quantile_summ_expand, female_19_est_quantile_summ_expand$matrix_id),
-       function(x) diag(x$var_Seed_cohort,6))
+var_fecundity_19_list <- lapply(split(female_19_est_quantile_summ_expand_sorted, female_19_est_quantile_summ_expand_sorted$matrix_id),
+       function(x) rbind(cbind(diag(1,2),matrix(0,nrow=2,ncol=6)),
+                         cbind(matrix(0,nrow=6,ncol=2),diag(x$var_Seed_cohort,6))))
 
-# saveRDS(fecundity_var_19_list, file="../2-Data/Clean/fecundity-var-19-cohort.RData")
+# saveRDS(var_fecundity_19_list, file="../2-Data/Clean/var-fecundity-19-cohort.RData")
 
 ```
