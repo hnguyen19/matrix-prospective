@@ -126,38 +126,42 @@ scenario1_rotation_wise_eigen <- scenario1_rotation_wise_projection %>%
 
 ```{r scenario1-rotation-lambda, echo=FALSE}
 scenario1_rotation_wise_lambda <- scenario1_rotation_wise_eigen %>%
-  map(., ~{head(.,1)})
+  map(., ~{head(.,1)}) 
+
+# make a df to admend to the next chunk's df 
+
+scenario1_rotation_wise_lambda_df <- scenario1_rotation_wise_lambda %>%
+   plyr::ldply(., data.frame)
 ```
 
 Using 2019 fecundity rates, waterhemp populations in all crop identity is decreasing in all rotation, fastest in the 3-year rotation (Figures \@ref(fig:scenario1-lambda-annualized)). 
-```{r scenario1-lambda-annualized, echo=FALSE, fig.cap= "Annualized waterhemp population growth rate using 2019 fecundity rate."}
-scenario1_rotation_wise_lambda_2yr <- rapply(scenario1_rotation_wise_lambda[1:2],
+```{r scenario1-lambda-annualized-df, echo=FALSE}
+scenario1_annualized_lambda_2yr <- rapply(scenario1_rotation_wise_lambda[1:2],
                                              function(x){nthroot(x,2)}, how = "list")    
 
-scenario1_rotation_wise_lambda_3yr <- rapply(scenario1_rotation_wise_lambda[3:4],
+scenario1_annualized_lambda_3yr <- rapply(scenario1_rotation_wise_lambda[3:4],
                                              function(x){nthroot(x,3)}, how = "list")
 
-scenario1_rotation_wise_lambda_4yr <- rapply(scenario1_rotation_wise_lambda[5:6],
+scenario1_annualized_lambda_4yr <- rapply(scenario1_rotation_wise_lambda[5:6],
                                              function(x){nthroot(x,4)}, how = "list")
    
-scenario1_lambda_df <- tibble::lst(scenario1_rotation_wise_lambda_2yr,
-                                   scenario1_rotation_wise_lambda_3yr,
-                                   scenario1_rotation_wise_lambda_4yr)%>%
+scenario1_annualized_lambda_df <- tibble::lst(scenario1_annualized_lambda_2yr,
+                                   scenario1_annualized_lambda_3yr,
+                                   scenario1_annualized_lambda_4yr) %>%
    plyr::ldply(., data.frame) %>% 
   rename(conv = "lambda1", low = "lambda1.1")
 
-scenario1_lambda_df_long <- scenario1_lambda_df %>%
+scenario1_annualized_lambda_df_long <- scenario1_annualized_lambda_df %>%
   pivot_longer(!.id, names_to = "Corn_weed_management", values_to = "annualized_lambda") 
-  
-x_labs <- c("2-year", "3-year", "4-year")
 
-ggplot(scenario1_lambda_df_long, aes(y = annualized_lambda, x = .id , fill = Corn_weed_management)) + 
-  geom_bar(stat = "identity", position = "dodge") +
-  ylab("Annualized population growth rate with 2019 fecundity") +
-  xlab("Rotation") +
-  scale_x_discrete(labels= x_labs) +
-  theme_bw()
+View(scenario1_annualized_lambda_df_long)
+
+## add the rotation-wise lambdas to the annualized lambdas 
+scenario1_annualized_lambda_df_long$rot_wise_lambda <-  scenario1_rotation_wise_lambda_df$lambda1
+
+
 ```
+
 
 
 
@@ -501,10 +505,10 @@ var_2yr_low_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
 ```
 
 ```{r elasticity-2yr}
-# lambda at scenario1_rotation_wise_lambda 
-lambda_2yr_conv <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_2yr_conv$lambda1 
+# lambda atscenario1_annualized_lambda_df_long$annualized_lambd
+lambda_2yr_conv <-scenario1_annualized_lambda_df_long$annualized_lambda[1]
 
-lambda_2yr_low <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_2yr_low$lambda1 
+lambda_2yr_low <-scenario1_annualized_lambda_df_long$annualized_lambda[2]
 # Elasticity contribution left: check if all_periods_2yr_conv_chain is the appropriate element 
 # The right-most matrix of all_periods_2yr_conv_chain is C2_spring_tillage
 # why is the order of "all_periods_2yr_conv_chain" and "sens_contribution_2yr" opposite?
@@ -677,9 +681,9 @@ var_3yr_low_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
 
 ```{r elasticity-3yr}
 # lambda at scenario1_rotation_wise_lambda 
-lambda_3yr_conv <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_3yr_conv$lambda1 
+lambda_3yr_conv <- scenario1_annualized_lambda_df_long$annualized_lambda[3]
 
-lambda_3yr_low <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_3yr_low$lambda1 
+lambda_3yr_low <- scenario1_annualized_lambda_df_long$annualized_lambda[4]
 
 
 # Elasticity contribution left component: b_hij_3/lambda,
@@ -856,9 +860,9 @@ var_4yr_low_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
 
 ## NEED NEW NAMES FOR ALL THE LIST
 # lambda at scenario1_rotation_wise_lambda 
-lambda_4yr_conv <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_4yr_conv$lambda1 
+lambda_4yr_conv <-scenario1_annualized_lambda_df_long$annualized_lambda[5]
 
-lambda_4yr_low <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_4yr_low$lambda1 
+lambda_4yr_low <-scenario1_annualized_lambda_df_long$annualized_lambda[6]
 # Elasticity contribution left: check if all_periods_4yr_conv_chain is the appropriate element 
 # The right-most matrix of all_periods_4yr_conv_chain is C4_spring_tillage
 # why is the order of "all_periods_4yr_conv_chain" and "sens_contribution_4yr" opposite?
@@ -877,4 +881,20 @@ elas_contribution_4yr_conv <- Map(\(x, y) Reduce(`%*%`, list(x, y)), A4_conv_ela
 
 ```
 
-Variance of annualized population growth rate is calculated with $Var(X^n) = E(X^{2n}) - E(X^n)^2$
+Variance of annualized population growth rate is calculated with Taylor series expansion on the relevant moment <https://en.wikipedia.org/wiki/Taylor_expansions_for_the_moments_of_functions_of_random_variables> .
+
+```{r scenario1-lambda-annualized, echo=FALSE, fig.cap= "Annualized waterhemp population growth rate using 2019 fecundity rate."}
+# move behind variance calculation
+scenario1_annualized_lambda_and_var <- scenario1_annualized_lambda_df_long %>%
+  mutate(squared_exp_annualized_lambda = annualized_lambda^2)
+
+#View(scenario1_annualized_lambda_and_var)
+x_labs <- c("2-year", "3-year", "4-year")
+
+ggplot(scenario1_annualized_lambda_and_var, aes(y = annualized_lambda, x = .id , fill = Corn_weed_management)) + 
+  geom_bar(stat = "identity", position = "dodge") +
+  ylab("Annualized population growth rate with 2019 fecundity") +
+  xlab("Rotation") +
+  scale_x_discrete(labels= x_labs) +
+  theme_bw()
+```
