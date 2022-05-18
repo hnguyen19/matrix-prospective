@@ -311,7 +311,7 @@ In the soybean phase of the 2-year rotation, emergence minimally contributed to 
 
 In 2019, as $\lambda$'s were under 1 for all treatments, fecundity did not contribute substantially to $\lambda$ changes. 
 
-```{r S-B-spring-tillage-contribution-2yr, fig.cap="Contribution of each entry element in the spring tillage sub-annual matrix to lambda."}
+```{r S-B-spring-tillage-contribution-2yr, fig.cap="Contribution of each entry element in the spring tillage sub-annual matrix to lambda.", include=FALSE}
 ## subletting removes names
 S_B_contribution_2yr_spring_tillage <- S_B_contribution_2yr[c("C2_mean_spring_tillage_contribution", "S2_mean_spring_tillage_contribution")]
 
@@ -335,7 +335,7 @@ reshape2::melt(S_B_contribution_2yr_spring_tillage) %>%
   theme(legend.position="top")
 ```
 
-```{r S-B-emerge-contribution-2yr, fig.cap="Contribution of each entry element in the emergence sub-annual matrix to lambda."}
+```{r S-B-emerge-contribution-2yr, fig.cap="Contribution of each entry element in the emergence sub-annual matrix to lambda.", include=FALSE}
 ## subletting removes names
 S_B_contribution_2yr_emerge <- S_B_contribution_2yr[c("C2_mean_emergence_scenario1_contribution", "S2_mean_emergence_scenario1_contribution")]
 
@@ -359,7 +359,7 @@ reshape2::melt(S_B_contribution_2yr_emerge) %>%
   theme(legend.position="top")
 ```
 
-```{r S-B-summer-survival-contribution-2yr, fig.cap="Contribution of each entry element in the emergence sub-annual matrix to lambda."}
+```{r S-B-summer-survival-contribution-2yr, fig.cap="Contribution of each entry element in the emergence sub-annual matrix to lambda.", include=FALSE}
 ## subletting removes names
 S_B_contribution_2yr_summer_survival <- S_B_contribution_2yr[c("C2_mean_summer_survival_scenario1_contribution", "S2_mean_summer_survival_scenario1_contribution")]
 
@@ -383,7 +383,7 @@ reshape2::melt(S_B_contribution_2yr_summer_survival) %>%
   theme(legend.position="top")
 ```
 
-```{r S-B-post-harvest-contribution-2yr, fig.cap="Contribution of each entry element in the post harvest tillage sub-annual matrix to lambda."}
+```{r S-B-post-harvest-contribution-2yr, fig.cap="Contribution of each entry element in the post harvest tillage sub-annual matrix to lambda.", include = FALSE}
 S_B_contribution_2yr_post_harvest_tillage <- S_B_contribution_2yr[c("C2_mean_post_harvest_tillage_contribution", "S2_mean_post_harvest_tillage_contribution")]
 
 # https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
@@ -407,7 +407,7 @@ reshape2::melt(S_B_contribution_2yr_post_harvest_tillage) %>%
 
 ```
 
-```{r S-B-overwinter-contribution-2yr, fig.cap="Contribution of each entry element in the overwinter sub-annual matrix to lambda."}
+```{r S-B-overwinter-contribution-2yr, fig.cap="Contribution of each entry element in the overwinter sub-annual matrix to lambda.", include=FALSE}
 ## subletting removes names
 S_B_contribution_2yr_overwinter <- S_B_contribution_2yr[c("C2_mean_overwinter_scenario1_contribution", "S2_mean_overwinter_scenario1_contribution")]
 
@@ -461,10 +461,13 @@ var_scenario1_projection_2yr_low <- var_scenario1_projection_by_matrix_id %>%
 ## Transpose the 2yr var list
 var_scenario1_projection_2yr_conv_transpose <- purrr::transpose(var_scenario1_projection_2yr_conv)
 
+var_scenario1_projection_2yr_low_transpose <- purrr::transpose(var_scenario1_projection_2yr_low)
+
 ## Remove nesting factor of the var list
 
 var_scenario1_projection_2yr_conv_unlist <- unlist(var_scenario1_projection_2yr_conv_transpose, recursive = FALSE)
 
+var_scenario1_projection_2yr_low_unlist <- unlist(var_scenario1_projection_2yr_low_transpose, recursive = FALSE)
 
 ## Keep the first column in the S_B list
 
@@ -476,16 +479,24 @@ S_B_contribution_2yr_first_transposed_each <- lapply(S_B_contribution_2yr_first,
 
 ## List t(S_B), V, and S_B in a nested list 
 
-var_elements_2yr_lambda <- tibble::lst(S_B_contribution_2yr_first_transposed_each,
+var_elements_2yr_lambda_list <- tibble::lst(S_B_contribution_2yr_first_transposed_each,
                                var_scenario1_projection_2yr_conv_unlist,
                                S_B_contribution_2yr_first)
 
+View(var_elements_2yr_lambda_list)
+
 ## Multiply t(S_B), V, and S_B 
 
-var_elements_2yr_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
+var_2yr_conv_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
                       list(x, y, z)),
     S_B_contribution_2yr_first_transposed_each,
     var_scenario1_projection_2yr_conv_unlist,
+    S_B_contribution_2yr_first)
+
+var_2yr_low_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
+                      list(x, y, z)),
+    S_B_contribution_2yr_first_transposed_each,
+    var_scenario1_projection_2yr_low_unlist,
     S_B_contribution_2yr_first)
 ```
 
@@ -602,41 +613,91 @@ D3_contribution <- lst(D3_conv_contribution, D3_low_contribution)
 
 D3_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), D3_contribution), '/', length(D3_contribution))
 
-contribution_3yr <- purrr::map2(D3_avg_contribution, A3_avg_sens, `%*%`)
+S_B_contribution_3yr <- purrr::map2(D3_avg_contribution, A3_avg_sens, `%*%`)
 
 # remove "conv" in all names
-contribution_3yr_raw_names <- names( contribution_3yr )
+contribution_3yr_raw_names <- names(S_B_contribution_3yr )
 
 contribution_3yr_names <- gsub('conv.', '', contribution_3yr_raw_names)
 
-names(contribution_3yr) <- contribution_3yr_names
+names(S_B_contribution_3yr) <- contribution_3yr_names
 ```
 
-```{r elasticity-2yr}
+```{r var-lambda-3yr}
+## The list of S_B for each subannual matrix in the 2-year rotation is in S_B_contribution_2yr
 
+## List Variance of each subannual matrix in the 2-year rotation
+var_scenario1_projection_3yr_conv <- var_scenario1_projection_by_matrix_id %>%
+  map(., ~{.[c(5, 15, 9)]}) # arranged by sequence C - S - O
+
+var_scenario1_projection_3yr_low <- var_scenario1_projection_by_matrix_id %>%
+  map(., ~{.[c(6, 16, 10)]})
+
+## Transpose the 3yr var list
+var_scenario1_projection_3yr_conv_transpose <- purrr::transpose(var_scenario1_projection_3yr_conv)
+
+var_scenario1_projection_3yr_low_transpose <- purrr::transpose(var_scenario1_projection_3yr_low)
+
+## Remove nesting factor of the var list
+
+var_scenario1_projection_3yr_conv_unlist <- unlist(var_scenario1_projection_3yr_conv_transpose, recursive = FALSE)
+
+var_scenario1_projection_3yr_low_unlist <- unlist(var_scenario1_projection_3yr_low_transpose, recursive = FALSE)
+
+## Keep the first column in the S_B list
+
+S_B_contribution_3yr_first <- lapply(S_B_contribution_3yr, function(x) x[,1])
+  
+
+## Transpose of each S_B_first_col matrix, named _transposed_each to distinguish with transposing the whole list
+S_B_contribution_3yr_first_transposed_each <- lapply(S_B_contribution_3yr_first, function(x) t(x))
+
+## List t(S_B), V, and S_B in a nested list 
+
+var_elements_3yr_lambda_list <- tibble::lst(S_B_contribution_3yr_first_transposed_each,
+                               var_scenario1_projection_3yr_conv_unlist,
+                               S_B_contribution_3yr_first)
+
+# View(var_elements_3yr_lambda_list)
+
+## Multiply t(S_B), V, and S_B 
+
+var_3yr_conv_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
+                      list(x, y, z)),
+    S_B_contribution_3yr_first_transposed_each,
+    var_scenario1_projection_3yr_conv_unlist,
+    S_B_contribution_3yr_first)
+
+var_3yr_low_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
+                      list(x, y, z)),
+    S_B_contribution_3yr_first_transposed_each,
+    var_scenario1_projection_3yr_low_unlist,
+    S_B_contribution_3yr_first)
+```
+
+```{r elasticity-3yr}
 # lambda at scenario1_rotation_wise_lambda 
-lambda_2yr_conv <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_2yr_conv$lambda1 
+lambda_3yr_conv <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_3yr_conv$lambda1 
 
-lambda_2yr_low <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_2yr_low$lambda1 
-# Elasticity contribution left: check if all_periods_2yr_conv_chain is the appropriate element 
-# The right-most matrix of all_periods_2yr_conv_chain is C2_spring_tillage
-# why is the order of "all_periods_2yr_conv_chain" and "sens_contribution_2yr" opposite?
+lambda_3yr_low <- scenario1_rotation_wise_lambda$scenario1_rotation_wise_3yr_low$lambda1 
 
-# Elasticity contribution left component: b_hij_2/lambda, or _3, _4 in the later chunks 
-b_hij_2_over_lambda_conv <-  all_periods_2yr_conv_chain %>%
-  map(., ~{./lambda_2yr_conv})
 
-b_hij_2_over_lambda_low <-  all_periods_2yr_low_chain %>%
-  map(., ~{./lambda_2yr_low})
+# Elasticity contribution left component: b_hij_3/lambda,
+b_hij_3_over_lambda_conv <-  all_periods_3yr_conv_chain %>%
+  map(., ~{./lambda_3yr_conv})
+
+b_hij_3_over_lambda_low <-  all_periods_3yr_low_chain %>%
+  map(., ~{./lambda_3yr_low})
 
 # Elasticity contribution right component: S_B's 
 
 # Multiply the left and right components 
-E_B_contribution_2yr_conv <- Map(\(x, y) Reduce(`%*%`, list(x, y)), b_hij_2_over_lambda_conv, S_B_contribution_2yr)
+E_B_contribution_3yr_conv <- Map(\(x, y) Reduce(`%*%`, list(x, y)), b_hij_3_over_lambda_conv, S_B_contribution_3yr)
 
 
-E_B_contribution_2yr_low <- Map(\(x, y) Reduce(`%*%`, list(x, y)), b_hij_2_over_lambda_low, S_B_contribution_2yr)
+E_B_contribution_3yr_low <- Map(\(x, y) Reduce(`%*%`, list(x, y)), b_hij_3_over_lambda_low, S_B_contribution_3yr)
 ```
+
 
 
 ```{r circ-4yr-arrange}
@@ -729,13 +790,65 @@ D4_avg_contribution <- lapply(Reduce(\(...)Map('+', ...), D4_contribution), '/',
 D4_avg_contribution_transposed <- D4_avg_contribution %>% map(.,~{t(.)})
 
 ## contribution of each sub-annual matrix to lambda's sensitivities, matrix S_B's                                     
-sens_contribution_4yr <- purrr::map2(D4_avg_contribution_transposed, A4_avg_sens, `%*%`)
+S_B_contribution_4yr <- purrr::map2(D4_avg_contribution_transposed, A4_avg_sens, `%*%`)
 # remove "conv" in all names
-sens_contribution_4yr_raw_names <- names( sens_contribution_4yr )
+S_B_contribution_4yr_raw_names <- names( S_B_contribution_4yr )
 
-sens_contribution_4yr_names <- gsub('conv.', '', sens_contribution_4yr_raw_names)
+S_B_contribution_4yr_names <- gsub('conv.', '', S_B_contribution_4yr_raw_names)
 
-names(sens_contribution_4yr) <- sens_contribution_4yr_names
+names(S_B_contribution_4yr) <- S_B_contribution_4yr_names
+```
+
+```{r var-lambda-4yr}
+## The list of S_B for each subannual matrix in the 4-year rotation is in S_B_contribution_2yr
+
+## List Variance of each subannual matrix in the 4-year rotation
+var_scenario1_projection_4yr_conv <- var_scenario1_projection_by_matrix_id %>%
+  map(., ~{.[c(7, 17, 11, 1)]}) # arranged by sequence C - S - O - A
+
+var_scenario1_projection_4yr_low <- var_scenario1_projection_by_matrix_id %>%
+  map(., ~{.[c(8, 18, 12, 2)]})
+
+## Transpose the 4yr var list
+var_scenario1_projection_4yr_conv_transpose <- purrr::transpose(var_scenario1_projection_4yr_conv)
+
+var_scenario1_projection_4yr_low_transpose <- purrr::transpose(var_scenario1_projection_4yr_low)
+
+## Remove nesting factor of the var list
+
+var_scenario1_projection_4yr_conv_unlist <- unlist(var_scenario1_projection_4yr_conv_transpose, recursive = FALSE)
+
+var_scenario1_projection_4yr_low_unlist <- unlist(var_scenario1_projection_4yr_low_transpose, recursive = FALSE)
+
+## Keep the first column in the S_B list
+
+S_B_contribution_4yr_first <- lapply(S_B_contribution_4yr, function(x) x[,1])
+  
+
+## Transpose of each S_B_first_col matrix, named _transposed_each to distinguish with transposing the whole list
+S_B_contribution_4yr_first_transposed_each <- lapply(S_B_contribution_4yr_first, function(x) t(x))
+
+## List t(S_B), V, and S_B in a nested list 
+
+var_elements_4yr_lambda_list <- tibble::lst(S_B_contribution_4yr_first_transposed_each,
+                               var_scenario1_projection_4yr_conv_unlist,
+                               S_B_contribution_4yr_first)
+
+# View(var_elements_4yr_lambda_list)
+
+## Multiply t(S_B), V, and S_B 
+
+var_4yr_conv_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
+                      list(x, y, z)),
+    S_B_contribution_4yr_first_transposed_each,
+    var_scenario1_projection_4yr_conv_unlist,
+    S_B_contribution_4yr_first)
+
+var_4yr_low_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
+                      list(x, y, z)),
+    S_B_contribution_4yr_first_transposed_each,
+    var_scenario1_projection_4yr_low_unlist,
+    S_B_contribution_4yr_first)
 ```
 
 ```{r elasticity-4yr}
@@ -760,6 +873,8 @@ A4_low_elas_left <-  all_periods_4yr_low_chain %>%
 # Elasticity contribution right component: S_B's sens_contribution_4yr
 
 # Elasticity
-elas_contribution_4yr_conv <- Map(\(x, y) Reduce(`%*%`, list(x, y)), A4_conv_elas_left, sens_contribution_4yr)
+elas_contribution_4yr_conv <- Map(\(x, y) Reduce(`%*%`, list(x, y)), A4_conv_elas_left, S_B_contribution_4yr)
 
 ```
+
+

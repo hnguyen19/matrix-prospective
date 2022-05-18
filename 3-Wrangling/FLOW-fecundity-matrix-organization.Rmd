@@ -9,6 +9,7 @@ library(readr)
 library(emmeans)
 library(here)
 library(nlme)
+library(data.table)
 ```
 
 ```{r fecund-18, include=FALSE}
@@ -131,31 +132,138 @@ fecundity_eq <- read_csv("../2-Data/Raw/fecund_eq.csv")
 
 
 ### import 2019 biomass, Weight here is on the original scale 
-female_19 <- read_csv("../2-Data/Raw/female_19.csv") # 1365 entries, no entries for soybeans
+female_19 <- read_csv("../2-Data/Raw/female_19.csv") # 1365 entries, no entries for soybeans because of high herbicide efficacy 
+
+table(female_19$Cohort, female_19$Crop_ID, female_19$Corn_weed_management)
+# Need to add: 
+# A4: cohort 6
+# C2: cohorts 4, 5, 6
+# C3: cohorts 5, 6
+# C4: cohorts 5, 6
+# O3: cohort 5
+# S2, S3, S4: cohorts 1 through 6
 
 
-# table(female_19$Plot, female_19$Crop_ID) returns no Plot number for soybeans because none of the waterhemp plants there survived
 #replace NA with 0, 0 will be corrected by log(Biomass + 0.0005) in the later step
 
+female_19_A4_seed_placeholder <- expand.grid(Crop_ID = "A4",
+            Corn_weed_management = c("conv","low"),
+            Crop = "alfalfa",
+            Year = 2019,
+            Cohort = 6,
+            Plot = c(17, 22, 39, 41)) 
+
+female_19_O3_seed_placeholder <- expand.grid(Crop_ID = "O3",
+            Corn_weed_management = c("low", "conv"),
+            Crop = "oat",
+            Year = 2019,
+            Cohort = c(3, 5, 6),
+            Plot = c(11, 23, 38, 48)) 
+
+female_19_O4_seed_placeholder <- expand.grid(Crop_ID = "O4",
+            Corn_weed_management = "low",
+            Crop = "oat",
+            Year = 2019,
+            Cohort = 6,
+            Plot = c(14, 29, 32, 49)) 
+
+female_19_C2_seed_placeholder <- expand.grid(Crop_ID = "C2",
+            Corn_weed_management = c("conv","low"),
+            Crop = "corn",
+            Year = 2019,
+            Cohort = c(3:6),
+            Plot = c(19, 27, 35, 45)) 
+
+
+female_19_C3_seed_placeholder <- expand.grid(Crop_ID = "C3",
+            Corn_weed_management = c("conv","low"),
+            Crop = "corn",
+            Year = 2019,
+            Cohort = c(4:6),
+            Plot = c(16, 25, 33, 42)) 
+
+female_19_C4_seed_placeholder <- expand.grid(Crop_ID = "C4",
+            Corn_weed_management = c("conv","low"),
+            Crop = "corn",
+            Year = 2019,
+            Cohort = c(3,5,6),
+            Plot = c(12, 21, 31, 43)) 
+
+## Since all soybeans were unavailable: create placeholders for S2, S3, and S4 separately to hold plot number
+## Block and side are not needed because mean weight are 0
+female_19_S2_seed_placeholder <- expand.grid(Crop_ID = "S2",
+            Corn_weed_management = c("conv","low"),
+            Crop = "soybean",
+            Year = 2019,
+            Cohort = c(1:6),
+            Plot = c(13, 24, 34, 44)) 
+
+female_19_S3_seed_placeholder <- expand.grid(Crop_ID = "S3",
+            Corn_weed_management = c("conv","low"),
+            Crop = "soybean",
+            Year = 2019,
+            Cohort = c(1:6),
+            Plot = c(15, 26, 36, 47)) 
+
+female_19_S4_seed_placeholder <- expand.grid(Crop_ID = "S4",
+            Corn_weed_management = c("conv","low"),
+            Crop = "soybean",
+            Year = 2019,
+            Cohort = c(1:6),
+            Plot = c(18, 28, 37, 46)) 
+
+# merge crops' placeholders
+female_19_all_crops_seed_placeholder <- rbind(female_19_S2_seed_placeholder,
+                                        female_19_S3_seed_placeholder,
+                                        female_19_S4_seed_placeholder,
+                                        female_19_C2_seed_placeholder,
+                                        female_19_C3_seed_placeholder,
+                                        female_19_C4_seed_placeholder,
+                                        female_19_A4_seed_placeholder,
+                                        female_19_O3_seed_placeholder,
+                                        female_19_O4_seed_placeholder)
+# check if all Crop_ID present: yes
+# table(female_19_all_crops_seed_placeholder$Plot, female_19_all_crops_seed_placeholder$Crop_ID)
+
+## Fill in weight = 0 (assuming NA = 0) and sex = female
+## Rotation, Side, Quadrat, etc. are not filled because those variables are not used at the later steps
+female_19_all_crops_seed_placeholder_named <- female_19_all_crops_seed_placeholder %>%
+  mutate(Weight = 0,
+         Sex = "female")
+
+female_19_blank_crops <- rbindlist(list(female_19, female_19_all_crops_seed_placeholder_named),
+                                 use.names=TRUE, fill=TRUE) # now 1509 entries
+
 ### estimate 2019 fecundity 
-female_19_est <- left_join(fecundity_eq, female_19, 
-                           by = c("Corn_weed_management", "Crop_ID" )) %>% #now 1371 entries, with 6 NA for soybeans 
-  replace_na(list(Weight = 0)) 
+## No Cohort id in the fecundity_eq because it was assumed that all plants across all cohorts in the same crop environment 
+## can have their seeds estimated using the same equation
+female_19_est <- left_join(fecundity_eq, female_19_blank_crops,
+                           by = c("Corn_weed_management", "Crop_ID")) #now 1617 entries, 
 
-# table(female_19_est$Plot, female_19_est$Crop_ID) returns no Plot number for soybeans because none of the waterhemp plants there survived
 
-## check if any NA:
+ table(female_19_est$Cohort, 
+       female_19_est$Crop_ID,
+       female_19_est$Corn_weed_management) # missing cohorts 5 and 6 in O3 low; and cohorts 3 in C4 conv
+# compare with the original, non-manifested table: all the blanks (0 or missing column) are now 4. 
+ table(female_19$Cohort, 
+       female_19$Crop_ID,
+       female_19$Corn_weed_management) 
+ ## check if any NA:
 # female_19_est_NA <- female_19_est %>% tidyr::extract(!complete.cases(.), ) # doesn't work consistently
 
+# 252 entries of no observations are incomplete (with the unfilled columns)
 female_19_est_NA <- female_19_est[!complete.cases(female_19_est),]
 
+```
 
-
+```{r amata-fecundity-cohort}
 # Seed = a * log(Weight) + b
 # a = log(Biomass + 0.005)_estimate /// b = (Intercept)_estimate
 # log is actually ln
 
 ##### estimate individual fecundity from weight #####
+## How to deal with NAs in corn and zeros in soybean's consequences on var(seed):
+# Assume var(constant) = 0 regardless of the number of reps
 female_19_est_individual_fecundity <-  female_19_est %>% 
   rename(a = `log(Biomass + 0.005)_estimate`,
          SE_a = `log(Biomass + 0.005)_std.error`,
@@ -165,58 +273,52 @@ female_19_est_individual_fecundity <-  female_19_est %>%
          var_b = SE_b^2,
          var_Weight = var(Weight), #pooled variance of biomass, need cohort-based, CropID x corn weed mgt var later
     Seed_log = a*log(Weight + 0.005) + b,
-    var_Seed_log = (a^2)*var_Weight + var_b, #pooled variance of number of seeds
+    var_Seed_log = (a^2)*var_Weight + var_b, #pooled variance of log of number of seeds
     Seed = exp(Seed_log),
-    var_Seed = exp(var_Seed_log)) 
+    var_Seed = exp(var_Seed_log))  %>% # pooled variance of number of seeds
+  select(Crop_ID, Corn_weed_management, Cohort,
+        a,  var_a, var_b, Weight, Seed, var_Weight, var_Seed) # keep relevant columns only 
 
+
+# female_19_est_individual_fecundity[!complete.cases(female_19_est_individual_fecundity),] #no NAs here.
 
 ##### summarize by cohort, crop ID and corn weed management #####
 # group by CropID x corn weed management and partition each group into 6 cohorts, assuming that cohort is best represented by individual size 
 # plants from the same CropID x corn weed management share the same slope and intercept
 # the combination of slope x intercept id is the same as Crop ID x corn weed management id
-female_19_est_quantile_summ <- female_19_est_individual_fecundity %>% 
-  group_by(Corn_weed_management, Crop_ID) %>% # pool all plants from the same CropID x Corn weed mgt
-  mutate(quantile_Weight = ntile(Weight , 6),
-         quantile_Seed = ntile(Seed, 6))  %>%
-    group_by(quantile_Weight, Corn_weed_management, Crop_ID) %>%
-  mutate(var_Weight_cohort = var(Weight),
+female_19_est_cohort_summ <- female_19_est_individual_fecundity %>% 
+#  group_by(Corn_weed_management, Crop_ID) %>% # pool all plants from the same CropID x Corn weed mgt
+#  mutate(quantile_Weight = ntile(Weight , 6), #out because recreating weight-based cohort poses discrepancy
+#         quantile_Seed = ntile(Seed, 6))  %>%
+    group_by(Cohort, Corn_weed_management, Crop_ID) %>%
+  mutate(count_cohort = n(),
+         var_Weight_cohort =  ifelse(count_cohort>1, var(Weight), 0),  
          var_Seed_log_cohort = (a^2)*var_Weight_cohort + var_b) 
 
+#  var_Weight_cohort = ifelse(count_cohort>1, var(Weight), 0) calculate within-cohort variance; if the group 
+# has only one sample, fill it with 0
+# The practice above make consistent variance value filling with R assigning var(4 identical numbers) = 0
+# Example: female_19_est_cohort_summ %>%
+#     filter(Crop_ID == "C3") %>%
+#     group_by(Cohort, Corn_weed_management) %>%
+#     select(Weight) %>%mutate(v_Weight = var(Weight))
 
 
-female_19_est_quantile_cohort <- female_19_est_quantile_summ %>%
-   group_by(quantile_Weight, Corn_weed_management, Crop_ID) %>%
+female_19_est_cohort_sorted <- female_19_est_cohort_summ %>%
+   group_by(Cohort, Corn_weed_management, Crop_ID) %>%
   summarize(mean_Seed_cohort = mean(Seed),
             var_Seed_log_cohort = mean(var_Seed_log_cohort),
             var_Seed_cohort = exp(var_Seed_log_cohort)) %>% 
-  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_"))
-
-# check combinations for non-zero entries: 78
-table(female_19_est_quantile_summ$quantile_Weight, female_19_est_quantile_summ$Crop_ID)
-
-# Fill cohorts 2 until 6 in soybeans with zeros 
-
-female_19_soy_seed_placeholder <- expand.grid(Crop_ID = c("S2", "S3", "S4"),
-            Corn_weed_management = c("conv","low"),
-            quantile_Weight = c(2:6),
-            mean_Seed_cohort = 0,
-            var_Seed_cohort = 0) #assuming var(0) = 0
-
-female_19_soy_seed_placeholder$matrix_id <- paste(female_19_soy_seed_placeholder$Crop_ID,
-                                          female_19_seed_placeholder$Corn_weed_management,
-                                          sep = "_")
-
-female_19_est_quantile_summ_expand <- rbind(female_19_est_quantile_summ, female_19_seed_placeholder)
-
-female_19_est_quantile_summ_expand_sorted <- female_19_est_quantile_summ_expand %>%
+  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, desc(mean_Seed_cohort)) 
 
-##issue: only soybean rows are saved
 
-table(female_19_est_quantile_summ_expand_sorted$matrix_id )
+
 
 # Save 2019 estimated fecundity as a list
-mean_fecundity_19_list <- lapply(split(female_19_est_quantile_summ_expand_sorted, female_19_est_quantile_summ_expand_sorted$matrix_id),
+mean_fecundity_19_list <- lapply(split(
+female_19_est_cohort_sorted, 
+female_19_est_cohort_sorted$matrix_id),
        function(x) rbind(cbind(diag(1,2),
                          rbind(matrix(c(x$mean_Seed_cohort, rep(0,6)), byrow = TRUE, nrow=2))),
        matrix(rep(0,48), nrow = 6, byrow = TRUE))) 
@@ -226,8 +328,9 @@ mean_fecundity_19_list <- lapply(split(female_19_est_quantile_summ_expand_sorted
 
 
 ## 2019 cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
-var_fecundity_19_list <- lapply(split(female_19_est_quantile_summ_expand_sorted, female_19_est_quantile_summ_expand_sorted$matrix_id),
-       function(x) rbind(cbind(diag(1,2),matrix(0,nrow=2,ncol=6)),
+# the first 2 columns and 2 rows are all zeros because this var matrix is a 6x6
+var_fecundity_19_list <- lapply(split(female_19_est_cohort_sorted, female_19_est_cohort_sorted$matrix_id),
+       function(x) rbind(cbind(diag(0,2),matrix(0,nrow=2,ncol=6)),
                          cbind(matrix(0,nrow=6,ncol=2),diag(x$var_Seed_cohort,6))))
 
 # saveRDS(var_fecundity_19_list, file="../2-Data/Clean/var-fecundity-19-cohort.RData")
