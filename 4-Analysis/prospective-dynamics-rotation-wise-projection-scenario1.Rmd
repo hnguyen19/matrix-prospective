@@ -877,4 +877,4 @@ elas_contribution_4yr_conv <- Map(\(x, y) Reduce(`%*%`, list(x, y)), A4_conv_ela
 
 ```
 
-
+Variance of annualized population growth rate is calculated with $Var(X^n) = E(X^{2n}) - E(X^n)^2$
