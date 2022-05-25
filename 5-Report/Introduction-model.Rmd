@@ -19,12 +19,18 @@ For waterhemp management, literature has stressed the importance of seed shatter
 
 Prospective analysis using a population matrix approach can be used to examine how a population would change over a period given the input parameters, but without extensive field trials [@caswellMatrixPopulationModels2001; @davisCroppingSystemEffects2002; @ullrichWeedPopulationDynamics2000].
 In this case, the input parameters for waterhemp population dynamics are seedbank density, emergence rate, seed and plant survival rates, fecundity, and seed viability loss. 
-I will use a periodic matrix model [@caswellMatrixPopulationModels2001; @cousensDynamicsWeedPopulations1995] to study waterhemp population dynamics because periodic matrices accommodate the examination of the effect of various events, i.e., crop management activities, that occur throughout the life cycle of waterhemp on the population change rate. 
-The periodic matrices are sub-divisions of an annual projection matrix: each is constructed based on critical points in a weed species' life cycle, which will provide a means to track when and where major changes in population dynamics happen.
+
+A periodic matrix model [@caswellMatrixPopulationModels2001; @cousensDynamicsWeedPopulations1995] was used to study waterhemp population dynamics because periodic matrices accommodate the examination of the effect of various events, i.e., crop management activities, that occur throughout the life cycle of waterhemp on the population change rate.
+
+*The periodic matrices are sub-divisions of an annual projection matrix: each is constructed based on critical points in a weed species' life cycle, which will provide a means to track when and where major changes in population dynamics happen.*
 Details on periodic matrices construction and justification are provided in the next section.  
 
 *waterhemp in different contexts and information gaps*  
-Interseeding red clover with wheat followed by spring tillage delayed and reduced seedling emergence as compared with three other interseeding and tillage timing combinations by fall tillage [@davisCroppingSystemEffects2003].
+Interseeding red clover with wheat followed by spring tillage delayed and reduced seedling emergence as compared with three other interseeding and tillage timing combinations by fall tillage [@davisCroppingSystemEffects2003]. Our exhaustive search of the current literature does not return any information on waterhemp's population dynamics in other crops. 
+
 
 *importance of the present study*
 
+This study was pursued to examine how waterhemp population might changes in cool-season crops suitable for the Midwestern US climates, such as oat and red clover or oat and alfalfa intercrops; and alfalfa sole crop.  
+
+As mentioned in the previous section, contrasting herbicide regimes have been used for corn and soybean at the experiment site from 2008. Soybean plots were managed by conventional herbicide starting in 2017 but 

@@ -606,11 +606,10 @@ elas_contribution_4yr_conv <- Map(\(x, y) Reduce(`%*%`, list(x, y)), A4_conv_ela
 
 ```
 
-Variance of annualized population growth rate is calculated with Taylor series expansion using the general formula: $Var[f(\lambda)] = {f'(E(\lambda))}^2 Var(\lambda)$, in which $f(\lambda)$ is the nth-root function used to annualize rotation-wise growth rate. For example, the variance of annualized population growth rate in the 2-year rotation was $Var(\lambda_{2}) = \frac{1}{4\lambda_{2r}}Var(\lambda_{2r})$, where $\lambda_2 = \sqrt{\lambda_{2r}}$.  
-<https://en.wikipedia.org/wiki/Taylor_expansions_for_the_moments_of_functions_of_random_variables> .
 
-The variance of population growth rate is calculated with $Var(\lambda)= \sum_i^b S_b^TV_bS_b$ where $V$ is the variance-covariance matrix of each periodic matrix. 
 ```{r var-list, echo=FALSE}
+# <https://en.wikipedia.org/wiki/Taylor_expansions_for_the_moments_of_functions_of_random_variables> .
+
 ## Need variance separated for each parameters in the summer survival period 
 ## issue: things happening at the same period need to be in one matrix 
 ## work-around: comment on period-based changes instead of parameter-based changes 
@@ -737,7 +736,7 @@ scenario1_annualized_lambda_and_var <- scenario1_annualized_lambda_df_long %>%
          var_annualized_lambda = multiplier * Rotation_var_lambda/squared_annualized_lambda) %>%
   select(.id, Corn_weed_management, annualized_lambda, var_annualized_lambda)
 
-View( scenario1_annualized_lambda_and_var)
+#View( scenario1_annualized_lambda_and_var)
 
 
 ```
