@@ -36,3 +36,28 @@ for(i in seq_along(dlist4)) {
 
 rapply(dlist4, function(x) {dimnames(x) <- rep(list(c("seed","plant")), 2); x}, how="list")
 ```
+
+```{r}
+
+A <- matrix(c(0, .3, 2, .7), nrow=2) # spring transition matrix 
+B <- matrix(c(0.5, .3, 3, .7), nrow = 2) # summer transition matrix
+C <- matrix(c(0, .3, 4, .7), nrow=2) # fall transition matrix 
+D <- matrix(c(0.1, .1, 6, .7), nrow = 2) # winter transition matrix
+
+N0 <- c(Juveniles=1,Adults=10) # initial population
+steps <- 12 # number of time steps; each chain of 4 time step representA%*% a year
+
+
+# combine the stages of our initial population, and a zero matrix 
+# with a column for each stage and a row for each time step
+N <- rbind(N0, matrix(0, ncol=2, nrow=steps) )
+# use a for-loop to project the population each year and store it.
+    for(t in 1:steps) {
+      N[t+1,] <- A%*%N[t,]
+      N[t+2,] <- B%*%A%*%N[t,]
+      N[t+3,] <- C%*%B%*%A%*%N[t,]
+      N[t+4,] <- D%*%C%*%B%*%A%*%N[t,]
+    N[t+5,] <- A%*%D%*%C%*%B%*%A%*%N[t,]
+
+    }
+```

@@ -328,10 +328,10 @@ female_19_est_cohort_sorted$matrix_id),
 
 
 ## 2019 cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
-# the first 2 columns and 2 rows are all zeros because this var matrix is a 6x6
+# because this var matrix is a 6x6, the last two columns and the last two rows are zeros 
 var_fecundity_19_list <- lapply(split(female_19_est_cohort_sorted, female_19_est_cohort_sorted$matrix_id),
-       function(x) rbind(cbind(diag(0,2),matrix(0,nrow=2,ncol=6)),
-                         cbind(matrix(0,nrow=6,ncol=2),diag(x$var_Seed_cohort,6))))
+       function(x) rbind(cbind(diag(x$var_Seed_cohort,6), matrix(0,nrow=6,ncol=2)),matrix(0,nrow=2,ncol=8))) 
+       
 
 # saveRDS(var_fecundity_19_list, file="../2-Data/Clean/var-fecundity-19-cohort.RData")
 

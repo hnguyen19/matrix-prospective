@@ -16,7 +16,7 @@ library(tidyverse)
 library(magrittr) 
 ```
 
-```{r periodic-matrices-phase-mean-and-var, include=FALSE}
+```{r periodic-matrices-phases-mean-and-var, include=FALSE}
 ## Pre-planting tillage 
 mean_spring_tillage <-  readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
 
@@ -74,9 +74,21 @@ scenario1_projection_by_matrix_id <- tibble::lst(mean_overwinter_scenario1,
                                                  mean_summer_survival_scenario1,
                                                mean_emergence_scenario1,
                                                mean_spring_tillage)
+## name column and row 
+scenario1_projection_by_matrix_id_named <- rapply(scenario1_projection_by_matrix_id, 
+                                                  function(x) {dimnames(x) <- rep(list(c("seed_top",
+                                                                                        "seed_bottom", 
+                                                                                        "plant_cohort_1",
+                                                                                        "plant_cohort_2",
+                                                                                        "plant_cohort_3",
+                                                                                        "plant_cohort_4",
+                                                                                        "plant_cohort_5",
+                                                                                        "plant_cohort_6")),2); x}, how="list")
+
+# View(scenario1_projection_by_matrix_id_named )
 
 ## List all periodic matrices within the same crop ID together  
-scenario1_projection_by_matrix_id_transpose <- purrr::transpose(scenario1_projection_by_matrix_id )
+scenario1_projection_by_matrix_id_transpose <- purrr::transpose(scenario1_projection_by_matrix_id_named )
 
 # multiply all the periodic matrices within a crop ID 
 
@@ -90,6 +102,7 @@ scenario1_phase_projection <- scenario1_projection_by_matrix_id_transpose  %>%
 ```
 
 ```{r rotation-group, include=FALSE}
+# Phases are listed right to left, which is the opposite to their orders 
 #2year, conventional
 scenario1_rotation_wise_2yr_conv <- scenario1_phase_projection[c("S2_conv", "C2_conv")]
 
@@ -154,7 +167,7 @@ scenario1_annualized_lambda_df <- tibble::lst(scenario1_annualized_lambda_2yr,
 scenario1_annualized_lambda_df_long <- scenario1_annualized_lambda_df %>%
   pivot_longer(!.id, names_to = "Corn_weed_management", values_to = "annualized_lambda") 
 
-View(scenario1_annualized_lambda_df_long)
+# View(scenario1_annualized_lambda_df_long)
 
 ## add the rotation-wise lambdas to the annualized lambdas 
 scenario1_annualized_lambda_df_long$rot_wise_lambda <-  scenario1_rotation_wise_lambda_df$lambda1
@@ -315,194 +328,8 @@ In the soybean phase of the 2-year rotation, emergence minimally contributed to 
 
 In 2019, as $\lambda$'s were under 1 for all treatments, fecundity did not contribute substantially to $\lambda$ changes. 
 
-```{r S-B-spring-tillage-contribution-2yr, fig.cap="Contribution of each entry element in the spring tillage sub-annual matrix to lambda.", include=FALSE}
-## subletting removes names
-S_B_contribution_2yr_spring_tillage <- S_B_contribution_2yr[c("C2_mean_spring_tillage_contribution", "S2_mean_spring_tillage_contribution")]
-
-# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
-# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
-reshape2::melt(S_B_contribution_2yr_spring_tillage) %>%
- rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
-  filter(original_matrix_col < 3) %>%
-  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
-  #geom_point() +
-  geom_jitter() +
-  facet_grid(~ L1) +
-  xlab("to seed stratum or plant group") +
-  labs(colour = "from seed stratum or plant group") + 
-  ylab("contribution to lambda sensitivity") +
-  scale_color_discrete(breaks=c("1", "2"),
-                           labels=c("Top", "Bottom")) +
-  scale_x_discrete(limits=c("top st. seed","bottom  st. seed","seedling co. 1", "seedling co. 2",
-                            "seedling co. 3", "seedling co. 4", "seedling co. 5", "seedling co. 6")) +
-  theme(axis.text.x = element_text(angle = 90)) +
-  theme(legend.position="top")
-```
-
-```{r S-B-emerge-contribution-2yr, fig.cap="Contribution of each entry element in the emergence sub-annual matrix to lambda.", include=FALSE}
-## subletting removes names
-S_B_contribution_2yr_emerge <- S_B_contribution_2yr[c("C2_mean_emergence_scenario1_contribution", "S2_mean_emergence_scenario1_contribution")]
-
-# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
-# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
-reshape2::melt(S_B_contribution_2yr_emerge) %>%
- rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
-  filter(original_matrix_col < 3) %>%
-  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
-  #geom_point() +
-  geom_jitter() +
-  facet_grid(~ L1) +
-  xlab("to seed stratum or plant group") +
-  labs(colour = "from seed stratum or plant group") + 
-  ylab("contribution to lambda sensitivity") +
-  scale_color_discrete(breaks=c("1", "2"),
-                           labels=c("Top", "Bottom")) +
-  scale_x_discrete(limits=c("top st. seed","bottom  st. seed","seedling co. 1", "seedling co. 2",
-                            "seedling co. 3", "seedling co. 4", "seedling co. 5", "seedling co. 6")) +
-  theme(axis.text.x = element_text(angle = 90)) +
-  theme(legend.position="top")
-```
-
-```{r S-B-summer-survival-contribution-2yr, fig.cap="Contribution of each entry element in the emergence sub-annual matrix to lambda.", include=FALSE}
-## subletting removes names
-S_B_contribution_2yr_summer_survival <- S_B_contribution_2yr[c("C2_mean_summer_survival_scenario1_contribution", "S2_mean_summer_survival_scenario1_contribution")]
-
-# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
-# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
-reshape2::melt(S_B_contribution_2yr_summer_survival) %>%
- rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
-  filter(original_matrix_col < 3) %>%
-  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
-  #geom_point() +
-  geom_jitter() +
-  facet_grid(~ L1) +
-  xlab("to seed stratum or plant group") +
-  labs(colour = "from seed stratum or plant group") + 
-  ylab("contribution to lambda sensitivity") +
-  scale_color_discrete(breaks=c("1", "2"),
-                           labels=c("Top", "Bottom")) +
-  scale_x_discrete(limits=c("top st. seed","bottom  st. seed","seedling co. 1", "seedling co. 2",
-                            "seedling co. 3", "seedling co. 4", "seedling co. 5", "seedling co. 6")) +
-  theme(axis.text.x = element_text(angle = 90)) +
-  theme(legend.position="top")
-```
-
-```{r S-B-post-harvest-contribution-2yr, fig.cap="Contribution of each entry element in the post harvest tillage sub-annual matrix to lambda.", include = FALSE}
-S_B_contribution_2yr_post_harvest_tillage <- S_B_contribution_2yr[c("C2_mean_post_harvest_tillage_contribution", "S2_mean_post_harvest_tillage_contribution")]
-
-# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
-# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
-reshape2::melt(S_B_contribution_2yr_post_harvest_tillage) %>%
-  rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
-  filter(original_matrix_col < 3) %>%
-  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
-  #geom_point() +
-  geom_jitter() +
-  facet_grid(~ L1) +
-  xlab("to seed or plant group") +
-  labs(colour = "from seed stratum or plant group") + 
-  ylab("contribution to lambda sensitivity") +
-  scale_color_discrete(breaks=c("1", "2"),
-                           labels=c("Top", "Bottom")) +
-  scale_x_discrete(limits=c("top st. seed","bottom st. seed","plant co. 1", "plant co. 2",
-                            "plant co. 3", "plant co. 4", "plant co. 5", "plant co. 6")) +
-  theme(axis.text.x = element_text(angle = 90)) +
-  theme(legend.position="top")
-
-```
-
-```{r S-B-overwinter-contribution-2yr, fig.cap="Contribution of each entry element in the overwinter sub-annual matrix to lambda.", include=FALSE}
-## subletting removes names
-S_B_contribution_2yr_overwinter <- S_B_contribution_2yr[c("C2_mean_overwinter_scenario1_contribution", "S2_mean_overwinter_scenario1_contribution")]
-
-# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
-# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
-reshape2::melt(S_B_contribution_2yr_overwinter) %>%
- rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
-  filter(original_matrix_col < 3) %>%
-  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
-  #geom_point() +
-  geom_jitter() +
-  facet_grid(~ L1) +
-  xlab("to seed stratum or plant group") +
-  labs(colour = "from seed stratum or plant group") + 
-  ylab("contribution to lambda sensitivity") +
-  scale_color_discrete(breaks=c("1", "2"),
-                           labels=c("Top", "Bottom")) +
-  scale_x_discrete(limits=c("top st. seed","bottom  st. seed","seedling co. 1", "seedling co. 2",
-                            "seedling co. 3", "seedling co. 4", "seedling co. 5", "seedling co. 6")) +
-  theme(axis.text.x = element_text(angle = 90)) +
-  theme(legend.position="top")
-```
 
 
-The variance of population growth rate is calculated with $Var(\lambda)= \sum_i^b S_b^TV_bS_b$ where $V$ is the variance-covariance matrix of each periodic matrix.  
-
-```{r var-list}
-
-## Combine all variance lists into one grand list, similar to the means list
-
-## Variance list needed for each rotation, but in the oposit order as in the mean list, to accommodate the order of the S_B list
-
-var_scenario1_projection_by_matrix_id <- tibble::lst(var_spring_tillage,
-                                                     var_emergence_scenario1,
-                                                      var_summer_survival_scenario1,
-                                                       var_fecundity_2019,
-                                                        var_post_harvest_tillage,
-                                                     var_overwinter_scenario1)
-```
-
-```{r var-lambda-2yr}
-## The list of S_B for each subannual matrix in the 2-year rotation is in S_B_contribution_2yr
-
-## List Variance of each subannual matrix in the 2-year rotation
-var_scenario1_projection_2yr_conv <- var_scenario1_projection_by_matrix_id %>%
-  map(., ~{.[c(3,13)]})
-
-var_scenario1_projection_2yr_low <- var_scenario1_projection_by_matrix_id %>%
-  map(., ~{.[c(4,14)]})
-
-## Transpose the 2yr var list
-var_scenario1_projection_2yr_conv_transpose <- purrr::transpose(var_scenario1_projection_2yr_conv)
-
-var_scenario1_projection_2yr_low_transpose <- purrr::transpose(var_scenario1_projection_2yr_low)
-
-## Remove nesting factor of the var list
-
-var_scenario1_projection_2yr_conv_unlist <- unlist(var_scenario1_projection_2yr_conv_transpose, recursive = FALSE)
-
-var_scenario1_projection_2yr_low_unlist <- unlist(var_scenario1_projection_2yr_low_transpose, recursive = FALSE)
-
-## Keep the first column in the S_B list
-
-S_B_contribution_2yr_first <- lapply(S_B_contribution_2yr, function(x) x[,1])
-  
-
-## Transpose of each S_B_first_col matrix, named _transposed_each to distinguish with transposing the whole list
-S_B_contribution_2yr_first_transposed_each <- lapply(S_B_contribution_2yr_first, function(x) t(x))
-
-## List t(S_B), V, and S_B in a nested list 
-
-var_elements_2yr_lambda_list <- tibble::lst(S_B_contribution_2yr_first_transposed_each,
-                               var_scenario1_projection_2yr_conv_unlist,
-                               S_B_contribution_2yr_first)
-
-View(var_elements_2yr_lambda_list)
-
-## Multiply t(S_B), V, and S_B 
-
-var_2yr_conv_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
-                      list(x, y, z)),
-    S_B_contribution_2yr_first_transposed_each,
-    var_scenario1_projection_2yr_conv_unlist,
-    S_B_contribution_2yr_first)
-
-var_2yr_low_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
-                      list(x, y, z)),
-    S_B_contribution_2yr_first_transposed_each,
-    var_scenario1_projection_2yr_low_unlist,
-    S_B_contribution_2yr_first)
-```
 
 ```{r elasticity-2yr}
 # lambda atscenario1_annualized_lambda_df_long$annualized_lambd
@@ -627,57 +454,6 @@ contribution_3yr_names <- gsub('conv.', '', contribution_3yr_raw_names)
 names(S_B_contribution_3yr) <- contribution_3yr_names
 ```
 
-```{r var-lambda-3yr}
-## The list of S_B for each subannual matrix in the 2-year rotation is in S_B_contribution_2yr
-
-## List Variance of each subannual matrix in the 2-year rotation
-var_scenario1_projection_3yr_conv <- var_scenario1_projection_by_matrix_id %>%
-  map(., ~{.[c(5, 15, 9)]}) # arranged by sequence C - S - O
-
-var_scenario1_projection_3yr_low <- var_scenario1_projection_by_matrix_id %>%
-  map(., ~{.[c(6, 16, 10)]})
-
-## Transpose the 3yr var list
-var_scenario1_projection_3yr_conv_transpose <- purrr::transpose(var_scenario1_projection_3yr_conv)
-
-var_scenario1_projection_3yr_low_transpose <- purrr::transpose(var_scenario1_projection_3yr_low)
-
-## Remove nesting factor of the var list
-
-var_scenario1_projection_3yr_conv_unlist <- unlist(var_scenario1_projection_3yr_conv_transpose, recursive = FALSE)
-
-var_scenario1_projection_3yr_low_unlist <- unlist(var_scenario1_projection_3yr_low_transpose, recursive = FALSE)
-
-## Keep the first column in the S_B list
-
-S_B_contribution_3yr_first <- lapply(S_B_contribution_3yr, function(x) x[,1])
-  
-
-## Transpose of each S_B_first_col matrix, named _transposed_each to distinguish with transposing the whole list
-S_B_contribution_3yr_first_transposed_each <- lapply(S_B_contribution_3yr_first, function(x) t(x))
-
-## List t(S_B), V, and S_B in a nested list 
-
-var_elements_3yr_lambda_list <- tibble::lst(S_B_contribution_3yr_first_transposed_each,
-                               var_scenario1_projection_3yr_conv_unlist,
-                               S_B_contribution_3yr_first)
-
-# View(var_elements_3yr_lambda_list)
-
-## Multiply t(S_B), V, and S_B 
-
-var_3yr_conv_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
-                      list(x, y, z)),
-    S_B_contribution_3yr_first_transposed_each,
-    var_scenario1_projection_3yr_conv_unlist,
-    S_B_contribution_3yr_first)
-
-var_3yr_low_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
-                      list(x, y, z)),
-    S_B_contribution_3yr_first_transposed_each,
-    var_scenario1_projection_3yr_low_unlist,
-    S_B_contribution_3yr_first)
-```
 
 ```{r elasticity-3yr}
 # lambda at scenario1_rotation_wise_lambda 
@@ -803,57 +579,6 @@ S_B_contribution_4yr_names <- gsub('conv.', '', S_B_contribution_4yr_raw_names)
 names(S_B_contribution_4yr) <- S_B_contribution_4yr_names
 ```
 
-```{r var-lambda-4yr}
-## The list of S_B for each subannual matrix in the 4-year rotation is in S_B_contribution_2yr
-
-## List Variance of each subannual matrix in the 4-year rotation
-var_scenario1_projection_4yr_conv <- var_scenario1_projection_by_matrix_id %>%
-  map(., ~{.[c(7, 17, 11, 1)]}) # arranged by sequence C - S - O - A
-
-var_scenario1_projection_4yr_low <- var_scenario1_projection_by_matrix_id %>%
-  map(., ~{.[c(8, 18, 12, 2)]})
-
-## Transpose the 4yr var list
-var_scenario1_projection_4yr_conv_transpose <- purrr::transpose(var_scenario1_projection_4yr_conv)
-
-var_scenario1_projection_4yr_low_transpose <- purrr::transpose(var_scenario1_projection_4yr_low)
-
-## Remove nesting factor of the var list
-
-var_scenario1_projection_4yr_conv_unlist <- unlist(var_scenario1_projection_4yr_conv_transpose, recursive = FALSE)
-
-var_scenario1_projection_4yr_low_unlist <- unlist(var_scenario1_projection_4yr_low_transpose, recursive = FALSE)
-
-## Keep the first column in the S_B list
-
-S_B_contribution_4yr_first <- lapply(S_B_contribution_4yr, function(x) x[,1])
-  
-
-## Transpose of each S_B_first_col matrix, named _transposed_each to distinguish with transposing the whole list
-S_B_contribution_4yr_first_transposed_each <- lapply(S_B_contribution_4yr_first, function(x) t(x))
-
-## List t(S_B), V, and S_B in a nested list 
-
-var_elements_4yr_lambda_list <- tibble::lst(S_B_contribution_4yr_first_transposed_each,
-                               var_scenario1_projection_4yr_conv_unlist,
-                               S_B_contribution_4yr_first)
-
-# View(var_elements_4yr_lambda_list)
-
-## Multiply t(S_B), V, and S_B 
-
-var_4yr_conv_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
-                      list(x, y, z)),
-    S_B_contribution_4yr_first_transposed_each,
-    var_scenario1_projection_4yr_conv_unlist,
-    S_B_contribution_4yr_first)
-
-var_4yr_low_lambda  <- Map(\(x, y, z) Reduce(`%*%`,
-                      list(x, y, z)),
-    S_B_contribution_4yr_first_transposed_each,
-    var_scenario1_projection_4yr_low_unlist,
-    S_B_contribution_4yr_first)
-```
 
 ```{r elasticity-4yr}
 ## calculate elasticity, see p. 121
@@ -881,13 +606,149 @@ elas_contribution_4yr_conv <- Map(\(x, y) Reduce(`%*%`, list(x, y)), A4_conv_ela
 
 ```
 
-Variance of annualized population growth rate is calculated with Taylor series expansion on the relevant moment <https://en.wikipedia.org/wiki/Taylor_expansions_for_the_moments_of_functions_of_random_variables> .
+Variance of annualized population growth rate is calculated with Taylor series expansion using the general formula: $Var[f(\lambda)] = {f'(E(\lambda))}^2 Var(\lambda)$, in which $f(\lambda)$ is the nth-root function used to annualize rotation-wise growth rate. For example, the variance of annualized population growth rate in the 2-year rotation was $Var(\lambda_{2}) = \frac{1}{4\lambda_{2r}}Var(\lambda_{2r})$, where $\lambda_2 = \sqrt{\lambda_{2r}}$.  
+<https://en.wikipedia.org/wiki/Taylor_expansions_for_the_moments_of_functions_of_random_variables> .
 
-```{r scenario1-lambda-annualized, echo=FALSE, fig.cap= "Annualized waterhemp population growth rate using 2019 fecundity rate."}
-# move behind variance calculation
+The variance of population growth rate is calculated with $Var(\lambda)= \sum_i^b S_b^TV_bS_b$ where $V$ is the variance-covariance matrix of each periodic matrix. 
+```{r var-list}
+## Need variance separated for each parameters in the summer survival period 
+## issue: things happening at the same period need to be in one matrix 
+## work-around: comment on period-based changes instead of parameter-based changes 
+
+
+## Combine all variance lists into one grand list, similar to the means list
+
+## Variance list needed for each rotation, but in the opposite order as in the mean list, to accommodate the order of the S_B list
+
+var_scenario1_projection_by_matrix_id <- tibble::lst(var_spring_tillage,
+                                                     var_emergence_scenario1,
+                                                      var_summer_survival_scenario1,
+                                                       var_fecundity_2019,
+                                                        var_post_harvest_tillage,
+                                                     var_overwinter_scenario1)
+# A list of 12 bested list
+var_scenario1_projection_by_matrix_id_named <- rapply(var_scenario1_projection_by_matrix_id , 
+                                                  function(x) {dimnames(x) <- rep(list(c("seed_top",
+                                                                                        "seed_bottom", 
+                                                                                        "plant_cohort_1",
+                                                                                        "plant_cohort_2",
+                                                                                        "plant_cohort_3",
+                                                                                        "plant_cohort_4",
+                                                                                        "plant_cohort_5",
+                                                                                        "plant_cohort_6")),2); x}, how="list")
+
+# Transpose the var list to rearrange will create a nested list of 18 lists of 12 matrices each
+var_scenario1_projection_transpose <- purrr::transpose(var_scenario1_projection_by_matrix_id_named)
+
+# Separate variance by rotation x corn weed management 
+var_scenario1_projection_2yr_conv <- var_scenario1_projection_transpose[c("C2_conv","S2_conv")]
+var_scenario1_projection_2yr_conv_unlist <- unlist(var_scenario1_projection_2yr_conv, recursive = FALSE)
+
+var_scenario1_projection_2yr_low <- var_scenario1_projection_transpose[c("C2_low","S2_low")]
+var_scenario1_projection_2yr_low_unlist <- unlist(var_scenario1_projection_2yr_low, recursive = FALSE)
+
+var_scenario1_projection_3yr_conv <- var_scenario1_projection_transpose[c("C3_conv","S3_conv", "O3_conv")]
+var_scenario1_projection_3yr_conv_unlist <- unlist(var_scenario1_projection_3yr_conv, recursive = FALSE)
+
+var_scenario1_projection_3yr_low <- var_scenario1_projection_transpose[c("C3_low","S3_low", "O3_low")]
+var_scenario1_projection_3yr_low_unlist <- unlist(var_scenario1_projection_3yr_low, recursive = FALSE)
+
+var_scenario1_projection_4yr_conv <- var_scenario1_projection_transpose[c("C4_conv","S4_conv", "O4_conv", "A4_conv")]
+var_scenario1_projection_4yr_conv_unlist <- unlist(var_scenario1_projection_4yr_conv, recursive = FALSE)
+
+var_scenario1_projection_4yr_low <- var_scenario1_projection_transpose[c("C4_low","S4_low", "O4_low", "A4_low")]
+var_scenario1_projection_4yr_low_unlist <- unlist(var_scenario1_projection_4yr_low, recursive = FALSE)
+# recombine variance using the same order as S_B
+
+var_scenario1_projection_conv <- tibble::lst(var_scenario1_projection_2yr_conv_unlist,
+                                             var_scenario1_projection_3yr_conv_unlist,
+                                             var_scenario1_projection_4yr_conv_unlist)
+
+View(var_scenario1_projection_conv)
+
+
+
+var_scenario1_projection_low <- tibble::lst(var_scenario1_projection_2yr_low_unlist,
+                                             var_scenario1_projection_3yr_low_unlist,
+                                             var_scenario1_projection_4yr_low_unlist)
+
+View(var_scenario1_projection_low)
+```
+
+```{r S-B-recombine}
+## Gather S_B contribution lists by sub-annual matrices: all the spring tillage matrices in 6 cropping systems together, all the emergence matrices together, ...
+
+S_B_contribution_recombined <- tibble::lst(S_B_contribution_2yr, 
+                                           S_B_contribution_3yr,
+                                           S_B_contribution_4yr)
+
+
+## Trim each matrix in the recombined S_B contribution list to the needed n row x 1 column
+#https://stackoverflow.com/questions/72326431/extract-the-same-column-from-all-matrices-in-a-nested-list/72326729#72326729
+
+S_B_contribution_recombined_first_col <- rapply(S_B_contribution_recombined, \(x) x[, 1, drop=FALSE], how='list')
+
+## Transpose the trimmed S_B list
+
+S_B_contribution_recombined_first_col_transpose <- rapply(S_B_contribution_recombined_first_col, \(x) t(x), how='list')
+```
+
+```{r var-rot-lambda}
+var_lambda_conv_elements  <- Map(\(x, y, z) Reduce(`%*%`,
+                      list(x, y, z)),
+    unlist(S_B_contribution_recombined_first_col_transpose, recursive = F),
+    unlist(var_scenario1_projection_conv, recursive = F),
+    unlist(S_B_contribution_recombined_first_col, recursive = F))
+
+var_lambda_conv_2yr <- sum(unlist(var_lambda_conv_elements[1:12]))
+var_lambda_conv_3yr <- sum(unlist(var_lambda_conv_elements[13:30]))
+var_lambda_conv_4yr <- sum(unlist(var_lambda_conv_elements[31:54]))
+
+var_lambda_low_elements  <- Map(\(x, y, z) Reduce(`%*%`,
+                      list(x, y, z)),
+    unlist(S_B_contribution_recombined_first_col_transpose, recursive = F),
+    unlist(var_scenario1_projection_low, recursive = F),
+    unlist(S_B_contribution_recombined_first_col, recursive = F))
+
+
+
+var_lambda_low_2yr <- sum(unlist(var_lambda_low_elements[1:12]))
+var_lambda_low_3yr <- sum(unlist(var_lambda_low_elements[13:30]))
+var_lambda_low_4yr <- sum(unlist(var_lambda_low_elements[31:54]))
+```
+
+```{r var-annualized-lambda}
+
+var_lambda_table <- expand.grid(Corn_weed_management = c("conventional", "low"),
+                                Rotation = c("2-year", "3-year", "4-year"))
+# combine all variance into a data frame and calculate annualized lambda's var
+
+var_lambda_table$Rotation_lambda <- c(var_lambda_conv_2yr,
+                                      var_lambda_low_2yr,
+                                      var_lambda_conv_3yr,
+                                      var_lambda_low_3yr,
+                                      var_lambda_conv_4yr,
+                                      var_lambda_low_4yr)
+
+# add multiplier to the var table
+var_lambda_table$multiplier <- c(1/4, 1/4, 1/9, 1/9, 1/16, 1/16)
+
+
+# combine lambda, var(lamda), and elasticity contribution and rename the data frame
 scenario1_annualized_lambda_and_var <- scenario1_annualized_lambda_df_long %>%
-  mutate(squared_exp_annualized_lambda = annualized_lambda^2)
+  mutate(squared_exp_annualized_lambda = annualized_lambda^2,
+         var_annualized_lambda = multiplier * var_lambda_rot/squared_exp_annualized_lambda)
 
+# check: var(annualized lambda) is very large, but the var component of fecundity is 0. 
+
+
+# add E_B contributions to lambda's elasticity 
+```
+
+
+#### Exclude from final text after this point #### 
+
+```{r scenario1-lambda-annualized, include=FALSE, fig.cap= "Annualized waterhemp population growth rate using 2019 fecundity rate."}
 #View(scenario1_annualized_lambda_and_var)
 x_labs <- c("2-year", "3-year", "4-year")
 
@@ -897,4 +758,124 @@ ggplot(scenario1_annualized_lambda_and_var, aes(y = annualized_lambda, x = .id ,
   xlab("Rotation") +
   scale_x_discrete(labels= x_labs) +
   theme_bw()
+```
+
+```{r S-B-spring-tillage-contribution-2yr, fig.cap="Contribution of each entry element in the spring tillage sub-annual matrix to lambda.", include=FALSE}
+
+S_B_contribution_2yr_spring_tillage <- S_B_contribution_2yr[c("C2_mean_spring_tillage_contribution", "S2_mean_spring_tillage_contribution")]
+
+# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
+# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
+reshape2::melt(S_B_contribution_2yr_spring_tillage) %>%
+ rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
+  filter(original_matrix_col < 3) %>%
+  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
+  #geom_point() +
+  geom_jitter() +
+  facet_grid(~ L1) +
+  xlab("to seed stratum or plant group") +
+  labs(colour = "from seed stratum or plant group") + 
+  ylab("contribution to lambda sensitivity") +
+  scale_color_discrete(breaks=c("1", "2"),
+                           labels=c("Top", "Bottom")) +
+  scale_x_discrete(limits=c("top st. seed","bottom  st. seed","seedling co. 1", "seedling co. 2",
+                            "seedling co. 3", "seedling co. 4", "seedling co. 5", "seedling co. 6")) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  theme(legend.position="top")
+```
+
+```{r S-B-emerge-contribution-2yr, fig.cap="Contribution of each entry element in the emergence sub-annual matrix to lambda.", include=FALSE}
+## subletting removes names
+S_B_contribution_2yr_emerge <- S_B_contribution_2yr[c("C2_mean_emergence_scenario1_contribution", "S2_mean_emergence_scenario1_contribution")]
+
+# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
+# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
+reshape2::melt(S_B_contribution_2yr_emerge) %>%
+ rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
+  filter(original_matrix_col < 3) %>%
+  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
+  #geom_point() +
+  geom_jitter() +
+  facet_grid(~ L1) +
+  xlab("to seed stratum or plant group") +
+  labs(colour = "from seed stratum or plant group") + 
+  ylab("contribution to lambda sensitivity") +
+  scale_color_discrete(breaks=c("1", "2"),
+                           labels=c("Top", "Bottom")) +
+  scale_x_discrete(limits=c("top st. seed","bottom  st. seed","seedling co. 1", "seedling co. 2",
+                            "seedling co. 3", "seedling co. 4", "seedling co. 5", "seedling co. 6")) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  theme(legend.position="top")
+```
+
+```{r S-B-summer-survival-contribution-2yr, fig.cap="Contribution of each entry element in the emergence sub-annual matrix to lambda.", include=FALSE}
+## subletting removes names
+S_B_contribution_2yr_summer_survival <- S_B_contribution_2yr[c("C2_mean_summer_survival_scenario1_contribution", "S2_mean_summer_survival_scenario1_contribution")]
+
+# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
+# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
+reshape2::melt(S_B_contribution_2yr_summer_survival) %>%
+ rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
+  filter(original_matrix_col < 3) %>%
+  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
+  #geom_point() +
+  geom_jitter() +
+  facet_grid(~ L1) +
+  xlab("to seed stratum or plant group") +
+  labs(colour = "from seed stratum or plant group") + 
+  ylab("contribution to lambda sensitivity") +
+  scale_color_discrete(breaks=c("1", "2"),
+                           labels=c("Top", "Bottom")) +
+  scale_x_discrete(limits=c("top st. seed","bottom  st. seed","seedling co. 1", "seedling co. 2",
+                            "seedling co. 3", "seedling co. 4", "seedling co. 5", "seedling co. 6")) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  theme(legend.position="top")
+```
+
+```{r S-B-post-harvest-contribution-2yr, fig.cap="Contribution of each entry element in the post harvest tillage sub-annual matrix to lambda.", include = FALSE}
+S_B_contribution_2yr_post_harvest_tillage <- S_B_contribution_2yr[c("C2_mean_post_harvest_tillage_contribution", "S2_mean_post_harvest_tillage_contribution")]
+
+# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
+# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
+reshape2::melt(S_B_contribution_2yr_post_harvest_tillage) %>%
+  rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
+  filter(original_matrix_col < 3) %>%
+  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
+  #geom_point() +
+  geom_jitter() +
+  facet_grid(~ L1) +
+  xlab("to seed or plant group") +
+  labs(colour = "from seed stratum or plant group") + 
+  ylab("contribution to lambda sensitivity") +
+  scale_color_discrete(breaks=c("1", "2"),
+                           labels=c("Top", "Bottom")) +
+  scale_x_discrete(limits=c("top st. seed","bottom st. seed","plant co. 1", "plant co. 2",
+                            "plant co. 3", "plant co. 4", "plant co. 5", "plant co. 6")) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  theme(legend.position="top")
+
+```
+
+```{r S-B-overwinter-contribution-2yr, fig.cap="Contribution of each entry element in the overwinter sub-annual matrix to lambda.", include=FALSE}
+## subletting removes names
+S_B_contribution_2yr_overwinter <- S_B_contribution_2yr[c("C2_mean_overwinter_scenario1_contribution", "S2_mean_overwinter_scenario1_contribution")]
+
+# https://stackoverflow.com/questions/62949713/unlisting-nested-lists-and-plotting-using-ggplot
+# melt the list will return Var1 = row 1 in the original matrix, Var = 2 column in the original matrix, and L1 = list name in the original matrix 
+reshape2::melt(S_B_contribution_2yr_overwinter) %>%
+ rename(original_matrix_row = Var1, original_matrix_col = Var2) %>%
+  filter(original_matrix_col < 3) %>%
+  ggplot(aes(x =  original_matrix_row, y = value, color = as.factor(original_matrix_col))) +
+  #geom_point() +
+  geom_jitter() +
+  facet_grid(~ L1) +
+  xlab("to seed stratum or plant group") +
+  labs(colour = "from seed stratum or plant group") + 
+  ylab("contribution to lambda sensitivity") +
+  scale_color_discrete(breaks=c("1", "2"),
+                           labels=c("Top", "Bottom")) +
+  scale_x_discrete(limits=c("top st. seed","bottom  st. seed","seedling co. 1", "seedling co. 2",
+                            "seedling co. 3", "seedling co. 4", "seedling co. 5", "seedling co. 6")) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  theme(legend.position="top")
 ```
