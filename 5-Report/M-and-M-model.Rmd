@@ -12,13 +12,15 @@ bibliography: prospective-pop-dynamics.bib
 library(readr)
 library(flextable)
 ```
-The date used in this excercise were collected from empirical experiment and the literature.
+
 
 ### Experiment design {-}
-The general experiment design and diagram were provided in [@nguyenImpactCroppingSystem2022], but an updated diagram is provided below to cover tillage regimes.  
+The general experiment design and diagram were provided in [@nguyenImpactCroppingSystem2022], but an updated diagram is provided below to cover tillage regimes. Contrasting herbicide regimes have been used for both corn and soybean at the experiment site from 2008. Soybean plots were managed by conventional herbicide starting in 2017.
 
 
-The empirical data was organized to distinguish historical herbicide information for soybean plots because the herbicide regime change was recent while the legacy effect of weed control program on each subplot may last for a few years [@rasmussenLegacyPesticidePollution2015; @gibsonBenchmarkStudyGlyphosateresistant2016].  
+```{r diagram, echo=FALSE}
+```
+  
 
 *Population transition matrices were calculated using Wood's quadratic programming method [Section 6.2, @caswellMatrixPopulationModels2001].*
 
@@ -106,6 +108,22 @@ assumptions_ft
 ```
 
 ### Parameterization {-}
+The empirical data was organized by corn weed management regimes, i.e., conventional (conv) versus low herbicide, because the herbicide regime change was recent while the legacy effect of weed control program on each subplot may last for a few years [@rasmussenLegacyPesticidePollution2015; @gibsonBenchmarkStudyGlyphosateresistant2016]. *Details on the empirical and literature data collection and justification are listed below.* 
+
+From spring to winter, the sequences of sub-annual matrices are: pre-planting tillage, emergence, summer survival, fecundity, post-harvest tillage, and overwinter survival. Each sub-annual period is an 8x8 matrix consists of four blocks using the format of matrix 4.8 in [Chapter 4, @caswellMatrixPopulationModels2001]. 
+
+```{r parameterization, include=FALSE}
+#https://ardata-fr.github.io/flextable-book/captions-and-cross-references.html
+
+parameters <- read.csv("demographic-parameters.csv")
+
+parameters_ft <-flextable(parameters)
+
+parameters_ft <- set_caption(parameters_ft,
+                              "Female-only population dynamics model parameters for common waterhemp (*Amaranthus tuberculatus*)")
+
+parameters_ft 
+```
 
 #### Vertical redistribution of seeds, in pre-planting and post-harvest tillage {-}
 
