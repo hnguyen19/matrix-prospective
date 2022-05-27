@@ -9,6 +9,7 @@ bibliography: prospective-pop-dynamics.bib
 
 # Results {-}
 
+The demographic parameters to which $\lambda$'s were the most elastic to are shown by each sub-annual matrix. The full set of elasticity values are provided in the Appendix. 
 
 ## Waterhemp population growth rate in three different rotation systems {-}
 ```{r, child = "prospective-dynamics-rotation-wise-projection-scenario1.Rmd"}

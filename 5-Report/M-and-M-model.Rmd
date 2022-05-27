@@ -15,10 +15,12 @@ library(flextable)
 
 
 ### Experiment design {-}
-The general experiment design and diagram were provided in [@nguyenImpactCroppingSystem2022], but an updated diagram is provided below to cover tillage regimes. Contrasting herbicide regimes have been used for both corn and soybean at the experiment site from 2008. Soybean plots were managed by conventional herbicide starting in 2017.
+The general experiment design and diagram were provided in [@nguyenImpactCroppingSystem2022], but an updated diagram is provided below to include tillage regimes. Contrasting herbicide regimes have been used for both corn and soybean at the experiment site from 2008 and soybean plots were managed by conventional herbicide starting in 2017, but the data was collected .
 
 
-```{r diagram, echo=FALSE}
+```{r diagram, echo=FALSE, fig.cap= "Conceptual diagram of the three rotation systems compared within the experiment. A cycle of four calendar years is shown. Tillage regimes were symbolized with arrows: light, black ahead of crop sowing for field cultivator, medium, blue and bold orange after crop harvest for chisel and moldboard plough, respectively. Crops are color-coded and displayed for the approximate months that they were present. Emergence and establishment of common waterhemp plants are illustrated with black symbols. Grey plants shown in oat or alfalfa’s first year were physically controlled by crop harvest operations. Grey plants shown in alfalfa’s second year were physically suppressed three to four times by haynharvest. Alfalfa's hay was harvested when approximately 5% of the plants flowered."}
+
+knitr::include_graphics('Tillage-diagram.png')
 ```
   
 
@@ -29,6 +31,11 @@ Cohorts in this experiment reflected the time stamps when the waterhemp sub-popu
 Two consecutive surveys were approximately two to three weeks apart, as the weather permitted.
 
 ### Matrix form {-}   
+
+
+
+*The periodic matrices are sub-divisions of an annual projection matrix: each is constructed based on critical points in a weed species' life cycle, which will provide a means to track when and where major changes in population dynamics happen.*
+Details on periodic matrices construction and justification are provided in the next section.  
 
 Each transition matrix of eight rows by eight columns (8 x 8) consists of four blocks using the format of matrix 4.8 in [Chapter 4, @caswellMatrixPopulationModels2001]. 
 Each rotational transition matrix, $A_r$, is the product of two, three or four annual projection matrices, $P_c$ (c = 2, 3, or 4, corresponding to the number of crop phases in each rotation). Each annual projection matrices, corresponding to a crop environment, $P_c$, is the product of six sub-annual matrices, $B_k$ with $k = {1,2,...,6}$.s 
@@ -150,5 +157,6 @@ Variance of annualized population growth rate is calculated with Taylor series e
 
  
 
-
 ### Elasticity of population growth rate on each lower-level parameter {-}
+
+Matrix calculation in this study was performed in R version 4.2.0 [@rdevelopmentcoreteamLanguageEnvironmentStatistical2022]. The population growth rate, $\lambda$, sensitivity and elasticity were calculated with `eigen.analysis` function [@stubbenPopbioConstructionAnalyse2020].

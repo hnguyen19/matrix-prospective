@@ -845,7 +845,7 @@ rapply(E_B_contribution_trimmed ,
                                                           how='list')
 ```
 
-The demographic parameters to which $\lambda$'s were the most elastic to are shown by each sub-annual matrix. The full set of elasticity values are provided in the Appendix. 
+
 
 ```{r E-B-table}
 
