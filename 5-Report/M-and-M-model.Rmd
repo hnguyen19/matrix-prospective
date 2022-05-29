@@ -155,7 +155,23 @@ The variance of population growth rate is calculated with $Var(\lambda)= \sum_i^
 
 Variance of annualized population growth rate is calculated with Taylor series expansion using the general formula: $Var[f(\lambda)] = {f'(E(\lambda))}^2 Var(\lambda)$, in which $f(\lambda)$ is the nth-root function used to annualize the rotation-wise growth rates. For example, the variance of annualized population growth rate in the 2-year rotation was $Var(\lambda_{2}) = \frac{1}{4\lambda_{2r}}Var(\lambda_{2r})$, where $\lambda_2 = \sqrt{\lambda_{2r}}$.  
 
- 
+ In all LTRE procedures presented here, the conventional corn weed management treatment is the reference treatment and low herbicide the treatment of interest. Following @caswellSensitivityAnalysisPeriodic1994's notions:
+
+The sensitivity of $\lambda$ to each element of each sub-annual periodic matrix is calculated with
+
+$$
+S_{B(h)} = {(B_{(h-1)}...B_{(1)}...B_{(h+1)})}^TS_{A(h)} = D^T S_{A(h)} \,\,\,(1)
+$$ where,\
+$B_{(h)}$ is the periodic projection matrix for sub-annual period h; h = {1,...,6},\
+$D^T$ is the transpose of the matrix product of all the $B_{(h)}$, and\
+$S_{A(h)}$ is the sensitivity of $\lambda$ to each element of $A^*_{(h)}$ (the average annual projection matrix between the reference treatment and the treatment of interest)
+
+The elasticities of $\lambda$ to each element of a sub-annual projection matrix is calculated with\
+$$
+E_{B(h)} = \frac{b_{ijk}}{\lambda} S_{B(h)} \,\,\,(2)
+$$ where,
+
+$b_{ijk}$ is the entry at row i column j of matrix $B_{(h)}$, and other elements as defined in Equation (1).
 
 ### Elasticity of population growth rate on each lower-level parameter {-}
 
