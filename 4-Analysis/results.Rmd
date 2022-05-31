@@ -11,7 +11,23 @@ bibliography: prospective-pop-dynamics.bib
 
 The demographic parameters to which $\lambda$'s were the most elastic to are shown by each sub-annual matrix. The full set of elasticity values are provided in the Appendix. 
 
-## Waterhemp population growth rate in three different rotation systems {-}
+## Waterhemp population growth rate in three different rotation systems {-}  
+
+Using 2019 fecundity rates, waterhemp population densities were decreasing in all rotations, the fastest in the 3-year rotation (Figures \@ref(fig:scenario1-phase-wise-lambda-plot)).
+
+In the corn phase of the 2-year rotation, the mobility of seeds at the bottom stratum to seedling cohort 2 was the highest contributor to changes in the population growth ($\lambda$); to the seedling cohorts 1, 3 and 4 were immediate contributors to changes in the population growth. The same pattern was observed for the top-stratum seeds in the corn phase of the 2-year rotation, but their contribution to changes in $\lambda$ were lower than those of the bottom-stratum seeds.
+
+In the soybean phase of the 2-year rotation, emergence minimally contributed to changes in population growth.
+
+*need a table, as graphs will be too many*
+
+In 2019, as $\lambda$'s were under 1 for all treatments, fecundity did not contribute substantially to $\lambda$ changes.
+
+
+Under scenario 1:
+
+summer seed survival was more important than seedling survival ($E_{b_{ij3}}$ values were at ninth to fourteenth decimal places for seedlings)
+
 ```{r, child = "prospective-dynamics-rotation-wise-projection-scenario1.Rmd"}
 ```
 
