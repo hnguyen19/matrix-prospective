@@ -114,13 +114,13 @@ fecundity_mean_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_
        matrix(rep(0,48), nrow = 6, byrow = TRUE))))
 
 ## Save the 18 2018 fecundity matrices as a list 
-# saveRDS(fecundity_mean_18_list, file="../2-Data/Clean/fecundity-mean-18-cohort.RData")
+# saveRDS(fecundity_mean_18_list, file="../2-Data/Clean/mean-fecundity-18-cohort.RData")
 
 ## cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
 fecundity_var_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_id),
        function(x) diag(x$var_seed,6))
 
-# saveRDS(fecundity_var_18_list, file="../2-Data/Clean/fecundity-var-18-cohort.RData")
+# saveRDS(fecundity_var_18_list, file="../2-Data/Clean/var-fecundity-18-cohort.RData")
 ```
 
 
@@ -256,7 +256,7 @@ female_19_est_NA <- female_19_est[!complete.cases(female_19_est),]
 
 ```
 
-```{r amata-fecundity-cohort}
+```{r amata-fecundity-cohort-19}
 # Seed = a * log(Weight) + b
 # a = log(Biomass + 0.005)_estimate /// b = (Intercept)_estimate
 # log is actually ln
