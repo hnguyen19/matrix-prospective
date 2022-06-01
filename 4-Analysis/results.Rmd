@@ -6,27 +6,52 @@ output:
     reference_docx: style_template.docx
 bibliography: prospective-pop-dynamics.bib
 ---
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(purrr) # for map2()
+library(pracma)
+library(popbio)
+library(tidyverse)
+library(magrittr) 
+# convert this Rmd to R to source it in results.Rmd
+library(flextable)
+source("functions.R")
+```
 
-# Results {-}
+# Results and discussion {-}
 
-The demographic parameters to which $\lambda$'s were the most elastic to are shown by each sub-annual matrix. The full set of elasticity values are provided in the Appendix. 
+## Waterhemp population growth rates {-}
 
-## Waterhemp population growth rate in three different rotation systems {-}  
+### Scenario 1 {-}
+*In scenario 1, plant cohorts were assigned by their size, under the assumption that plant size decreases as emergence delays (Table).* 
+Using 2019 fecundity rates, that were estimated from individual plant size using eighteen equations from @nguyenImpactCroppingSystem2022, waterhemp population densities were decreasing in all rotations, the fastest in the 2-year rotation under low herbicide corn weed management and the 3-year rotation under both corn weed management programs (Figures \@ref(fig:scenario1-phase-wise-lambda-plot)). $\lambda$'s decreased right after the first phase of the 2-year (C2) and 3-year (C3) rotations, but increased in the first phase of the 4-year rotation (C4) by three ($\lambda(C4, low)$ = 3.24) to fourteen ($\lambda(C4, low)$ = 14.34) folds. The steady decrease of population density in the soybean, oat, and alfalfa phases ($\lambda$'s = 0.5) were sufficient to keep the rotation-wise populations decreasing within a four year cycle even if $\lambda$ may increase again when the cropping system circles back to corn. The majority of the seedbank in the 4-year rotation is at the 2-20 cm stratum, which limits the seed pool density available for emergence.   
 
-Using 2019 fecundity rates, waterhemp population densities were decreasing in all rotations, the fastest in the 3-year rotation (Figures \@ref(fig:scenario1-phase-wise-lambda-plot)).
+### Scenario 2 {-}
 
-In the corn phase of the 2-year rotation, the mobility of seeds at the bottom stratum to seedling cohort 2 was the highest contributor to changes in the population growth ($\lambda$); to the seedling cohorts 1, 3 and 4 were immediate contributors to changes in the population growth. The same pattern was observed for the top-stratum seeds in the corn phase of the 2-year rotation, but their contribution to changes in $\lambda$ were lower than those of the bottom-stratum seeds.
+*In scenario 2, plant cohorts were assigned by their size, under the assumption that plant size decreases as emergence delays (Table).* 
+Using 2018 fecundity rates, waterhemp population densities were increasing rapidly in all rotations, the fastest in the 2-year rotation (Figures \@ref(fig:scenario2-phase-wise-lambda-plot)). The population increase in the 3-year rotation under low herbicide corn weed management was similar to those of the 4-year rotation. Even though the populations were all increasing, the partition of seedbanks differed between rotations and consistent between two corn weed management regimes within the same rotation. In the 2-year rotation, a large portion of the seedbanks were at the 0-2 cm soil stratum; in the 3-year rotation, the top and bottom soil strata were fairly evenly populated; and in the 4-year rotation, the majority of the seedbanks were at the bottom stratum.   
 
-In the soybean phase of the 2-year rotation, emergence minimally contributed to changes in population growth.
+The oat phase of the 3-year rotation (O3) alfalfa phase of the 4-year rotation (A4) offered an opportunity for decreasing $\lambda$, which was not possible in any other crop phases in the three examined rotations. However, the decline in $\lambda$ in O3 ($\lambda(O3, low)$ = 0.68) and A4 ($\lambda(A4, low)$ = 0.60) were not strong enough to deplete the replenishment from the corn ($\lambda(C3, low)$ = 2553 and $\lambda(C4, low)$ = 35676.54) and soybean ($\lambda(S3, low)$ = 14567.90 and $\lambda(S4, low)$ = 30.20) phases. *It would be useful to examine how many years of continuous overwinter cover crops is necessary and which cool-season crop species would be efficient in decreasing waterhemp $\lambda$ after steady seedbank replenishment.*   
 
-*need a table, as graphs will be too many*
+## Elasticities of popilation growth rates to lower-level demographic parameters {-}
 
-In 2019, as $\lambda$'s were under 1 for all treatments, fecundity did not contribute substantially to $\lambda$ changes.
+All the elasticity of $\lambda$ to the lower-level demographic parameters mentioned in the brackets below are bold in Tables \@ref(tab:scenario1-E-B-by-rot-tab) and \@ref(tab:scenario2-E-B-by-rot-tab). The tables exclude all-zero columns. Zeros in the tables were from rounding or absolute values being zeros. For examples, the elasticity of $\lambda$'s to plant survival rate during summer (the probability that seedlings successfully reach maturity) were negligibly small (at ninth to fourteenth decimal places), and thus, were excluded from the tables. This pattern suggests that even if weed control programs are of high, or even total efficacy, the very few survived plants, if successfully and prolifically produce new seeds, can help sustain the population.  
+
+### Scenario 1 {-}  
+The ranking of parameters or individual parameters to the elasticity of $\lambda$ differed by rotation and crop phase. 
+
+The elasticity of $\lambda$'s to fecundity rate, as a group, were ranked first in the corn phase of the 2-year rotation (C2) (43.13 and 3.15), the soybean phase of the 2-year rotation (S2) (0.75 and 4.18), the soybean phase of the 3-year rotation (S3) that followed corn under low herbicide weed management prorgram (0.91), the corn phase of the 4-year rotation (C4) (305.24 and 323.07), and the alfalfa in the 4-year rotation (A4) (36.78 and 14.49) under both weed management regimes.
+The rate of pre-planting tillage induced seed movement to the 2-20 cm soil stratum was the first-ranked individual parameter to the elasticity of $\lambda$'s in the corn phase of the 3-year rotation (C3) (1.1 and 1.1), the soybean in the 3-year rotation that followed corn under low herbicide weed management (0.89), the oat phase of the 3-year rotation (O3) (0.87 and 0.88), the oat phase of the 4-year rotation (5.49 and 3.98). The overwinter survival rate of the seeds at the 0-2 cm soil stratum was the first-ranked individual parameter to the elasticity of $\lambda$'s in the soybean phase of the 4-year rotation (S4) (3.32 and 2.41). 
+
+Noticeably, the elasticity of $\lambda$ to fecundity rates in C4 were distinctively higher than that to the second-ranked group, suggesting that. 
+
+The second-ranked and lower ranked groups of parameters contributed minimally and fairly evenly to the elasticity of $\lambda$ in most crop environment, except for
+
+As $\lambda$s were all declining in this scenario, with some opportunity of increasing in the 
 
 
-Under scenario 1:
-
-summer seed survival was more important than seedling survival ($E_{b_{ij3}}$ values were at ninth to fourteenth decimal places for seedlings)
+### Scenario 2 {-}  
+Unlike scenario one's dynamics, the difference in the absolute value of the elasticity of $\lambda$ to the first-ranked and second-ranked groups of parameters were multiple orders of magnitude. The elasticity of $\lambda$'s to fecundity rates, as a group, were ranked first in all crop phases; but the specific influence of each cohort's fecundity differed by crop phase. The elasticity of $\lambda$'s elasticity to cohort one fecundity were the highest in C2 (4.1 x $10^9$ and 2.8 x $10^9$), S3 (4.4 x $10^9$ and 9.7 x $10^{10}$), and O4 (8.3 x $10^6$ and 6.5 x $10^6$) phases. The elasticity of $\lambda$'s elasticity to cohort two fecundity were the highest in S2, C3, C4, S4, O4, and A4 phases. The second-ranked group of demographic parameters to $\lambda$ differed by rotation and crop phase. In the 2-year rotation, the second-ranked group of parameters in contribution to elasticity of $\lambda$ were both pre-planting tillage-induced seed movement and overwinter seed survival. In the 3-year rotation, the second-ranked group of parameters in contribution to elasticity of $\lambda$ was pre-planting tillage-induced seed movement in the warm-season crop phases; and overwinter seed survival in the cool-season crop phase. In the 4-year rotation, the second-ranked group of parameters in contribution to elasticity of $\lambda$ was overwinter seed survival in the cool-season crop phase; and pre-planting tillage-induced seed movement in the warm-season crop phases; a reverse trend as compared to the 3-year rotation's dynamics.
 
 ```{r, child = "prospective-dynamics-rotation-wise-projection-scenario1.Rmd"}
 ```
@@ -35,12 +60,24 @@ summer seed survival was more important than seedling survival ($E_{b_{ij3}}$ va
 ```{r, child = "prospective-dynamics-rotation-wise-projection-scenario2.Rmd"}
 ```
 
+## Conclusion {-}
+
+Regardless of the difference in waterhemp $\lambda$, no crop yield decline was observed at the experiment site from 2017 through 2020 [@nguyenWeedCommunityComposition2022].  
+
+*This observation is consistent with waterhemp's ability to replenish a declining soil seedbank over several years with only one successful year reported by @davisWeedSeedPools2008.* 
+
+Since the elasticity of $\lambda$ was the least contributed by seedling survival, it would be helpful to
+
 ## Sensitivities and elasticities of waterhemp population growth rate to projection matrices elements {-}
-```{r, child = "prospective-dynamics-phase-wise-projection.Rmd"}
+```{r, include=FALSE}
+# remove later child = "prospective-dynamics-phase-wise-projection.Rmd
 ```
 
 
 ## Appendix {-}
 
-```{r, child = "scenario2-matrices.Rmd"}
+```{r, include=FALSE}
+# child = "scenario2-matrices.Rmd
 ```
+
+## Reference {-}

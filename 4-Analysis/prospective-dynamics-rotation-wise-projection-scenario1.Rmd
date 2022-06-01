@@ -845,9 +845,9 @@ scenario1_S_B_contribution_recombined_first_col_transpose <- rapply(scenario1_S_
 ```{r scenario1-var-rot-lambda, echo=FALSE}
 scenario1_var_lambda_conv_elements  <- Map(\(x, y, z) Reduce(`%*%`,
                       list(x, y, z)),
-    unlist(scenario1_S_B_contribution_recombined_first_col_transpose, recursive = F),
-    unlist(var_scenario1_projection_conv, recursive = F),
-    unlist(scenario1_S_B_contribution_recombined_first_col, recursive = F))
+    unlist(scenario1_S_B_contribution_recombined_first_col_transpose, recursive = FALSE),
+    unlist(var_scenario1_projection_conv, recursive = FALSE),
+    unlist(scenario1_S_B_contribution_recombined_first_col, recursive = FALSE))
 
 scenario1_var_lambda_conv_2yr <- sum(unlist(scenario1_var_lambda_conv_elements[1:12]))
 scenario1_var_lambda_conv_3yr <- sum(unlist(scenario1_var_lambda_conv_elements[13:30]))
@@ -855,9 +855,9 @@ scenario1_var_lambda_conv_4yr <- sum(unlist(scenario1_var_lambda_conv_elements[3
 
 scenario1_var_lambda_low_elements  <- Map(\(x, y, z) Reduce(`%*%`,
                       list(x, y, z)),
-    unlist(scenario1_S_B_contribution_recombined_first_col_transpose, recursive = F),
-    unlist(var_scenario1_projection_low, recursive = F),
-    unlist(scenario1_S_B_contribution_recombined_first_col, recursive = F))
+    unlist(scenario1_S_B_contribution_recombined_first_col_transpose, recursive = FALSE),
+    unlist(var_scenario1_projection_low, recursive = FALSE),
+    unlist(scenario1_S_B_contribution_recombined_first_col, recursive = FALSE))
 
 
 
@@ -906,13 +906,25 @@ scenario1_var_lambda_low_top_element <- scenario1_var_lambda_low_elements[str_de
 scenario1_var_lambda_low_second_element <- scenario1_var_lambda_low_elements[str_detect(names(scenario1_var_lambda_low_elements), "fecund")]
 ```
 
+```{r scenario1-phase-wise-lambda, include=FALSE}
+scenario1_phase_lambda <-  scenario1_phase_projection_trimmed %>% 
+  map(., ~{lambda(.)}) %>%
+  unlist(recursive = FALSE) %>%
+  data.frame() %>%
+  rename(phase_lambda = ".") %>%
+  tibble::rownames_to_column() %>%
+  mutate(Crop_ID = substr(rowname, 1,2),
+         Corn_weed_management = substring(rowname, 4),
+         Corn_weed_management = ifelse(Corn_weed_management == "conv", paste0(Corn_weed_management,"entional"), Corn_weed_management),
+         Rotation = paste0(substr(rowname,2,2),"-year")) %>%
+  arrange(Rotation, Corn_weed_management) %>%
+  mutate(phase_lambda_r = round(phase_lambda, 2))
+
+# View(scenario1_phase_lambda )
+```
 
 ```{r scenario1-phase-wise-lambda-plot, echo=FALSE, fig.width= 8, fig.height= 12, fig.cap= "Scenario 1: Changes of a seed column after twelve model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). The model started at year 0 with 1000 and 0 seeds per squared meter at the top (0-2 cm) and bottom (2-20 cm) strata, respectively. The red horizontal line shows the number of seeds at the top stratum at the begining of the model clock. The annualized population growth rates are followed by their variances in brackets. The models years are followed by the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
 
-#scenario1_phase_seed_vectors$Sequence <- c(rep("start-C-S-C-S-C-S-C-S-C-S-C-S",2),
-#                                           rep( "start-C-S-O-C-S-O-C-S-O-C-S-O",2),
-#                                           rep( "start-C-S-O-A-C-S-O-A-C-S-O-A",2))
-## Convert the seed vectors to long format
 scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
   mutate(Stratum = rep(c("0-2 cm", "2-20 cm"),6),
          Rotation = c(rep("2-year",4), rep("3-year",4), rep("4-year",4)),
@@ -922,7 +934,7 @@ scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
          Sequence = c(rep(c("start", "C", "S", "C", "S", "C", "S", "C", "S", "C", "S", "C", "S"),4),
                       rep(c("start", "C", "S", "O", "C", "S", "O", "C", "S", "O", "C", "S", "O"),4),
                       rep(c("start", "C", "S", "O", "A", "C", "S", "O", "A", "C", "S", "O", "A"),4)),
-         Year_Crop = paste(Year, Sequence, sep = "/"))
+         Year_Crop = paste(Year, Sequence, sep = "_")) # using "/" as a sep will break the x-axis border later
 
 # View( scenario1_phase_seed_vectors_long)
 
@@ -932,8 +944,12 @@ scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
 # View(scenario1_annualized_lambda_and_var )
 # https://stackoverflow.com/questions/72426613/individual-text-box-with-greek-letter-on-each-facet-grid-panel/72426740#72426740
 lambda_label <- data.frame(
-  label = c("\u03BB = 0.567 (1663.3)",  "\u03BB = 0.544 (46598.7)", "\u03BB = 0.701 (268.9)",
-            "\u03BB = 0.537 (1876.0)", "\u03BB = 0.542 (46996.3)", "\u03BB = 0.968 (141.3)"),
+  label = c("\u03BB = 0.567 (1663.3) \n \u03BB(C2) = 0.63, \n \u03BB(S2) = 0.52", 
+            "\u03BB = 0.544 (46598.7) \n \u03BB(C3) = 0.59, \n \u03BB(S3) = 0.53, \n \u03BB(O3) = 0.53",
+            "\u03BB = 0.701 (268.9) \n \u03BB(C4) = 3.24, \n \u03BB(S4) = 0.52, \n \u03BB(O4) = 0.52, \n \u03BB(A4) = 0.53",
+            "\u03BB = 0.537 (1876.0) \n \u03BB(C2) = 0.55, \n \u03BB(S2) = 0.52",
+            "\u03BB = 0.542 (46996.3) \n \u03BB(C3) = 0.59, \n \u03BB(S3) = 0.52, \n \u03BB(O3) = 0.54", 
+            "\u03BB = 0.968 (141.3) \n \u03BB(C4) = 14.34, \n \u03BB(S4) = 0.52, \n \u03BB(O4) = 0.52, \n \u03BB(A4) = 0.53"),
   Rotation = rep(c("2-year", "3-year", "4-year"), 2),
   Corn_weed_management = rep(c("conventional", "low"), 3),
   Stratum = rep("placeholder", 6) #need this placeholder for the geom_text in the code chain below to run
@@ -942,14 +958,14 @@ lambda_label <- data.frame(
 ## reverse legend: https://www.geeksforgeeks.org/reversing-the-order-of-a-ggplot2-legend/
 scenario1_phase_seed_vectors_long  %>% 
   ggplot() +
-  aes(x = factor(Year_Crop, levels=unique(Year_Crop)), group = Stratum) +
- #  aes(x = as.factor(Year), y = Count, group = Stratum) +
+  # aes(x = factor(Year_Crop, levels=unique(Year_Crop)), y = Count, group = Stratum) + 
+   aes(x = Year, y = Count, group = Stratum) +
   geom_line(aes(y = Count, linetype =  Stratum)) +
   geom_point(aes(y = Count, shape =  Stratum)) +
   geom_hline(aes(yintercept = 1000, color = "baseline")) +
   facet_wrap(Rotation ~ Corn_weed_management, scales = "free_x", ncol = 2, labeller = label_wrap_gen(multi_line=FALSE)) + 
- # scale_x_continuous(breaks = scales::pretty_breaks(n = 13)) + don't need this with as.factor(Year)
-  labs(x = "Model year/Crop species abbreviation",
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 13)) + #don't need this with as.factor(Year)
+  labs(x = "Model year _ Crop species abbreviation",   #/
        y= expression(paste("Seed density (", seeds~m^-2,")"))) +
   theme(axis.text.x = element_text(angle = 90)) +
   theme(legend.position = "bottom", legend.title = element_blank(),
@@ -1407,10 +1423,16 @@ scenario1_E_B_recombine_wide <- plyr::join_all(list(scenario1_E_B_spring_tillage
             scenario1_E_B_summer_recombine_wide,
             scenario1_E_B_fecund_recombine_wide,
             scenario1_E_B_postharvest_tillage_recombine_wide,
-            scenario1_E_B_overwinter_recombine_wide), by = c("Scenario", "Rotation", "Crop_ID", "Corn_weed_management"), type='left')  %>% select(!c(Rotation,Scenario)) 
+            scenario1_E_B_overwinter_recombine_wide), by = c("Scenario", "Rotation", "Crop_ID", "Corn_weed_management"), type='left')  %>% select(!c(Rotation,Scenario)) %>%
+  mutate(Corn_weed_management = ifelse(Corn_weed_management == "conv", paste0(Corn_weed_management,"entional"), Corn_weed_management))
 
-## View( scenario1_E_B_recombine_wide )
+# View( scenario1_E_B_recombine_wide )
 
+## combine phase-wise lambda with E_B
+# scenario1_E_B_and_lambda <- scenario1_E_B_recombine_wide %>% 
+#  left_join(scenario1_phase_lambda, by = c("Crop_ID", "Corn_weed_management"))
+ 
+#View(scenario1_E_B_and_lambda )
 # remove all-zero columns: https://stackoverflow.com/questions/21530168/remove-columns-with-zero-values-from-a-dataframe
 scenario1_E_B_recombine_wide_zero_col_removed <-  scenario1_E_B_recombine_wide[, colSums(scenario1_E_B_recombine_wide != 0) > 0]
 
@@ -1418,21 +1440,17 @@ scenario1_E_B_recombine_wide_zero_col_removed <-  scenario1_E_B_recombine_wide[,
 scenario1_E_B_recombine_wide_zero_col_removed  %>% 
   flextable::flextable()  -> scenario1_E_B_plain
 
-
 for(i in seq_len(nrow(scenario1_E_B_recombine_wide_zero_col_removed )))
 {
   scenario1_E_B_plain %<>% flextable::bold(i, which.max(scenario1_E_B_recombine_wide_zero_col_removed[i,]))
 }
-
-
 ```
 
 ```{r scenario1-E-B-by-rot-tab, echo = FALSE, results='asis'}
 #https://stackoverflow.com/questions/62148912/sharing-of-footnote-between-different-part-of-tables-using-flextable
 # special character list: http://www.ephotocaption.com/a/106/106.html
 scenario1_E_B_plain %>%
-  fontsize(size = 6, part = "all") %>%
-  set_caption("Scenario1 - Elasticity of population growth rate to lower level demographic parameters")  %>%
+  set_caption("Scenario1 - Elasticity of population growth rates in three rotations crossed with two corn weed management programs to lower-level demographic parameters")  %>%
   set_table_properties(layout = "autofit") %>%
   footnote(i = 1, j = 3:6,
            value = as_paragraph(c("st_ij: the probability of seed movement from soil stratum i to j by pre-planting tillage")),
@@ -1469,7 +1487,8 @@ scenario1_E_B_plain %>%
   footnote(i = NULL, j = NULL,
            value = as_paragraph("All-zero columns are excluded. In Crop_ID: C2 - corn in the 2 year rotation, S2 - soybean in the 2-year rotation, C3 - corn in the 3-year rotation, S3 - soybean in the 3-year rotation, O3 - oat intercroped with red clover in the 3-year rotation, C4 - corn in the 4-year rotation, S4 - soybean in the 4-year rotation, O4 - oat intercropped with alfalfa in the 4-year rotation, and A4 - alfalfa in the 4-year rotation."), 
            part = "footer", 
-           ref_symbols = " ") # need " ", otherwise flextable will put "1" as the ref_symbol
+           ref_symbols = " ") %>%# need " ", otherwise flextable will put "1" as the ref_symbol
+    fontsize(size = 6, part = "all") 
 # multiple Greek letters as headers 
 # which zeros were due to rounding and which negligible 
 ```

@@ -118,7 +118,9 @@ fecundity_mean_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_
 
 ## cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
 fecundity_var_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_id),
-       function(x) diag(x$var_seed,6))
+       function(x) rbind(cbind(diag(x$var_seed,6), matrix(0,nrow=6,ncol=2)),matrix(0,nrow=2,ncol=8))) 
+
+
 
 # saveRDS(fecundity_var_18_list, file="../2-Data/Clean/var-fecundity-18-cohort.RData")
 ```

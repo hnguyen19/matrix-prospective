@@ -119,6 +119,11 @@ The empirical data was organized by corn weed management regimes, i.e., conventi
 
 From spring to winter, the sequences of sub-annual matrices are: pre-planting tillage, emergence, summer survival, fecundity, post-harvest tillage, and overwinter survival. Each sub-annual period is an 8x8 matrix consists of four blocks using the format of matrix 4.8 in [Chapter 4, @caswellMatrixPopulationModels2001]. 
 
+
+
+The lower-level demographic parameters are demographic parameters at each sub-annual periods.
+The examined lower-level demographic parameters can be grouped based on their impacts to preserving and producing new seeds. The parameter that contributed to preserving seeds is the probability of seeds not emerging ($1 - \sum_{k=1}^6 \gamma_k$). The parameters that contributed to producing new seeds are the emergence probabilities ($\gamma_k, k = \{1,...6\}$), the survival rates of seeds ($\sigma_{sk}, k = \{1,2\}$) and seedlings ($\sigma_{pk}, k = \{1,...,6\}$) during summer, the fecundity rate ($\phi_k,  k = \{1,...,6\}$), and the survival rate overwinter ($\omega_k, k = {1,2}$). Even though emergence reduces the seedbank, the number of seeds that are produced from an emerged seedling that succeeds until seed production are substantial, so emergence is considered positively impacting new seed production [@davisWeedSeedPools2008]. The parameters that are neutral to both seed preservation and seed production are tillage-induced seed movement across soil strata at the pre-planting ($\tau_{sij}, i = \{1,2\}$) and post-harvest $\tau_{fij}, i = \{1,2\}$) periods. The tillage-induced seed vertical movement rates are considered neutral to both seed preservation and seed production because the seeds that are kept at or moved to the 0-2 cm soil layer can be exposed to emergence stimulants or granivors while the seeds that are kept at or moved to the 2=20 cm soil layer can be exposed to suicidal germination and decaying stimulants; or preserved at optimal conditions [@burnsideSeedLongevity411996; @davisEnvironmentalFactorsAffecting2005; @davisInfluenceSeedDepth2007]. 
+
 ```{r parameterization, include=FALSE}
 #https://ardata-fr.github.io/flextable-book/captions-and-cross-references.html
 
