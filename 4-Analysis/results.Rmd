@@ -21,7 +21,8 @@ source("functions.R")
 theme_set(theme_classic())
 ```
 
-# Introduction {-}
+# Introduction {-}  
+
 ```{r, child = "../5-Report/Introduction-model.Rmd"}
 ```
 
