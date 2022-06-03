@@ -1,10 +1,12 @@
 ---
+title: "Effects of crop rotation on common waterhemp population dynamics: A prospective and retrospective analysis"
 output:
     bookdown::word_document2:
       toc: false
       fig_caption: yes
     reference_docx: style_template.docx
 bibliography: prospective-pop-dynamics.bib
+csl: apa-no-ampersand.csl 
 ---
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
