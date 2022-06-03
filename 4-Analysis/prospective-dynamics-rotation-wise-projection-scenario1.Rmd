@@ -246,7 +246,7 @@ scenario1_N4yr_low$N10 <- S4_low %*% scenario1_N4yr_low$N9
 scenario1_N4yr_low$N11 <- O4_low %*% scenario1_N4yr_low$N10 
 scenario1_N4yr_low$N12 <- A4_low %*% scenario1_N4yr_low$N11 
 
-View(scenario1_N4yr_low )
+#View(scenario1_N4yr_low )
 
 ## combine all the 6 crop id x corn weed management
 scenario1_phase_seed_vectors <- rbind(scenario1_N2yr_conv,
@@ -944,12 +944,12 @@ scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
 # View(scenario1_annualized_lambda_and_var )
 # https://stackoverflow.com/questions/72426613/individual-text-box-with-greek-letter-on-each-facet-grid-panel/72426740#72426740
 lambda_label <- data.frame(
-  label = c("\u03BB = 0.567 (1663.3) \n \u03BB(C2) = 0.63, \n \u03BB(S2) = 0.52", 
-            "\u03BB = 0.544 (46598.7) \n \u03BB(C3) = 0.59, \n \u03BB(S3) = 0.53, \n \u03BB(O3) = 0.53",
-            "\u03BB = 0.701 (268.9) \n \u03BB(C4) = 3.24, \n \u03BB(S4) = 0.52, \n \u03BB(O4) = 0.52, \n \u03BB(A4) = 0.53",
-            "\u03BB = 0.537 (1876.0) \n \u03BB(C2) = 0.55, \n \u03BB(S2) = 0.52",
-            "\u03BB = 0.542 (46996.3) \n \u03BB(C3) = 0.59, \n \u03BB(S3) = 0.52, \n \u03BB(O3) = 0.54", 
-            "\u03BB = 0.968 (141.3) \n \u03BB(C4) = 14.34, \n \u03BB(S4) = 0.52, \n \u03BB(O4) = 0.52, \n \u03BB(A4) = 0.53"),
+  label = c("\u03BB = 0.567 (1663.3) \n \u03BB(C2) = 0.63 \n \u03BB(S2) = 0.52", 
+            "\u03BB = 0.544 (46598.7) \n \u03BB(C3) = 0.59 \n \u03BB(S3) = 0.53 \n \u03BB(O3) = 0.53",
+            "\u03BB = 0.701 (268.9) \n \u03BB(C4) = 3.24 \n \u03BB(S4) = 0.52 \n \u03BB(O4) = 0.52, \n \u03BB(A4) = 0.53",
+            "\u03BB = 0.537 (1876.0) \n \u03BB(C2) = 0.55 \n \u03BB(S2) = 0.52",
+            "\u03BB = 0.542 (46996.3) \n \u03BB(C3) = 0.59 \n \u03BB(S3) = 0.52 \n \u03BB(O3) = 0.54", 
+            "\u03BB = 0.968 (141.3) \n \u03BB(C4) = 14.34 \n \u03BB(S4) = 0.52 \n \u03BB(O4) = 0.52, \n \u03BB(A4) = 0.53"),
   Rotation = rep(c("2-year", "3-year", "4-year"), 2),
   Corn_weed_management = rep(c("conventional", "low"), 3),
   Stratum = rep("placeholder", 6) #need this placeholder for the geom_text in the code chain below to run
@@ -1074,7 +1074,11 @@ scenario1_E_B_spring_tillage_recombine_wide <- scenario1_E_B_spring_tillage_reco
                                ifelse(Crop == "O", 3, 4))))%>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop)) %>% 
-   mutate_at(5:8, round, 2)
+   mutate_at(5:8, round, 2) %>%
+  rename("\U03C4_11s" = st1_1,
+        "\U03C4_21s" = st2_1,
+        "\U03C4_12s" = st1_2,
+        "\U03C4_22s" = st2_2)
 
 #View( scenario1_E_B_spring_tillage_recombine_wide )
 
@@ -1106,7 +1110,7 @@ scenario1_E_B_emerge_conv_unlist <- scenario1_E_B_emerge_conv %>%
          Crop = substr(rowname, 37, 37),
          Rotation = substr(rowname, 28,30))
   
- View( scenario1_E_B_emerge_conv_unlist)
+# View( scenario1_E_B_emerge_conv_unlist)
 
 scenario1_E_B_emerge_low_unlist <- scenario1_E_B_emerge_low %>% 
   unlist(., recursive = FALSE) %>% 
@@ -1136,13 +1140,13 @@ scenario1_E_B_emerge_recombine_wide <- scenario1_E_B_emerge_recombine %>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop, seed_bottom)) %>% #keep the relevant columns only 
    mutate_at(5:11, round, 2) %>%
-  rename(`1-sum(e)` = seed_top,
-        e_1= plant_cohort_1,
-        e_2 = plant_cohort_2,
-        e_3 = plant_cohort_3,
-        e_4 = plant_cohort_4,
-        e_5 = plant_cohort_5,
-        e_6 = plant_cohort_6)
+  rename("1 - \U03A3 \u03B3" = seed_top,
+        "\u03B3_1" = plant_cohort_1,
+        "\u03B3_2" = plant_cohort_2,
+        "\u03B3_3" = plant_cohort_3,
+        "\u03B3_4" = plant_cohort_4,
+        "\u03B3_5" = plant_cohort_5,
+        "\u03B3_6" = plant_cohort_6)
 
 #View(scenario1_E_B_emerge_recombine_wide) 
 ```
@@ -1201,14 +1205,14 @@ scenario1_E_B_summer_recombine_wide <- scenario1_E_B_summer_recombine %>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop)) %>% 
   mutate_at(5:12, round, 2) %>%
-  rename(sss_1 = seed_top,
-         sss_2 = seed_bottom,
-        sps_1= plant_cohort_1,
-        sps_2 = plant_cohort_2,
-        sps_3 = plant_cohort_3,
-        sps_4 = plant_cohort_4,
-        sps_5 = plant_cohort_5,
-        sps_6 = plant_cohort_6)
+  rename("\U03C3_s1" = seed_top,
+         "\U03C3_s2" = seed_bottom,
+        "\U03C3_p1" = plant_cohort_1,
+        "\U03C3_p2" = plant_cohort_2,
+        "\U03C3_p3" = plant_cohort_3,
+       "\U03C3_p4" = plant_cohort_4,
+        "\U03C3_p5" = plant_cohort_5,
+        "\U03C3_p6" = plant_cohort_6)
 
 #View(scenario1_E_B_summer_recombine_wide) 
 ```
@@ -1266,12 +1270,12 @@ scenario1_E_B_fecund_recombine_wide <- scenario1_E_B_fecund_recombine %>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop))  %>%
    mutate_at(5:10, round, 2)  %>%
-  rename(f_1= plant_cohort_1,
-        f_2 = plant_cohort_2,
-        f_3 = plant_cohort_3,
-        f_4 = plant_cohort_4,
-        f_5 = plant_cohort_5,
-        f_6 = plant_cohort_6)
+  rename("\U03C6_1" = plant_cohort_1,
+        "\U03C6_2"= plant_cohort_2,
+        "\U03C6_3" = plant_cohort_3,
+        "\U03C6_4" = plant_cohort_4,
+        "\U03C6_5" = plant_cohort_5,
+        "\U03C6_6" = plant_cohort_6)
 
 #View(scenario1_E_B_fecund_recombine_wide)
 ```
@@ -1344,7 +1348,11 @@ scenario1_E_B_postharvest_tillage_recombine_wide <- scenario1_E_B_postharvest_ti
                                ifelse(Crop == "O", 3, 4))))%>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop)) %>%
-   mutate_at(5:8, round, 2)
+   mutate_at(5:8, round, 2)  %>%
+  rename("\U03C4_11f" = ft1_1,
+        "\U03C4_21f" = ft2_1,
+        "\U03C4_12f" = ft1_2,
+        "\U03C4_22f" = ft2_2)
 
 # View(scenario1_E_B_postharvest_tillage_recombine_wide)
 ```
@@ -1410,8 +1418,8 @@ scenario1_E_B_overwinter_recombine_wide <- scenario1_E_B_overwinter_recombine %>
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop)) %>%
    mutate_at(5:6, round, 2)  %>%
-  rename(wss_1 = seed_top,
-         wss_2 = seed_bottom)
+  rename("\U03C9_11" = seed_top,
+         "\U03C9_22"= seed_bottom)
 
 # View(scenario1_E_B_overwinter_recombine_wide)
 ```
@@ -1451,13 +1459,15 @@ for(i in seq_len(nrow(scenario1_E_B_recombine_wide_zero_col_removed )))
 # special character list: http://www.ephotocaption.com/a/106/106.html
 scenario1_E_B_plain %>%
   set_caption("Scenario1 - Elasticity of population growth rates in three rotations crossed with two corn weed management programs to lower-level demographic parameters")  %>%
-  set_table_properties(layout = "autofit") %>%
+  set_header_labels(values = list(
+    Crop_ID = "Crop ID",
+    Corn_weed_mangement = "Corn weed management")) %>%
   footnote(i = 1, j = 3:6,
-           value = as_paragraph(c("st_ij: the probability of seed movement from soil stratum i to j by pre-planting tillage")),
+           value = as_paragraph(c("The probability of seed movement from soil stratum i to j by pre-planting tillage")),
            part = "header",
            ref_symbols = "*")  %>%
     footnote(i = 1, j = 7,
-           value = as_paragraph(c("1-sum(e): the probability of non-emerging seeds in the top (0-2 cm) soil stratum")),
+           value = as_paragraph(c("The probability of non-emerging seeds in the top (0-2 cm) soil stratum")),
            part = "header",
            ref_symbols = "\U00A7")  %>%
 #  footnote(i = 1, j = 9:14,
@@ -1465,7 +1475,7 @@ scenario1_E_B_plain %>%
 #           part = "header",
 #           ref_symbols = "\U00B6" )  %>%
       footnote(i = 1, j = 8:9,
-           value = as_paragraph(c("sss_1 and sss_2: the summer survival probabilities of the seeds in the top (0-2 cm) and bottom (2-20 cm) soil strata")),
+           value = as_paragraph(c("The summer survival probabilities of the seeds in the top (0-2 cm) and bottom (2-20 cm) soil strata")),
            part = "header",
            ref_symbols =  "\U2020") %>%
 #      footnote(i = 1, j = 17:22,
@@ -1473,23 +1483,27 @@ scenario1_E_B_plain %>%
 #           part = "header",
 #           ref_symbols = "\U2021")  %>%
       footnote(i = 1, j = 10:15,
-           value = as_paragraph(c( "f_1 though f_6: the individual fecundity of mature plants in cohorts 1 through 6")),
+           value = as_paragraph(c( "The individual fecundity of mature plants in cohorts 1 through 6")),
            part = "header",
            ref_symbols = "\U204B")  %>%
       footnote(i = 1, j = 16:19,
-           value = as_paragraph(c( "ft_ij: the probability of seed movement from soil stratum i to j by post-harvest tillage")),
+           value = as_paragraph(c( "The probability of seed movement from soil stratum i to j by post-harvest tillage")),
            part = "header",
            ref_symbols = "\U2307")  %>%
       footnote(i = 1, j = 20:21,
-           value = as_paragraph(c("wss_1 and wss_2: the overwinter survival probabilities of seeds in the top (0-2 cm) and bottom (2-20 cm) soil strata")),
+           value = as_paragraph(c("The overwinter survival probabilities of seeds in the top (0-2 cm) and bottom (2-20 cm) soil strata")),
            part = "header",
            ref_symbols = "\U2351")  %>%
   footnote(i = NULL, j = NULL,
            value = as_paragraph("All-zero columns are excluded. In Crop_ID: C2 - corn in the 2 year rotation, S2 - soybean in the 2-year rotation, C3 - corn in the 3-year rotation, S3 - soybean in the 3-year rotation, O3 - oat intercroped with red clover in the 3-year rotation, C4 - corn in the 4-year rotation, S4 - soybean in the 4-year rotation, O4 - oat intercropped with alfalfa in the 4-year rotation, and A4 - alfalfa in the 4-year rotation."), 
            part = "footer", 
            ref_symbols = " ") %>%# need " ", otherwise flextable will put "1" as the ref_symbol
-    fontsize(size = 6, part = "all") 
+    fontsize(size = 6, part = "all") %>%
+  autofit()
 # multiple Greek letters as headers 
 # which zeros were due to rounding and which negligible 
 ```
+
+
+
 
