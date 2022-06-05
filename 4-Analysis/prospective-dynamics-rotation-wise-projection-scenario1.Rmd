@@ -915,7 +915,7 @@ scenario1_phase_lambda <-  scenario1_phase_projection_trimmed %>%
   tibble::rownames_to_column() %>%
   mutate(Crop_ID = substr(rowname, 1,2),
          Corn_weed_management = substring(rowname, 4),
-         Corn_weed_management = ifelse(Corn_weed_management == "conv", paste0(Corn_weed_management,"entional"), Corn_weed_management),
+         Corn_weed_management = ifelse(Corn_weed_management == "conv", paste0(Corn_weed_management,"entional"), "low"),
          Rotation = paste0(substr(rowname,2,2),"-year")) %>%
   arrange(Rotation, Corn_weed_management) %>%
   mutate(phase_lambda_r = round(phase_lambda, 2))

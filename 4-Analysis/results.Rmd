@@ -34,11 +34,15 @@ theme_set(theme_classic())
 ```
 
 # Results and discussion {-}
+All the multi-year variables failed the Levene's test for equal variance so those data was analyzed by year.  
 
 ## Waterhemp sub-annual demographic parameters from empirical measurement {-}
 
-### Seedling emergence timing {-}
+### Seedling emergence pattern and timing {-}
 
+Within the same calendar year, seedling densities were lower in the warm-season crops than in the cool-season crops (Table \@ref(tab:seedlings-density-19-20)).
+
+The first cohort of waterhemp that emerged in different cohorts were significantly different crop environments (Table \@ref(tab:Julian-19-20-tab)). Waterhemp emergence was delayed in alfalfa crop environment as compared to corn and soybean environments. Waterhemp emergence was nine to sixteen days earlier in oat than that in alfalfa.    
 
 ```{r, child= "~/Documents/Dissertation/AMATA-demography/4-Analysis/emergence-pattern-timing-Julian.Rmd"}
 # diagnosis plots still look concerning
@@ -95,7 +99,7 @@ The hypothesis that "extending a conventional 2-year rotation of corn and soybea
 
 Since the elasticity of $\lambda$ was the least contributed by seed emergence in both the $\lambda$-increasing and $\lambda$-decreasing scenarios, it would be helpful to focus on disrupting seed production by reducing individual plant size with delaying emergence or applying multiple mortality factors to successfully establishing plants, and by limiting seed deposit to the soil. Under the current 4-year rotation's crop sequence, oat (O4) and alfalfa (A4) provided valuable opportunities to reduce plant size [@nguyenWeedCommunityComposition2022; @nguyenImpactCroppingSystem2022]. 
 
-Reduction of herbicide mass [@nguyenWeedCommunityComposition2022] was not coincided with population growing in scenario one ($\lambda < 1$) but coincided with population growing in scenario two ($\lambda > 1$). In consideration of scenario two, $\lambda$-increasing, it would be useful to examine how many years of continuous overwinter cover crops is necessary and which cool-season crop species would be efficient in decreasing waterhemp $\lambda$ after steady seedbank replenishment. This investigation is needed because even if the increased in abundance of waterhemp and other present weed species, has not been observed at the experiment site [@nguyenWeedCommunityComposition2022], an affluent seedbank of a highly competitive weed species habors risks of weed outbreaks. 
+Reduction of herbicide mass [@nguyenWeedCommunityComposition2022] was not coincided with population growing in scenario one ($\lambda < 1$) but coincided with population growing in scenario two ($\lambda > 1$). In consideration of scenario two, $\lambda$-increasing, it would be useful to examine how many years of continuous overwinter cover crops is necessary and which cool-season crop species would be efficient in decreasing waterhemp $\lambda$ after steady seedbank replenishment. This investigation is needed because even if the increased in abundance of waterhemp and other present weed species, has not been observed at the experiment site [@nguyenWeedCommunityComposition2022], an affluent seedbank of a highly competitive weed species harbors risks of weed outbreaks. 
 
 The cohort-based female survival rates at the experiment site were not realistically estimated due to small sample size in a high efficacy weed management program. Future experiments should focus on assessing cohort-based female survival rates in cool-season crop environments. 
 
@@ -158,6 +162,14 @@ Julian_cohort1_20_lm <- lm(Julian_day ~ Block +
 joint_tests(Julian_cohort1_20_lm )
 ```
 
+```{r, echo=FALSE, fig.cap = "Diagnosis plots for the effects of crop identity and corn weed management on the seedling densities in 2019 (A) and 2020 (B)"}
+list(emerge_cohort_19_gls, emerge_cohort_20_gls) %>%
+   lapply(resid_panel, nrow = 4) %>% 
+  wrap_plots() +
+  plot_annotation(tag_levels = "A")
+
+```
+
 ```{r, echo=FALSE, fig.cap = "Diagnosis plots for the effects of crop identity and corn weed management on the seedbank densities at the top (A) and bottom (B) soil strata"}
 list(Julian_cohort1_19_lm, Julian_cohort1_20_lm) %>%
    lapply(resid_panel, nrow = 4) %>% 
@@ -172,4 +184,4 @@ list(Julian_cohort1_19_lm, Julian_cohort1_20_lm) %>%
 # , child = "female-dens-mature.Rmd" removed because density was published
 ```
 
-# Reference {-}
+# References {-}
