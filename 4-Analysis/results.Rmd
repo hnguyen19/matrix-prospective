@@ -4,7 +4,6 @@ output:
     bookdown::word_document2:
       toc: false
       fig_caption: yes
-    reference_docx: style_template.docx
 bibliography: prospective-pop-dynamics.bib
 csl: apa-no-ampersand.csl 
 ---
@@ -22,7 +21,7 @@ library(ggResidpanel)
 library(broom)
 library(nlme)
 source("functions.R")
-theme_set(theme_classic())
+theme_set(theme_bw())
 ```
 
 # Introduction {-}  
@@ -59,7 +58,7 @@ Within the same calendar year, whole-season and cohort-based seedling densities 
 ## Waterhemp population growth rates {-}
 
 ### Scenario 1 {-}
-Using 2019 fecundity rates, that were estimated from individual plant size using eighteen equations from @nguyenImpactCroppingSystem2022, waterhemp population densities were decreasing in all rotations, the fastest in the 2-year rotation under low herbicide corn weed management and the 3-year rotation under both corn weed management programs (Figures \@ref(fig:scenario1-phase-wise-lambda-plot)). $\lambda$'s decreased right after the first phase of the 2-year (C2) and 3-year (C3) rotations, but increased in the first phase of the 4-year rotation (C4) by three ($\lambda(C4, low)$ = 3.24) to fourteen ($\lambda(C4, low)$ = 14.34) folds. 
+Using 2019 fecundity rates, that were estimated from individual plant size using eighteen equations from @nguyenImpactCroppingSystem2022, waterhemp population densities were decreasing in all rotations, the fastest in the 2-year rotation under low herbicide corn weed management and the 3-year rotation under both corn weed management programs (Figure \@ref(fig:scenario1-phase-wise-lambda-plot)). $\lambda$'s decreased right after the first phase of the 2-year (C2) and 3-year (C3) rotations, but increased in the first phase of the 4-year rotation (C4) by three ($\lambda(C4, low)$ = 3.24) to fourteen ($\lambda(C4, low)$ = 14.34) folds. 
 
 The steady decrease of population density in the soybean, oat, and alfalfa phases ($\lambda$'s = 0.5) of the 4-year rotation were sufficient to keep the rotation-wise populations decreasing within a four year cycle even if $\lambda$ may increase again when the cropping system circles back to corn. 
 
@@ -67,13 +66,13 @@ The majority of the seedbank in the 4-year rotation is at the 2-20 cm stratum, w
 
 ### Scenario 2 {-}
 
-Using 2018 fecundity rates, waterhemp population densities were increasing rapidly in all rotations, the fastest in the 2-year rotation (Figures \@ref(fig:scenario2-phase-wise-lambda-plot)). The population increase in the 3-year rotation under low herbicide corn weed management was similar to that of the 4-year rotation. Even though $\lambda(r)$ were all increasing, the partition of seedbanks differed between rotations. Within the same rotation, a consistent pattern of top:bottom ratios of seed densities was observed between two corn weed management regimes. In the 2-year rotation, a large portion of the seedbanks were at the 0-2 cm soil stratum; in the 3-year rotation, the top and bottom soil strata were fairly evenly populated; and in the 4-year rotation, the majority of the seedbanks were at the bottom stratum.   
+Using 2018 fecundity rates, waterhemp population densities were increasing rapidly in all rotations, the fastest in the 2-year rotation (Figure \@ref(fig:scenario2-phase-wise-lambda-plot)). The population increase in the 3-year rotation under low herbicide corn weed management was similar to that of the 4-year rotation. Even though $\lambda(r)$ were all increasing, the partition of seedbanks differed between rotations. Within the same rotation, a consistent pattern of top:bottom ratios of seed densities was observed between two corn weed management regimes. In the 2-year rotation, a large portion of the seedbanks were at the 0-2 cm soil stratum; in the 3-year rotation, the top and bottom soil strata were fairly evenly populated; and in the 4-year rotation, the majority of the seedbanks were at the bottom stratum.   
 
 The oat phase of the 3-year rotation (O3) alfalfa phase of the 4-year rotation (A4) offered an opportunity for decreasing $\lambda$, which was not possible in any other crop phases in the three examined rotations. However, the decline in $\lambda(r)$'s in O3 ($\lambda(O3, low)$ = 0.68) and A4 ($\lambda(A4, low)$ = 0.60) were not strong enough to deplete the replenishment from the corn ($\lambda(C3, low)$ = 2553 and $\lambda(C4, low)$ = 35676.54) and soybean phases ($\lambda(S3, low)$ = 14567.90 and $\lambda(S4, low)$ = 30.20). 
 
 ## Elasticities of popilation growth rates to lower-level demographic parameters {-}
 
-All the relative ranking of elasticity of $\lambda$ to the lower-level demographic parameters was consistent between corn weed management regimes (Figures \@ref(fig:scenario1-E-B-by-rot-rank) and \@ref(tab:scenario2-E-B-by-rot-rank)). In both scenarios, seed emergence and seedling survival rate contributed minimally to the elasticity of $\lambda$. This pattern suggests that even if weed control programs are of high, or even total efficacy, the very few survived plants, if successfully and prolifically produce new seeds, can help sustain the population.  
+All the relative ranking of elasticity of $\lambda$ to the lower-level demographic parameters was consistent between corn weed management regimes (Figures \@ref(fig:scenario1-E-B-by-rot-rank) and \@ref(fig:scenario2-E-B-by-rot-rank)). In both scenarios, seed emergence and seedling survival rate contributed minimally to the elasticity of $\lambda$. This pattern suggests that even if weed control programs are of high, or even total efficacy, the very few survived plants, if successfully and prolifically produce new seeds, can help sustain the population.  
 
 ### Scenario 1 {-}  
 The ranking of parameters or individual parameters to the elasticity of $\lambda_r$ differed by rotation and crop phase. The seed preserving parameters were ranked higher in the corn phase of the 3-year rotation (C3) under both weed management regimes, the soybean phase of the 3-year rotation (S3) that followed corn under low herbicide weed management, the oat phases of the 3-year and 4-year rotations (O3 and O4) regardless of the preceding corn phase's weed management regime, and the alfalfa phase of the 4-year rotation (A4) regardless of the preceding corn phase's weed management regime. The seed producing parameters were ranked higher in the other crop environments (crop species in each rotation).  

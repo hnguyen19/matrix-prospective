@@ -3,7 +3,6 @@ output:
     bookdown::word_document2:
       toc: false
       fig_caption: yes
-    reference_docx: style_template.docx
 ---
 
 ```{r, include=FALSE}
@@ -1467,9 +1466,9 @@ scenario1_E_B_recombine_ranked_long <- scenario1_E_B_recombine_wide_ranked %>%
   pivot_longer(!c(Rotation:Crop), names_to = "Parameter", values_to = "Rank") 
 
 scenario1_E_B_recombine_ranked_value <- scenario1_E_B_recombine_ranked_long %>% 
-  left_join(scenario1_E_B_recombine_long) %>%
-  mutate(Value_rounded = as.character(round(Value, 3)))
-
+  left_join(scenario1_E_B_recombine_long)  %>%
+  mutate(ln_Value = log(Value),
+         ln_Value_rounded = as.character(round(ln_Value, 2)))
 
 ### Order factors before ggplot2,
 ## ordering anywhere before this point will be neglected
@@ -1499,7 +1498,7 @@ ggplot(aes(x=Parameter, y=Rank, fill = Crop)) +
     scale_fill_brewer(palette = "Set1") +
     geom_text(aes(x = Parameter, 
                   y = Rank + 5,  #leave space between bar and label
-                  label = Value_rounded), 
+                  label = ln_Value_rounded), 
               angle = 90,
               size = 2.5) +
   facet_grid(Crop_ID ~ Corn_weed_management) +
