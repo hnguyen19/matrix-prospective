@@ -4,7 +4,7 @@ output:
     bookdown::word_document2:
       toc: false
       fig_caption: yes
-bibliography: prospective-pop-dynamics.bib
+bibliography: WH-pop-dynamics.bib
 csl: apa-no-ampersand.csl 
 ---
 ```{r, include=FALSE}
@@ -72,7 +72,13 @@ The oat phase of the 3-year rotation (O3) alfalfa phase of the 4-year rotation (
 
 ## Elasticities of popilation growth rates to lower-level demographic parameters {-}
 
-All the relative ranking of elasticity of $\lambda$ to the lower-level demographic parameters was consistent between corn weed management regimes (Figures \@ref(fig:scenario1-E-B-by-rot-rank) and \@ref(fig:scenario2-E-B-by-rot-rank)). In both scenarios, seed emergence and seedling survival rate contributed minimally to the elasticity of $\lambda$. This pattern suggests that even if weed control programs are of high, or even total efficacy, the very few survived plants, if successfully and prolifically produce new seeds, can help sustain the population.  
+All the relative ranking of elasticity of $\lambda$ to the lower-level demographic parameters was consistent between corn weed management regimes (Figures \@ref(fig:scenario1-E-B-by-rot-rank) and \@ref(fig:scenario2-E-B-by-rot-rank)). However, the overall population change rate can be reflected by the relative importance of each $b_{ij}$ element on the elasticity of $\lambda$. 
+
+Even though all the $B_h$ matrices, but $B_f$, were identical across scenarios, the ranking of each $b_{ij}$ element contribution to the elasticity of $\lambda$ might be slightly different across scenarios. For example, the the $\lambda$-decreasing case, the relative ranks of $t_{22_s}$ (the probability that a seed in the 2-20 cm stratum stay at that stratum) was higher that those of other $t_{ij_s}$, whereas $t_{22_s}$ in the $\lambda$-increasing case was the lowest among all $t_{ij_s}$. Similarly, $s_{s2}$ was more important than $s_{s1}$ in the elasticity of $\lambda$ in the $\lambda$-decreasing versus $\lambda$-increasing case. Consistent patterns in the importance of $t_{ij_f}$ to elasticity of $\lambda$ was observed in the two scenarios.  
+
+Because seed emergence and seedling survival rate contributed minimally to the elasticity of $\lambda$, this pattern suggests that even if weed control programs are of high, or even total efficacy, the very few survived plants, if successfully and prolifically produce new seeds, can help sustain the population. The low relative importance of $g_k$ and $s_{p_k}$ can be attributed to the low emergence rate in weeds, the high weed control efficacy, while the high relative importance of of $f_k$ to elasticity of $\lambda$ can be explained by the high individual fecundity.
+
+In both scenarios, the patterns of contribution to elasticity of $\lambda$ in the 3-year rotation was slightly different from the 2-year and 4-year rotations. The contribution of plant survival rate to elasticity of $\lambda$ was non-existent in C2, S2, C4, S4, and O4 (absolute zeros) but minimal in C3, S3, and O4 (very small positive values). The difference in contribution of plant survival rate on O3 and O4 might be attributed to the different companion crops to oat (red clover in O3 and alfalfa in O4). 
 
 ### Scenario 1 {-}  
 The ranking of parameters or individual parameters to the elasticity of $\lambda_r$ differed by rotation and crop phase. The seed preserving parameters were ranked higher in the corn phase of the 3-year rotation (C3) under both weed management regimes, the soybean phase of the 3-year rotation (S3) that followed corn under low herbicide weed management, the oat phases of the 3-year and 4-year rotations (O3 and O4) regardless of the preceding corn phase's weed management regime, and the alfalfa phase of the 4-year rotation (A4) regardless of the preceding corn phase's weed management regime. The seed producing parameters were ranked higher in the other crop environments (crop species in each rotation).  
@@ -92,7 +98,7 @@ The elasticity of $\lambda(r)$'s to fecundity rates, as a group, were ranked fir
 The second-ranked group of demographic parameters to $\lambda_r$ differed by rotation and crop phase. In the 2-year rotation, the second-ranked group of parameters in contribution to the elasticity of $\lambda(2)$ were both pre-planting tillage-induced seed movement and overwinter seed survival. In the 3-year rotation, the second-ranked group of parameters in contribution to elasticity of $\lambda(3)$ was pre-planting tillage-induced seed movement in the warm-season crop phases; and overwinter seed survival in the cool-season crop phase. In the 4-year rotation, the second-ranked group of parameters in contribution to elasticity of $\lambda(4)$ was overwinter seed survival in the cool-season crop phase and pre-planting tillage-induced seed movement in the warm-season crop phases; a reverse trend as compared to the 3-year rotation's dynamics.
 
 
-The high ranking of fecundity to elasticity of $\lambda$ can be explained by the 
+
 
 ```{r, child = "prospective-dynamics-rotation-wise-projection-scenario1.Rmd"}
 ```
