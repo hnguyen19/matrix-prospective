@@ -18,6 +18,11 @@ library(here)
 ```
 
 
+*Other details to include:*
+
+*why not individual-based: some individual-based vitals cannot describe population-level dynamics*
+
+
 ## Introduction  
 
 The ultimate goal of any weed control program is to prevent the target population from growing. One approach to doing so is to deplete the soil seedbank. 
@@ -385,3 +390,74 @@ Seed granivory results are highly dependent on specific field conditions [@vande
 Two main sources of seed mortality, which are seed decay rate and seed predation rate, are very challenging to quantify exactly. Therefore, these rates will be incorporated in the model in ranges that are appropriate for waterhemp. For example, different scenarios of post-harvest seed consumption by gravivores can be 10% to 90% of the freshly produced seeds.  
 
 
+```{r, include=FALSE}
+# remove all-zero columns: https://stackoverflow.com/questions/21530168/remove-columns-with-zero-values-from-a-dataframe
+scenario2_E_B_recombine_wide_zero_col_removed <-  scenario2_E_B_recombine_wide[, colSums(scenario2_E_B_recombine_wide != 0) > 0]
+
+## Use the non-zero only dataframe to make a flextable
+scenario2_E_B_plain <- scenario2_E_B_recombine_wide_zero_col_removed %>% 
+  flextable::flextable()
+
+# https://stackoverflow.com/questions/72451868/flextable-scientific-formats-for-a-table-that-has-both-very-large-and-very-smal
+# %>% 
+#  flextable::flextable() %>%
+#  set_formatter(function(x) {
+#    formatC(x, format = "e", digits = 2)
+#  })  
+
+
+for(i in seq_len(nrow(scenario2_E_B_recombine_wide_zero_col_removed )))
+{
+  scenario2_E_B_plain %<>% flextable::bold(i, which.max(scenario2_E_B_recombine_wide_zero_col_removed[i,]))
+}
+```
+
+```{r scenario2-E-B-by-rot-tab, echo = FALSE, results='asis'}
+#https://stackoverflow.com/questions/62148912/sharing-of-footnote-between-different-part-of-tables-using-flextable
+# special character list: http://www.ephotocaption.com/a/106/106.html
+scenario2_E_B_plain %>% 
+  set_caption("Scenario 2 - Elasticity of population growth rates in three rotations crossed with two corn weed management programs to lower-level demographic parameters")  %>%
+    set_header_labels(values = list(
+    Crop_ID = "Crop ID",
+    Corn_weed_mangement = "Corn weed management")) %>%
+  footnote(i = 1, j = 3:6,
+           value = as_paragraph(c("The probability of seed movement from soil stratum i to j by pre-planting tillage")),
+           part = "header",
+           ref_symbols = "*")  %>%
+    footnote(i = 1, j = 7,
+           value = as_paragraph(c("The probability of non-emerging seeds in the top (0-2 cm) soil stratum")),
+           part = "header",
+           ref_symbols = "\U00A7")  %>%
+#  footnote(i = 1, j = 9:14,
+#           value = as_paragraph(c("e_1 through e_6: the probability of seeds in the 0-2 cm soil stratum emerging to seedling cohorts 1 though 6")),
+#           part = "header",
+#           ref_symbols = "\U00B6" )  %>%
+      footnote(i = 1, j = 8:9,
+           value = as_paragraph(c("The summer survival probabilities of the seeds in the top (0-2 cm) and bottom (2-20 cm) soil strata")),
+           part = "header",
+           ref_symbols =  "\U2020") %>%
+#      footnote(i = 1, j = 17:22,
+#           value = as_paragraph(c( "sps_1 through sps_6: the probabilities that seedling cohorts 1 through 6 reach maturity")),
+#           part = "header",
+#           ref_symbols = "\U2021")  %>%
+      footnote(i = 1, j = 10:15,
+           value = as_paragraph(c( "The individual fecundity of mature plants in cohorts 1 through 6")),
+           part = "header",
+           ref_symbols = "\U204B")  %>%
+      footnote(i = 1, j = 16:19,
+           value = as_paragraph(c( "The probability of seed movement from soil stratum i to j by post-harvest tillage")),
+           part = "header",
+           ref_symbols = "\U2307")  %>%
+      footnote(i = 1, j = 20:21,
+           value = as_paragraph(c("The overwinter survival probabilities of seeds in the top (0-2 cm) and bottom (2-20 cm) soil strata")),
+           part = "header",
+           ref_symbols = "\U2351")  %>%
+  footnote(i = NULL, j = 1,
+           value = as_paragraph("All-zero columns are excluded. In Crop_ID: C2 - corn in the 2 year rotation, S2 - soybean in the 2-year rotation, C3 - corn in the 3-year rotation, S3 - soybean in the 3-year rotation, O3 - oat intercroped with red clover in the 3-year rotation, C4 - corn in the 4-year rotation, S4 - soybean in the 4-year rotation, O4 - oat intercropped with alfalfa in the 4-year rotation, and A4 - alfalfa in the 4-year rotation."), 
+           part = "footer", 
+           ref_symbols = " ") %>% # need " ", otherwise flextable will put "1" as the ref_symbol
+    fontsize(size = 4, part = "all") %>%
+ set_table_properties(layout = "autofit")
+# multiple Greek letters as headers 
+# which zeros were due to rounding and which negligible 
+```

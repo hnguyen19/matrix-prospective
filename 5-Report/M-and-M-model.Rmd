@@ -4,7 +4,7 @@ output:
       toc: false
       fig_caption: yes
     reference_docx: style_template.docx
-bibliography: prospective-pop-dynamics.bib
+bibliography: WH-pop-dynamics.bib
 ---
 
 
@@ -17,23 +17,24 @@ library(tidyverse)
 
 ### Experiment design {-}  
 
-To study how common waterhemp's demography differ in three cropping systems suitable for the Midwestern USA, a factorial design of four replications with main-plot effect (crop identity as the combination of crop species name and rotation system) and split-plot effect (corn weed management herbicide regime) was conducted at Iowa State University Agronomy Research Farm. The rotation systems used in this present study includes 2-year (corn - soybean), 3-year (corn - soybean - oat) intercropped with red clover, and 4-year (corn - soybean - oat intercropped with alfalfa - alfalfa). 
+To study how common waterhemp’s demography differs in three cropping systems suitable for the Midwestern USA, we used a factorial design with nine crop identities crossed with two weed management regimes. Crop identity was assigned to main plots and comprised the combination of crop species name and rotation system. The different weed management regimes were assigned to split plots and comprised conventional versus low herbicide regimes applied to the corn phase of each of three rotation systems The rotation systems used in this study included a 2-year (corn-soybean) rotation, a 3-year (corn - soybean - oat (Avena sativa L.)) intercropped with red clover (Trifolium pratense L.) rotation, and a 4-year (corn - soybean - oat intercropped with alfalfa (Medicago sativa L.) - alfalfa] rotation. There were four replications of each crop identity x herbicide regime combination. Field plots were located at the Iowa State University Agricultural Engineering and Agronomy Research Farm in Boone County, Iowa, USA.
 
-The general experiment design and diagram were provided in [@nguyenImpactCroppingSystem2022], but an updated diagram (Figure \@ref(fig:diagram)) is included here to illustrate tillage regimes. Contrasting herbicide regimes have been used for both corn and soybean at the experiment site from 2008 and soybean plots were managed by only conventional herbicide starting in 2017, and thus, the data was collected by each experimental unit (eu) to accommodate the different weed management program in the corn phase of all crop rotations. Oat, red clover, and alfalfa did not receive any herbicide regardless of how weed in the corn and soybean phases were managed.    
+The general experiment design and diagram were provided by @nguyenImpactCroppingSystem2022, but an updated diagram (Figure \@ref(fig:diagram)) includes tillage regimes used for each treatment. Contrasting herbicide regimes were used for both corn and soybean at the experiment site from 2008 through 2020, and soybean plots were managed by conventional herbicide starting in 2017. Data were collected in each experimental unit (eu) to accommodate the different weed management programs in the corn phase of all crop rotations.
 
-```{r diagram, echo=FALSE, fig.cap = "Conceptual diagram of the three rotation systems compared within the experiment. A cycle of four calendar years is shown. Tillage regimes were symbolized with arrows: light, black ahead of crop sowing for field cultivator, medium, blue and bold orange after crop harvest for chisel and moldboard plough, respectively. Crops are color-coded and displayed for the approximate months that they were present. Emergence and establishment of common waterhemp plants are illustrated with black symbols. Grey plants shown in oat or alfalfa’s first year were physically controlled by crop harvest operations. Grey plants shown in alfalfa’s second year were physically suppressed three to four times by hay harvest. Alfalfa's hay was harvested when approximately 5% of the plants flowered. Red clover in O3, and A4 were terminated in the winter before growing corn in the following year, so the dark green bar in the 3-year represents volunteer red clover and the light green bar in the 4-year rotation represents the living alfalfa residue in C4."}
 
-knitr::include_graphics('Tillage-diagram.jpg')
+```{r diagram, echo=FALSE, fig.cap = "Conceptual diagram of the three rotation systems compared within the experiment. A cycle of four calendar years is shown. Tillage regimes are symbolized with arrows: light, black ahead of crop sowing for field cultivator and medium, blue and bold orange after crop harvest for chisel and moldboard plowing, respectively. Crops are color-coded and displayed for the approximate months that they were present in the field. Emergence and establishment of common waterhemp plants are illustrated with black symbols. Grey plants shown in oat or alfalfa’s first year were physically controlled by crop harvest operations. Grey plants shown in alfalfa’s second year were physically suppressed three to four times by hay harvest. Alfalfa hay was harvested when approximately 5% of the plants flowered. Red clover in O3, and A4 treatments were terminated in the winter before growing corn in the following year, so the dark green bar in the 3-year rotation represents volunteer red clover and the light green bar in the 4-year rotation represents the living alfalfa residue in the C4 treatment."}
+
+knitr::include_graphics('./Tillage-diagram.jpg')
 ```
 
 
 ### Data collection and analysis {-}
-  
-The current demographic details here are presented for female only. All the plant characteristics were reported for each cohort.   
+
+The current demographic information presented here is only for female waterhemp seeds and plants because: 1) waterhemp is a dioecious species with 1:1 sex ratio [@costeaBiologyInvasiveAlien2005; @montgomerySexspecificMarkersWaterhemp2019; @montgomeryMaleSpecificChromosomal2021], 2) only female individuals are bearing seeds [@costeaBiologyInvasiveAlien2005], and 3) pollen grains are abundantly available during reproduction [@liuPollenBiologyDispersal2012]. All plant characteristics were reported for each cohort and seedbank densities were reported for two soil strata: 0 - 2 cm and 2 - 20 cm.    
 
 #### Seed densities and seed fates in the soil seedbank {-}  
 
-Nine groups of four soil cores arranged in a 3 x 3 grid were collected in  2019 from each experimental unit (eu). Each soil core was cut into two sections, the top 2 cm and the bottom 18 cm. All the 0-2 cm sections in each (eu) were packed separately from all the 2-20 sections, so each eu yield two data points. Seeds were separated from the soil materials and plant residues with an elutriation and floatation process. Clean seeds were placed on germination paper imbibed with distilled water in Petri dishes and incubated in 28/18 degree Celsius light/dark - 18/8 hour night/day for five days. Proportions of seeds that are dormant, readily germinable, and dead were recorded: germinated as readily germinable, firm, unyielding to forceps as dormant, and yielding to forceps as dead [@borzaComparingEstimatesSeed2007]. Readily germinable and dormant seeds were grouped as viable and used to calculate emergence proportion (details in *Parameterization*).   
+Nine groups of four soil cores arranged in a 3 x 3 grid were collected in the fall of 2019 from each experimental unit (eu). Each soil core was cut into two sections, the top 2 cm and the bottom 18 cm. No deeper sampling was conducted because the tillage regimes applied at the experiment were affecting the top 0 - 20 cm of the soil. All the 0-2 cm sections in each (eu) were packed separately from all the 2-20 sections, so each eu yield two data points, one for each of the two soil strata. Seeds were separated from the soil materials and plant residues using elutriation and floatation. Clean seeds were placed on germination paper imbibed with distilled water in Petri dishes and incubated in 28/18 degree Celsius light/dark - 18/8 hour night/day for five days. Proportions of seeds that are dormant, readily germinable, and dead were recorded: germinated as readily germinable, firm and unyielding to forceps pressure as dormant; and yielding to forceps pressure as dead [@borzaComparingEstimatesSeed2007]. Readily germinable and dormant seeds were grouped as viable and used to calculate emergence proportion (Details on how the 2019 fall soil seedbank sample was used with 2020 destructive emergence record keeping for emergence proportion calculation is provided in *Parameterization*).   
 
 #### Emergence pattern and timing {-}
  
@@ -54,21 +55,62 @@ The assumptions used in the modeling exercise in this manuscript are listed in T
 ```{r assumptions, echo=FALSE}
 #https://ardata-fr.github.io/flextable-book/captions-and-cross-references.html
 
-assumptions <- read.csv("assumption-table.csv")
+Stage = c("All", " ", "Seed", rep(" ", 8), " Young plant", rep(" ", 4), "Mature plant", rep(" ", 2))
+
+Assumption = c("sex is stable throughout the life cycle",
+               "equal growth rate across indivudals of the same size and shape under the same treatments (crop  x rotation x herbicide",
+               "euqal germination probability across sexes",
+               "the sex ratio is 1:1",
+               "sex is determined at seed formation",
+               "seedlings only emerge from the 0 - 2 cm",
+               "germination is fatal from the 2 - 20 cm soil stratum",
+               "equal decay rate across sexes",
+               "different decay rate across all burial depths",
+               "equal palatability to granivores across sexes",
+               "granivore activities are an important thread",
+               "female plants are more likely to survive under stressful conditions than male plants",
+               "competition with crops for resources were expressed in multiple periods",
+               "competition with other weed species is excluded",
+               "intraspecific competition is included in the survival rate from seedling through maturity",
+               "the weed control program catered to the specific crop is the main cause of mortality",
+               "pollen is abundantly available to all female plants at reproductive stage",
+               "50% of the seeds produced by each female plant are female",
+               "male:female ratio can deviate from the 1:1 ratio under different conditions")
+
+`References or justification` <- c("Montgomery et al., 2019 and 2021",
+                                  "Chapter 8, Caswell, 2001",
+                                  "No evidence of sexually differentiated seed germination probability",
+                                  "Costea et al., 2005",
+                                  "Montgomery et al., 2019 and 2021",
+                                  "Chapter 3, FAO, 1989 and ???",
+                                  " i ",
+                                  " No evidence of sexually differentiated seed decay rate",
+                                  "Buhler et al., 2001, Steckel et al., 2007 and Sosnoskie et al., 2013",
+                                  "No evidence of sexually differentiated palatability",
+                                  "van der Laat et al., 2015",
+                                  "deduced collectively from the general 1:1 sex ratio (Costea et al. 2005) and differentiated sex ratio at maturity across weed management systems at the experiment site in 2018 (Nguyen and Liebman 2022b)",
+                                  "specific mortality or size reduction causes by crops were not measured",
+                                  "excluded for simplicity of the model",
+                                  "specific mortality or size reduction causes by other weed species were not measured",
+                                  "Ryan et al., 2010",
+                                  "pollen grains can remain viable for five days after dispersal (Liu et al., 2012) and the populations at the expriment site were close to sexual parity with abundant plant densities (Nguyen and Liebman, 2022b)",
+                                  "Costea et al., 2005",
+                                  "Nguyen and Liebman 2022b and Montgomery et al., 2019 and 2021")
+
+
+assumptions <- data.frame(Stage, Assumption, `References or justification`)
 
 assumptions %>%
   flextable() %>% 
-  set_header_labels(values = list( References.or.justification = "References or justification")) %>% 
   set_caption("Female-only population dynamics model assumptions for common waterhemp (*Amaranthus tuberculatus*)") %>%
-  width(width = c(0.75, 2, 3.5)) %>%
-  autofit()
+  width(width = c(2, 3, 3.5)) # %>% autofit()
 ```
 
 ### Matrix form {-}   
 
-Each rotation transition matrix, $A_r$, is the product of two, three or four annual projection matrices, $P_c$ (c = 2, 3, or 4, corresponding to the number of crop phases in each rotation). Each annual projection matrices, corresponding to a crop environment, $P_c$, is the product of six sub-annual matrices, $B_k$ with $k = \{1,2,...,6\}$. The six sub-annual matrices, in chronological order from spring to winter, are pre-planting tillage induced seed vertical movement ($B_{\tau(s)}$), emergence ($B_\gamma$), summer seed and seedling survival ($B_\sigma$), fecundity ($B_\phi$), post-harvest tillage induced seed vertical movement ($B_{\tau(f)}$), and overwinter seed survival ($B_\omega$). Each sub-annual period matrix of means is an 8x8 matrix consists of four blocks using the format of matrix 4.8 in [Chapter 4, @caswellMatrixPopulationModels2001]. The compilation of each $B_h$ matrix, from the published literature, empirical measurement, or both parameters are detailed in the *Parameterization* section.   
+Each rotation transition matrix, $A_r$, is the product of two, three or four annual projection matrices, $P_c$ (c = 2, 3, or 4, corresponding to the number of crop phases in each rotation). Each set of annual projection matrices, corresponding to a crop environment, $P_c$, is the product of six sub-annual matrices, $B_h$ with $h = \{t(s), g, s, f, t(f), o\}$. The six sub-annual matrices, in chronological order from spring to winter, are pre-planting tillage induced seed vertical movement ($B_{t(s)}$), emergence ($B_g$), summer seed and seedling survival ($B_s$), fecundity ($B_f$), post-harvest tillage induced seed vertical movement ($B_{t(f)}$), and overwinter seed survival ($B_o$). 
 
-Any transition matrix (periodic sub-annual, ($B_k$), annual, ($A_r$), or rotational, ($P_c$)), is of eight rows by eight columns (8 x 8) consists of four blocks using the format of matrix 4.8 in [Chapter 4, @caswellMatrixPopulationModels2001].  
+Any transition matrix (periodic sub-annual, ($B_h$), annual, ($A_r$), or rotational, ($P_c$)), is of eight rows by eight columns (8 x 8) consists of four blocks using the format of matrix 4.8 in [Chapter 4, @caswellMatrixPopulationModels2001].  
 
 $$
 \left[\begin{array}{c|c}
@@ -83,43 +125,38 @@ $M_p$, 6 x 6, is the transition within the plant population (seedling survival t
 $M_{s,p}$, 6 x 2, is the transition from the seedbank to the plant population (emergence), and    
 $M_{p,s}$, 2 x 6, is the transition from the plant to the seedbank population (distribution of newly produced seeds to the soil seedbank)  
 
-In total, eighteen sets of six sub-annual periodic matrices were used. Each set of sub-annual matrices was constructed for a crop identity crossed with corn weed management combination. Population transition matrices were calculated using Wood's quadratic programming method [Section 6.2, @caswellMatrixPopulationModels2001].
+The compilation of each $B_h$ matrix, from the published literature, empirical measurement, or both parameters are detailed in the *Parameterization* section. In total, eighteen sets of six sub-annual periodic matrices were used. Each set of sub-annual matrices was constructed for every crop identity crossed with corn weed management combination. Population transition matrices were calculated using Wood's quadratic programming method [Section 6.2, @caswellMatrixPopulationModels2001].
   
 
 ### Parameterization {-}  
-Two scenarios of population dynamics presented in this manuscript were distinguished by plant fecundity (see *Plant fecundity* for details).  In scenario 1, plant cohorts were recorded. In scenario 2, plant cohorts were assigned by their size because the emergence timing of the sampled plants were not included under the assumption that plant size decreases as emergence delays (Table \@ref(tab:assumptions)). All the parameters were calculated for a female-only population.
+Two scenarios of population dynamics presented in this manuscript were distinguished by plant fecundity (see *Plant fecundity* for details).  In scenario 1, plant cohorts were recorded. In scenario 2, plant cohorts were assigned by their size because the emergence timing of the sampled plants were not included under the assumption that plant size decreases as emergence is delayed (Table \@ref(tab:assumptions)). All the parameters were calculated for a female-only population.
 
 
-The lower-level demographic parameters are demographic parameters at each sub-annual periods, $B_h$, filling $B_h$ elements at positions that describe seed and plant dynamics. From left to right, the columns of a $B_h$ matrix are named as `seed_top`, `seed_bottom`, `plant_cohort_1`, ..., `plant_cohort_6`. The same order is applied down the rows of $B_h$.  
-The examined lower-level demographic parameters can be grouped based on their impacts to preserving and producing new seeds, hereafter referred to as seed production, seed preservation, and neutral parameters. The seed preserving parameters are the probability of seeds not emerging ($1 - \sum_{k=1}^6 \gamma_k$). The seed producing parameters are the emergence probabilities ($\gamma_k, k = \{1,...6\}$), the survival rates of seeds ($\sigma_{sk}, k = \{1,2\}$) and seedlings ($\sigma_{pk}, k = \{1,...,6\}$) during summer, the fecundity rate ($\phi_k,  k = \{1,...,6\}$), and the survival rate overwinter ($\omega_k, k = {1,2}$). Even though emergence reduces the seedbank, the number of seeds that are produced from an emerged seedling that succeeds until seed production are substantial, so emergence is considered positively impacting new seed production [@davisWeedSeedPools2008]. The neutral parameters to both seed preservation and seed production are tillage-induced seed movement across soil strata at the pre-planting ($\tau_{ij,s}, i,j = \{1,2\}$) and post-harvest $\tau_{ij,f}, i,j = \{1,2\}$) periods. The tillage-induced seed vertical movement rates are considered neutral parameters because the seeds that are kept at or moved to the 0-2 cm soil layer can be exposed to emergence stimulants or granivors while the seeds that are kept at or moved to the 2-20 cm soil layer can be exposed to suicidal germination and decaying stimulants; or preserved at optimal conditions [@burnsideSeedLongevity411996; @davisEnvironmentalFactorsAffecting2005; @davisInfluenceSeedDepth2007]. 
+The lower-level demographic parameters are demographic parameters at each sub-annual periods, $B_h$, filling $B_h$ elements at positions that describe seed and plant dynamics. From left to right, the eight columns of a $B_h$ matrix are named as `seed_top`, `seed_bottom`, `plant_cohort_1`, ..., `plant_cohort_6`. `seed_top` and `seed_bottom` represents two stratum of the soil seedbank. The same order is applied down eight rows of $B_h$.  
+The examined lower-level demographic parameters can be grouped based on their impacts to preserving and producing new seeds, hereafter referred to as seed production, seed preservation, and neutral parameters. The seed preserving parameters are the probability of seeds not emerging ($d = 1 - \sum_{k=1}^6 g_k$). The seed producing parameters are the emergence probabilities ($g_k, k = \{1,...6\}$), the survival rates of seeds ($s_{sk}, k = \{1,2\}$) and seedlings ($s_{pk}, k = \{1,...,6\}$) during summer, the fecundity rate ($f_k,  k = \{1,...,6\}$), and the survival rate overwinter ($o_k, k = {1,2}$). Even though emergence reduces the seedbank, the number of seeds that are produced from an emerged seedling that succeeds until seed production are substantial, so emergence is considered positively impacting new seed production [@davisWeedSeedPools2008]. The neutral parameters to both seed preservation and seed production are tillage-induced seed movement across soil strata at the pre-planting ($t_{ij,s}, i,j = \{1,2\}$) and post-harvest $t_{ij,f}, i,j = \{1,2\}$) periods. The tillage-induced seed vertical movement rates are considered neutral parameters because the seeds that are kept at or moved to the 0-2 cm soil layer can be exposed to emergence stimulants or granivores while the seeds that are kept at or moved to the 2-20 cm soil layer can germinate without reaching the soil surface (fatal germination), are exposed to decaying stimuli; or preserved at optimal conditions [@burnsideSeedLongevity411996; @davisEnvironmentalFactorsAffecting2005; @davisInfluenceSeedDepth2007]. 
 
 ```{r parameterization, include=FALSE}
 #https://ardata-fr.github.io/flextable-book/captions-and-cross-references.html
 
-parameters <- read.csv("demographic-parameters.csv")
+#parameters <- read.csv("demographic-parameters.csv")
 
-parameters_ft <-flextable(parameters)
 
-parameters_ft <- set_caption(parameters_ft,
-                              "Female-only population dynamics model parameters for common waterhemp (*Amaranthus tuberculatus*)")
-
-parameters_ft 
 ```
 
 #### Published literature data {-}
 
 ##### Pre-planting tillage induced vertical redistribution of seeds {-}  
 
-The only non-zeros section of the pre-planting tillage induced vertical redistribution of seeds is $M_s$. $M_s$'s were resized from the raw data of Seed Chaser [@spokasSeedChaserVerticalSoil2007], a simulation program that estimate vertical seed movement after tillage. No-till is represented by an identical matrix, $I$, after @cousensModelEffectsCultivation1990. Field cultivator was applied before planting corn (C2, C3, and C4), soybean (S2, S3, and S4), and oat (O3 and O4). No tillage was applied before alfalfa (A4) because alfalfa that was intercropped with oat in the 4-year rotation (O4) was kept overwinter and grown as a sole crop in the following year.     
+The only non-zeroes section of the pre-planting tillage induced vertical redistribution of seeds is $M_s$. $M_s$'s were resized from the raw data of Seed Chaser [@spokasSeedChaserVerticalSoil2007], a simulation program that estimate vertical seed movement after tillage: the proportion of seeds staying at its original soil stratum, $t_{11,s}$ and $t_{22,s}$, or move to another stratum, $t_{12,s}$ and $t_{21,s}$. The original matrices in @spokasSeedChaserVerticalSoil2007 were resized to 2 x 2 by summing over all the elements within each of the four sections, i.e., top left 2 x 2, bottom left 18 x 2, top right 2 x 18, and 18x18, and divide each of the i x 2 summations by the summation of the 20 x 2 left section, and each of the i x 18 summations by the summation of the 20 x 2 right section.  
 
-The @spokasSeedChaserVerticalSoil2007's raw data was used to calculate the proportion of seeds staying at its original section, $\tau_{11,s}$ and $\tau_{22,s}$, or move to another section, $\tau_{12,s}$ and $\tau_{21,s}$. The original matrices in @spokasSeedChaserVerticalSoil2007 were resized to 2x2 by summing over all the elements within each of the four sections, i.e., top left 2x2, bottom left 18x2, top right 2x18, and 18x18, and divide each of the ix2 summations by the summation of the 20x2 left section, and each of the ix18 summations by the summation of the 20x2 right section.  
+No-till is represented by an identical matrix, $I$, after @cousensModelEffectsCultivation1990. A field cultivator was applied before planting corn (C2, C3, and C4), soybean (S2, S3, and S4), and oat (O3 and O4). No tillage was applied before alfalfa (A4) because alfalfa that was intercropped with oat in the 4-year rotation (O4) was kept overwinter and grown as a sole crop in the following year.     
 
 
 $$
-\mathbf{B_{\tau(s)}} = \left[\begin{array}
+B_{t(s)} = \left[\begin{array}
 {rr|rrrrr} 
-\tau_{11,s} & \tau_{21,s} & 0 & ... & ... & ... & ... & 0\\
-\tau_{12,s} & \tau_{22,s} & 0 & ... & ... & ... & ... & 0\\
+t_{11,s} & t_{21,s} & 0 & ... & ... & ... & ... & 0\\
+t_{12,s} & t_{22,s} & 0 & ... & ... & ... & ... & 0\\
 \hline    
 0 & 0 & 0 & ... & ... & ... & ... &0\\
 ... & ... & ... & ... & ... & ... & ... & ...\\ 
@@ -133,39 +170,39 @@ $$
 
 ##### In-season survival of seeds and seedlings {-}
 
-The matrix $B_{\sigma}$ is comprised of seed survival rates at the $M_s$ and plant survival rates at the $M_p$ sections, respectively.  
+The matrix $B_s$ is comprised of seed survival rates at the $M_s$ and plant survival rates at the $M_p$ sections, respectively.  
 
 
 $$
-\mathbf{B_\sigma} = \left[\begin{array}
+B_s = \left[\begin{array}
 {rr|rrrrr} 
-\sigma_{s_1}  & 0 & 0 & ... & ... & ... & ... & 0\\
-0 & \sigma_{s_2}  & 0 & ... & ... & ... & ... & 0\\
+s_{s_1}  & 0 & 0 & ... & ... & ... & ... & 0\\
+0 & s_{s_2}  & 0 & ... & ... & ... & ... & 0\\
 \hline             
-0 & 0 & \sigma_{p_1} & ... & ... & ...&...  & 0\\
-... & ... & 0 & \sigma_{p_2} & ... & ... & ... & 0\\ 
+0 & 0 & s_{p_1} & ... & ... & ...&...  & 0\\
+... & ... & 0 & s_{p_2} & ... & ... & ... & 0\\ 
 ... & ... & ... & ... & ... & ... & ... & 0\\ 
-0 & 0 & 0 & ... & ... & ...& 0 & \sigma_{p_6}\\
+0 & 0 & 0 & ... & ... & ...& 0 & s_{p_6}\\
 \end{array}\right]
 $$ 
 
-The $M_s$ section's diagonal ($\sigma_{s_1}$ and $\sigma_{s_2}$) were filled with survival rates adapted from equations $o_1 = y = 98.9 e^{-0.068x} \%$ and $o_2 = y = 99.5 e^{-0.05x} \%$ [Figures 1 and 3, @sosnoskieGlyphosateResistanceDoes2013] for the top and bottom layers. The values of x, denoted as $x_s$, the burial length in month, were assigned at 6 for corn and soybean, *6.5 for oat, and 7 for alfalfa* crop environments (Table \@ref(tab:Julian-19-20-tab)). These x's values were assigned based on the estimated time that seeds are receiving germination stimulants.  
+The $M_s$ section's diagonal ($s_{s_1}$ and $s_{s_2}$) were filled with survival rates adapted from equations $o_1 = y = 98.9 e^{-0.068x} \%$ and $o_2 = y = 99.5 e^{-0.05x} \%$ [Figures 1 and 3, @sosnoskieGlyphosateResistanceDoes2013] for the top and bottom layers. The values of x, denoted as $x_s$, the burial length since emergence until new seed production, were assigned at 6 for corn and soybean, *6.5 for oat, and 7 for alfalfa* crop environments (Table \@ref(tab:Julian-19-20-tab)).  
 
 
-The empirically measured data for seedling survival was unrealistically (Appendix) low as compared to the literature, so @nordbyInfluenceCornCommon2004's results were used for corn and @hartzlerEffectCommonWaterhemp2004's were used for soybean crop environments. The seedling survival rates by cohort ($\sigma_{p_k}, k = \{1,...,6\}$) were assigned such that the earlier cohorts had lower survival rate in the oat crop environment; and those in the alfalfa crop environment were evenly low in all cohorts. These guessed numbers were based on a suggestion that the cool-season crop environments can inhibit warm-season weed species growth [@nguyenWeedCommunityComposition2022 and relevant citations].
+The empirically measured data for seedling survival was deemed unrealistically (Appendix) low as compared to the literature, so @nordbyInfluenceCornCommon2004's results were used for corn and @hartzlerEffectCommonWaterhemp2004's results were used for soybean crop environments. The seedling survival rates by cohort ($s_{p_k}, k = \{1,...,6\}$) were assigned such that the earlier cohorts had lower survival rate in the oat crop environment; and those in the alfalfa crop environment were evenly low in all cohorts. These estimated numbers were based on a suggestion that cool-season crop environments can inhibit warm-season weed species growth [@nguyenWeedCommunityComposition2022 and citations given there].
 
 ##### Plant fecundity {-}  
 
-The plant fecundity matrix, $B_\phi$, had the $M_s$ section's diagonal filled with 1's and the first row of the $M_{p,s}$ filled with $\phi_k, k =\{1,...,6\}$. The 1's in the $M_s$ section's diagonal are placeholders to carry the product from the previous matrices over.  
+The plant fecundity matrix, $B_f$, had the $M_s$ block's diagonal filled with 1's and the first row of the $M_{p,s}$ filled with $f_k, k =\{1,...,6\}$. The 1's in the $M_s$ block's diagonal are placeholders to carry the product from the previous matrices over.  
 
 $$
-\mathbf{B_\phi} = \left[\begin{array}
+\mathbf{B_f} = \left[\begin{array}
 {rr|rrrrr} 
-1 & 0 & \phi_1 & \phi_2 & ... & ... & ... & \phi_6\\
+1 & 0 & f_1 & f_2 & ... & ... & ... & f_6\\
 0 & 1 & 0 & ... & ... & ... & ... & 0\\
 \hline   
 0 & 0 & 0 & ... & ... & ... & ... & 0\\
-... & ...& ... & ... &...&...&...&0\\
+... & ...& ... & ... &...&...&...& 0\\
 ... & ... & ... & ... & ... & ... & ... & ...\\ 
 0 & 0 & 0 & ... & ... & ... & 0 & 0\\
 \end{array}\right]
@@ -173,19 +210,19 @@ $$
 
 
 
-Two scenarios of plant fecundity were used. In scenario 1, plant fecundity ($\phi_k, k =\{1,...,6\}$) in each crop identity crossed with corn weed management was estimated from plant aboveground mass using eighteen equations from @nguyenImpactCroppingSystem2022. In scenario 2, the plants were partitioned into six size-based bins and their fecundity were summarized as $\phi_k, k =\{1,...,6\}$ and filled in their relevant position in the $B_\phi$ matrix by partitioning. Both practices in scenarios 1 and 2 were based on the assumption that plant size and fecundity decreased as emergence delayed [@hartzlerEffectCommonWaterhemp2004; @nordbyInfluenceCornCommon2004].   
+Two scenarios of plant fecundity were used. In scenario 1, plant fecundity ($f_k, k =\{1,...,6\}$) in each crop identity crossed with corn weed management was estimated from plant aboveground mass using eighteen equations from @nguyenImpactCroppingSystem2022. In scenario 2, the plants were partitioned into six size-based bins and their fecundity was summarized as $f_k, k =\{1,...,6\}$ and filled in their relevant positions in the $B_f$ matrix by partitioning. Both practices in scenarios 1 and 2 were based on the assumption that plant size and fecundity decreased as emergence delayed [@hartzlerEffectCommonWaterhemp2004; @nordbyInfluenceCornCommon2004].   
 
 ##### Post-harvest tillage induced vertical redistribution of seeds post-harvest tillage {-}
 
-The compilation of $B_{\tau(f)}$ was the similar to that of $B_{\tau(s)}$. Chisel plow was applied after C2, C3, and C4, no-till was applied after S2, S3, S4, and O4, and moldboard was applied after O3 and A4.  
+The compilation of $B_{t(f)}$ was the similar to that of $B_{t(s)}$. Chisel plowing was applied after corn was harvested in the C2, C3, and C4 treatments, no-till was applied after harvests in the  S2, S3, S4, and O4 treatments, and moldboard was applied at the end of the O3 and A4 phases.  
 
 $$
-\mathbf{B_{\tau(f)}} = \left[\begin{array}
+B_{t(f)} = \left[\begin{array}
 {rr|rrrrr} 
-\tau_{11,f} & \tau_{21,f} & 0 & ... & ... & ... & ... & 0\\
-\tau_{12,f} & \tau_{22,f} & 0 & ... & ... & ... & ... & 0\\
+t_{11,f} & t_{21,f} & 0 & ... & ... & ... & ... & 0\\
+t_{12,f} & t_{22,f} & 0 & ... & ... & ... & ... & 0\\
 \hline    
-0 & 0 & 0 & ... & ... & ... & ... &0\\
+0 & 0 & 0 & ... & ... & ... & ... & 0\\
 ... & ... & ... & ... & ... & ... & ... & ...\\ 
 ... & ... & ... & ... & ... & ... & ... & ...\\ 
 0 & 0 & 0 & ... & ... & ... & ... & 0\\
@@ -194,15 +231,15 @@ $$
 
 ##### Overwinter survival {-} 
 
-The compilation of matrix $B_\omega$ was similar to that of $B_\sigma$, using equations $o_1 = y = 98.9 e^{-0.068x} \%$ and $o_2 = y = 99.5 e^{-0.05x} \%$ [Figures 1 and 3, @sosnoskieGlyphosateResistanceDoes2013]. $\omega_{ij}$ was calculated with different values of x, denoted as $x_w$ the burial length in month, were assigned at 6 for corn and soybean, *5.5 for oat, and 5 for alfalfa* crop environments (Table \@ref(tab:Julian-19-20-tab)), equivalent to $12 - x_s$ in the summer seed survival in matrix $B_{\sigma}$.
+The compilation of matrix $B_o$ was similar to that of $B_\sigma$, using equations $o_1 = y = 98.9 e^{-0.068x} \%$ and $o_2 = y = 99.5 e^{-0.05x} \%$ [Figures 1 and 3, @sosnoskieGlyphosateResistanceDoes2013]. $o_{ij}$ was calculated with different values of x, denoted as $x_w$ the burial length after post-harvest tillage application until emergence initiation, were assigned at 6 for corn and soybean, *5.5 for oat, and 5 for alfalfa* crop environments (Table \@ref(tab:Julian-19-20-tab)), equivalent to $12 - x_s$ in the summer seed survival in matrix $B_{\sigma}$.
 
 $$
-\mathbf{B_{\omega}} = \left[\begin{array}
+\mathbf{B_o} = \left[\begin{array}
 {rr|rrrrr} 
-\omega_{11} & 0 & 0 & ... & ... & ... & ... & 0\\
-0  & \omega_{22} & 0 & ... & ... & ... & ... & 0\\
+o_{11} & 0 & 0 & ... & ... & ... & ... & 0\\
+0  & o_{22} & 0 & ... & ... & ... & ... & 0\\
 \hline    
-0 & 0 & 0 & ... & ... & ... & ... &0\\
+0 & 0 & 0 & ... & ... & ... & ... & 0 \\
 ... & ... & ... & ... & ... & ... & ... & ...\\ 
 ... & ... & ... & ... & ... & ... & ... & ...\\ 
 0 & 0 & 0 & ... & ... & ... & ... & 0\\
@@ -214,34 +251,34 @@ $$
 
 ##### Seedling recruitment {-}  
 
-The emergence proportions calculated from step 5 here are lined on the first column of block $M_{s,p}$ in matrix $B_\gamma$. $1 - sum_{k=1}^6 \gamma_k$ represents the non-emerging seeds proportion.  
+The emergence proportions calculated from step 5 here are positioned on the first column of block $M_{s,p}$ in matrix $B_g$. $1 - sum_{k=1}^6 g_k$ represents the non-emerging seeds proportion.  
 
 $$
-\mathbf{B_\gamma}=\left[\begin{array}
+\mathbf{B_g}=\left[\begin{array}
 {rr|rrrrr} 
-1-\sum_{k=1}^6 \gamma_k & 0 & 0 & ... & ... & ... & ... & 0\\  
+d = 1-\sum_{k=1}^6 g_k & 0 & 0 & ... & ... & ... & ... & 0\\  
 0 & 1 & 0 & ... & ... & ... & ... & 0\\  
 \hline             
-\gamma_1 & 0 & 0 & ... & ... & ... & ... & 0\\  
+g_1 & 0 & 0 & ... & ... & ... & ... & 0\\  
 ... & ... & ... & ... & ... & ... & ... & ...\\  
-\gamma_6 & 0 & 0 & ... & ... & ... & ... & 0\\  
+g_6 & 0 & 0 & ... & ... & ... & ... & 0\\  
 \end{array}\right]
 $$   
 
 
-The proportion of seed emergence from the top 0-2 cm soil seedbank stratum in each crop identity crossed with corn weed management was calculated with the following steps:   
+The proportion of seedling emergence from the top 0-2 cm soil seedbank stratum in each crop identity crossed with corn weed management was calculated with the following steps:   
 
 1 - Estimate the 0-2 cm and 2-20 cm seedbank densities with the soil seedbank samples collected before post-harvest tillage. A seed column at a particular sub-annual period is comprised of the 0-2 cm and 2-20 cm soil stratum seed densities, $N_h = [s_t, s_b]$.  
 
 From steps 2 through 4, the seed column in sub-period h, $N_h$, was transitioned from one period to the next with the general matrix multiplication of $N_{h+1} = B_hN_h$ by @caswellMatrixPopulationModels2001.  
 
-2 - Estimate post-harvest tillage induced seed vertical redistribution with resized Seed Chaser [@spokasSeedChaserVerticalSoil2007] chisel and moldboard matrices, as detailed in the *Post-harvest tillage induced seed vertical movement*, to yield $N_{\tau(f)}$       
+2 - Estimate post-harvest tillage induced seed vertical redistribution with resized Seed Chaser [@spokasSeedChaserVerticalSoil2007] chisel and moldboard plowing matrices, as detailed in the *Post-harvest tillage induced seed vertical movement*, to yield $N_{t(f)}$       
 
-3 - Adapt overwinter survival rates as previously explain in he *Overwinter survival section* and apply it on $N_{\tau(f)}$ to yield $N_\omega$. Corn weed management did not affect waterhemp's first cohort emergence in the same crop environment (Appendix), so the same value of $x_s$ was used for the same crop identity.    
+3 - Adapt overwinter survival rates as previously explain in he *Overwinter survival section* and apply it on $N_{t(f)}$ to yield $N_o$. Corn weed management did not affect waterhemp's first cohort emergence in the same crop environment (Appendix), so the same value of $x_s$ was used for the same crop identity.    
 
-4 - Estimate pre-planting tillage induced seed vertical redistribution with resized Seed Chaser [@spokasSeedChaserVerticalSoil2007] field cultivator matrix, similar to step 2 to yield $N_{\tau(s)}$.   
+4 - Estimate pre-planting tillage induced seed vertical redistribution with resized Seed Chaser [@spokasSeedChaserVerticalSoil2007] field cultivator matrix, similar to step 2 to yield $N_{t(s)}$.   
 
-5 - Divide the seedling density in each cohort, $l_k$, by $s_t$, the top soil stratum seed density to yield $\gamma_k$.   
+5 - Divide the seedling density in each cohort, $l_k$, by $s_{11,f}$, the top soil stratum seed density to yield $g_k$.   
 
 
 ### Variance of the lower-level parameters {-}
@@ -249,83 +286,83 @@ The variance-covariance matrix of each matrix $B_h$, $V_h$, was used to calculat
 
 #### Pre-planting and post-harvest tillage induced seed movement {-}
 
-The variance-covariance matrix of matrices $B_{\tau(s)}$ and $B_{\tau(f)}$ are 2x2 because these periods involved seed dynamics only. $v_{\tau_{i,j}} = \frac{\tau_i (1-\tau_i)}{n_j}$ and $\rho_{\tau_{i,j}} = -\frac{\tau_i \tau_j}{n_j}$, where $n_j$ is the column summation of all the seeds in the relevant $B_\tau$ matrix.  
+The variance-covariance matrix of matrices $B_{t(s)}$ and $B_{t(f)}$ are 2 x 2 because these periods involved seed dynamics only. $v_{t_{i,j}} = \frac{t_i (1-\tau_i)}{n_.j}$ and $\rho_{t_{i,j}} = -\frac{t_i t_j}{n_.j}$, where $n_.j$ is the column summation of all the seeds in the relevant $B_t$ matrix.  
 
 $$
-\mathbf{V_{\tau(s)}} = \left[\begin{array}
+V_{t(s)} = \left[\begin{array}
 {rr} 
-v_{\tau_{11,s}} & \rho_{\tau_{21,s}} \\
-\rho_{\tau_{12,s}} & v_{\tau_{22,s}} \\
+v_{t_{11,s}} & \rho_{t_{21,s}} \\
+\rho_{t_{12,s}} & v_{t_{22,s}} \\
 \end{array}\right]
 $$  
 
 and    
 
 $$
-\mathbf{V_{\tau(f)}} = \left[\begin{array}
+V_{t(f)} = \left[\begin{array}
 {rr} 
-v_{\tau_{11,f}} & \rho_{\tau_{21,f}} \\
-\rho_{\tau_{12,f}} & v_{\tau_{22,f}} \\
+v_{t_{11,f}} & \rho_{t_{21,f}} \\
+\rho_{t_{12,f}} & v_{t_{22,f}} \\
 \end{array}\right]
 $$   
 
 
-#### Seed emergence {-}
+#### Seedling emergence {-}
 
-The diagonals of $V_\gamma$ were filled with $\frac{pi(1-p_i)}{n}$ and other elements, where $i \neq j$, were filled with $\frac{-p_ip_j}{n}$. $p_k$ is the proportion of seedling emerge at cohort k. The off-diagonal of the $M_s$ and the second column of the $M_{s,p}$ are zeros because we assumed no emergence from the 2-20 cm soil stratum and that the seed emergence from the 0-2 cm soil stratum is independent of the 2-20 stratum soil seedbank density.    
+The diagonals of $V_g$ were filled with $\frac{pi(1-p_i)}{n}$ and other elements, where $i \neq j$, were filled with $\frac{-p_ip_j}{n}$. $p_k$ is the proportion of seedling emerge at cohort k. The off-diagonal of the $M_s$ and the second column of the $M_{s,p}$ are zeros because we assumed no emergence from the 2-20 cm soil stratum and that the seedling emergence from the 0-2 cm soil stratum is independent of the 2-20 stratum soil seedbank density, and $n$ is the number of seeds in the 0-2 cm soil stratum. 
 
 $$
-\mathbf{V_\gamma}=\left[\begin{array}
+V_g=\left[\begin{array}
 {rr|rrrrr} 
-\frac{(1-\sum_{k=1}^6) \sum_{i=1}^6}{n} & 0 & 0 & ... & ... & ... & ... & 0\\  
+\frac{(1-\sum_{k=1}^6 g_k)  \sum_{k=1}^6 g_k}{n} & 0 & 0 & ... & ... & ... & ... & 0\\  
 0 & 0 & 0 & ... & ... & ... & ... & 0\\  
 \hline             
--\frac{(1-\sum_{i=1}^6 \gamma_k) \gamma_3}{n} & 0 & \frac{\gamma_1(1-\gamma_1)}{n} & ... & ... & ... & ... & 0\\  
-... & ... & -\frac{\gamma_1\gamma_2}{n} & \frac{\gamma_2(1-\gamma_2)}{n} & ... & ... & ... & ...\\  
- -\frac{(1-\sum_{i=1}^6 \gamma_k) \gamma_6} {n} & 0 & 0 & ... & ... & ... & -\frac{\gamma_5\gamma_6}{n} & \frac{\gamma_6(1-\gamma_6)}{n}\\  
+-\frac{d g_3}{n} & 0 & \frac{g_1(1-g_1)}{n} & ... & ... & ... & ... & 0\\  
+... & ... & -\frac{g_1g_2}{n} & \frac{g_2(1-g_2)}{n} & ... & ... & ... & ...\\  
+ -\frac{d g_6} {n} & 0 & 0 & ... & ... & ... & -\frac{g_5g_6}{n} & \frac{g_6(1-g_6)}{n}\\  
 \end{array}\right]
 $$  
 
 #### Summer seedling and plant survival {-}
 
-$v_{\sigma_{s_1}}$ and $v_{\sigma_{s_2}}$ elements were visually estimated from Figures 1 and 3, in @sosnoskieGlyphosateResistanceDoes2013 because the raw data was not available. All other elements are 0 because we assumed seed survival in different strata and plant survival in different cohorts are independent of one another.  
+$v_{s_{s_1}}$ and $v_{s_{s_2}}$ elements were visually estimated from Figures 1 and 3, in @sosnoskieGlyphosateResistanceDoes2013 because the raw data was not available. All other elements are 0 because we assumed seed survival in different strata and plant survival in different cohorts are independent of one another.  
 
 $$
-\mathbf{V_\sigma} = \left[\begin{array}
+\mathbf{V_s} = \left[\begin{array}
 {rr|rrrrr} 
-v_{\sigma_{s_1}}  & 0 & 0 & ... & ... & ... & ... & 0\\
-0 & v_{\sigma_{s_2}}  & 0 & ... & ... & ... & ... & 0\\
+v_{s_{s_1}}  & 0 & 0 & ... & ... & ... & ... & 0\\
+0 & v_{s_{s_2}}  & 0 & ... & ... & ... & ... & 0\\
 \hline             
-0 & 0 & \sigma_{p_1} & ... & ... & ...&...  & 0\\
-... & ... & 0 & \sigma_{p_2} & ... & ... & ... & 0\\ 
+0 & 0 & s_{p_1} & ... & ... & ...&...  & 0\\
+... & ... & 0 & s_{p_2} & ... & ... & ... & 0\\ 
 ... & ... & ... & ... & ... & ... & ... & 0\\ 
-0 & 0 & 0 & ... & ... & ...& 0 & \sigma_{p_6}\\
+0 & 0 & 0 & ... & ... & ...& 0 & s_{p_6}\\
 \end{array}\right]
 $$ 
 
 #### Plant fecundity {-}
 
-The variance-covariance matrix of $B_\phi$, $V_\phi$, is 6x6 because this period involved plant dynamics only. $v_{\phi_k} = \frac{\sum_{f=1}^z (f_{z} - \bar{f_k})} {n_k - 1}$, where $f_z$ is the fecundity of plant z in cohort k, $\bar{f_k}$ is the mean fecundity of the cohort k, and $n_k$ is the number of plants in cohort k.  Variance of a cohort that had only one sample was assigned zero.  
+The variance-covariance matrix of $B_f$, $V_f$, is 6 x 6 because this period involved plant dynamics only. $v_{f_k} = \frac{\sum_{m=1}^z (m_{z} - \bar{m_k})} {n_k - 1}$, where $f_z$ is the fecundity of plant z in cohort k, $\bar{f_k}$ is the mean fecundity of the cohort k, and $n_k$ is the number of plants in cohort k. Variance of a cohort that had only one sample was assigned zero. Fecundity of plants in different cohorts were assumed independent, so $\rho(f_i,f_j) = 0$.  
 
 $$
-\mathbf{V_\phi} = \left[\begin{array}
+\mathbf{V_f} = \left[\begin{array}
 {rrrrr} 
-v_{\phi_1} & 0 & ... & ... & ... & 0 & \\
+v_{f_1} & 0 & ... & ... & ... & 0 & \\
 ... & ...& ... & ... &...&...\\
-... & ... & ... & ... & v_{\phi_5} & ... \\ 
-0 & ... & ... & ... & 0 & v_{\phi_6} \\
+... & ... & ... & ... & v_{f_5} & ... \\ 
+0 & ... & ... & ... & 0 & v_{f_6} \\
 \end{array}\right]
 $$   
 
 #### Overwinter survival {-}
 
-Similar to $V_\sigma$, the variance-covariance matrix of $B_\omega$, $V_\omega$, is 2x2 because this stage involved seed dynamics only. The $v_{\omega_{11}}$ and $v_{\omega_{22}}$ elements were visually estimated from Figures 1 and 3, in @sosnoskieGlyphosateResistanceDoes2013 because the raw data was not available.
+Similar to $V_s$, the variance-covariance matrix of $B_o$, $V_o$, is 2x2 because this stage involved seed dynamics only. The $v_o_{11}$ and $v_{o_{22}$ elements were visually estimated from Figures 1 and 3, in @sosnoskieGlyphosateResistanceDoes2013 because the raw data was not available. Survival rates of seeds in different strata were assumed independent, so $\rho(f_i,f_j) = 0$
 
 $$
-\mathbf{V_{\omega}} = \left[\begin{array}
+V_o = \left[\begin{array}
 {rr} 
-v_{\omega_{11}} & 0 \\
-0  & v_{\omega_{22}} \\
+v_{o_{11}} & 0 \\
+0  & v_{o_{22}} \\
 \end{array}\right]
 $$   
 
@@ -334,34 +371,32 @@ $$
  
 
 Within a year, waterhemp population projection from time $k$ to $k+1$ was reflected by the changes in number of seeds and plants and calculated as follow [Chapters 2, 3 and 4, @caswellMatrixPopulationModels2001].  
-$$N_{k+1} = B_k*N_k$$  
+$$N_{h+1} = B_h*N_h$$  
 where,  
-$\mathcal{B_k}$ is the square transition matrix from time $k$ to time $k+1$, and   
+$B_h$ is the square transition matrix from time $h$ to time $h+1$, and   
 $N$ is the population vector (in column matrix form) of eight rows and one column.  
-Waterhemp population transition in one crop phase, from pre-planting tillage to winter dormancy is calculated with 
+Waterhemp population transition in one crop phase, from pre-planting tillage to winter seed dormancy is calculated with 
 
-$$ N_{r_{c,k+1}} = N_{r_{c,h}}*\prod_{k=1}^6 B_k  \;\;\;\;\;  [1]$$   
+$$ N_{r_{c,h+1}} = N_{r_{c,w}}*\prod_{h=1}^H B_h  \;\;\;\;\;  [1]$$   
 where,   
 $r_{c}$ is the index for the $c^{th}$ crop phase in a particular rotation,   
-$N_{r_{c}}$ is the Leslie's population matrix in crop phase $c^{th}$, and   [@leslieUseMatricesCertain1945]   
-$B_k$ is the population transition matrix during summer    
+$N_{r_{c}}$ is the Leslie population matrix in crop phase $c^{th}$ corn weed management $w^{th}$, and   [@leslieUseMatricesCertain1945]   
+$B_h$ is the population transition matrix during summer    
 
-The main factors that contribute to the success of the control practices are tillage regime, chemical herbicide, cultivation practice and crops' competitiveness. 
-Among those four factors, crop competitiveness will not be factorized because this factor is dependent on other factors.  
+The main factors that contribute to the success of the control practices used for waterhemp are tillage regime, herbicides, cultivation practice, and crops' competitiveness. Among those four factors, crop competitiveness is reflected in emergence proportion, mature plant size (intermediate value to calculate fecundity), and fecundity because this factor could not be measured independently.  
 
-The following parameters were collected and plugged into a general population model to examine when and where large changes in population dynamics might occur. 
-The list of parameters and the corresponding formula is presented in Table 4.1 below.  
 
-Matrix calculation in this study was performed in R version 4.2.0 [@rdevelopmentcoreteamLanguageEnvironmentStatistical2022]. The population growth rate, $\lambda$, sensitivity and elasticity were calculated with `eigen.analysis` function in the `popbio` package version 2.7 [@stubbenPopbioConstructionAnalyse2020].  
+
+Matrix calculation in this study was performed in R version 4.2.0 [@rdevelopmentcoreteamLanguageEnvironmentStatistical2022]. The population growth rate ($\lambda$) sensitivity and elasticity were calculated with `eigen.analysis` function in the `popbio` package version 2.7 [@stubbenPopbioConstructionAnalyse2020].  
 
 #### Sensitivity of population growth rate on each lower-level parameter {-}
 
-In all the Life Table Retrospective Experiment (LTRE) procedures performed here, the conventional corn weed management treatment is the reference treatment and low herbicide the treatment of interest. Following @caswellSensitivityAnalysisPeriodic1994's notions.
+In all the Life Table Retrospective Experiment (LTRE) procedures performed here, the conventional corn weed management treatment is the reference treatment and low herbicide regime is the treatment of interest, following @caswellSensitivityAnalysisPeriodic1994's notions.
 
 The sensitivities of $\lambda$ to changes in sub-annual demographic parameters are not presented in this manuscript, but $S_{B_h}$ were used as intermediate parameters to calculate the elasticity of $\lambda$ to each element of a sub-annual projection matrix *and variance of $\lambda$*. The sensitivity of $\lambda$ to each element of each sub-annual periodic matrix is calculated with
 
 $$
-S_{B_h} = {(B_{(h-1)}...B_{(1)}...B_{(h+1)})}^TS_{A(h)} = D^T S_{A(h)} \,\,\,(1)
+S_{B_h} = {(B_{(h-1)}...B_{(1)}...B_{(h+1)})}^TS_{A(h)} = D^T S_{A(h)} \,\,\,(2)
 $$ 
 
 where,
@@ -369,7 +404,7 @@ $B_h$ is the periodic projection matrix for sub-annual period h; $h = \{1,...,6\
 $D^T$ is the transpose of the matrix product of all the $B_h$, and
 $S_{A(h)}$ is the sensitivity of $\lambda$ to each element of $A^*_h$ (the average annual projection matrix between the reference treatment and the treatment of interest).  
 
-In general, each $S_{B_h}$, except for $S_{B_\gamma}$ - sensitivity of $\lambda$ to summer survival, is a 8x2 matrix. In all $S_{B_h}$, only the first column was used in calculating the variance of population growth rate because the first column contains sensitivity values that concerns the population dynamics from changes in eight categories of interest, namely, seed density at the 0-2 cm soil stratum, seed density at the 2-20 cm soil stratum, and plant cohort one through six. The second through eighth columns are irrelevant under this manuscript's scope because those columns explain theoretical changes to $\lambda$ if other patterns occurred in the population dynamics, such as if seeds from the 2-20 cm emerged and contributed (column two), or if plant cohort one "becomes" cohort two (column three), and so on.  
+In general, each $S_{B_h}$, except for $S_{B_g}$ - sensitivity of $\lambda$ to summer survival, is a 8 x 2 matrix. In all $S_{B_h}$, only the first column was used in calculating the variance of population growth rate because the first column contains sensitivity values that concerns the population dynamics from changes in eight categories of interest, namely, seed density at the 0-2 cm soil stratum, seed density at the 2-20 cm soil stratum, and plant cohort one through six. The second through eighth columns are irrelevant under this manuscript's scope because those columns explain theoretical changes to $\lambda$ if other patterns occurred in the population dynamics, such as if seeds from the 2-20 cm emerged and contributed (column two), or if plant cohort one "becomes" cohort two (column three), and so on.  
 
 #### Population growth rate and its variance {-}  
 
@@ -380,9 +415,9 @@ The variance of population growth rate in each rotation was calculated with $Var
 
 The elasticity of $\lambda$ to each element of a sub-annual projection matrix is calculated with
 $$
-E_{B(h)} = \frac{b_{ijk}}{\lambda} S_{B(h)} \,\,\,(2)
+E_{B(h)} = \frac{b_{ijh}}{\lambda} S_{B(h)} \,\,\,(2)
 $$ 
 
 where,
 
-$b_{ijk}$ is the entry at row i column j of matrix $B_h$, and other elements as defined in Equation (1).
+$b_{ijh}$ is the entry at row i column j of matrix $B_h$, and other elements as defined in Equation (2).

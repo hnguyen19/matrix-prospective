@@ -896,13 +896,6 @@ scenario1_annualized_lambda_and_var <- scenario1_annualized_lambda_df_long %>%
 #View( scenario1_annualized_lambda_and_var)
 #https://community.rstudio.com/t/subset-a-nested-list-to-get-all-the-lower-level-lists-with-the-same-characters-in-their-names/138320
 
-scenario1_var_lambda_conv_top_element <- scenario1_var_lambda_conv_elements[str_detect(names(scenario1_var_lambda_conv_elements), "summer")]
-
-scenario1_var_lambda_conv_second_elements <-  scenario1_var_lambda_conv_elements[str_detect(names(scenario1_var_lambda_conv_elements), "fecund")]
-
-scenario1_var_lambda_low_top_element <- scenario1_var_lambda_low_elements[str_detect(names(scenario1_var_lambda_low_elements), "summer")]
-
-scenario1_var_lambda_low_second_element <- scenario1_var_lambda_low_elements[str_detect(names(scenario1_var_lambda_low_elements), "fecund")]
 ```
 
 ```{r scenario1-phase-wise-lambda, include=FALSE}
@@ -922,7 +915,7 @@ scenario1_phase_lambda <-  scenario1_phase_projection_trimmed %>%
 # View(scenario1_phase_lambda )
 ```
 
-```{r scenario1-phase-wise-lambda-plot, echo=FALSE, fig.width= 8, fig.height= 12, fig.cap= "Scenario 1: Changes of a seed column after twelve model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). The model started at year 0 with 1000 and 0 seeds per squared meter at the top (0-2 cm) and bottom (2-20 cm) strata, respectively. The red horizontal line shows the number of seeds at the top stratum at the begining of the model clock. The annualized population growth rates are followed by their variances in brackets. The models years are followed by the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
+```{r scenario1-phase-wise-lambda-plot, echo=FALSE, fig.width= 8, fig.height= 12, fig.cap= "Scenario 1: Changes of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). The model started at year 0 with 1000 and 0 seeds per squared meter in the top (0-2 cm) and bottom (2-20 cm) strata, respectively. The red horizontal line shows the number of seeds in the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
 
 scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
   mutate(Stratum = rep(c("0-2 cm", "2-20 cm"),6),
@@ -970,7 +963,7 @@ scenario1_phase_seed_vectors_long  %>%
   geom_line(aes(y = Count, linetype =  Stratum)) +
   geom_point(aes(y = Count, shape =  Stratum)) +
   geom_hline(aes(yintercept = 1000, color = "baseline")) +
-  facet_wrap(Rotation ~ Corn_weed_management, scales = "free_x", ncol = 2, labeller = label_wrap_gen(multi_line=FALSE)) + 
+  facet_wrap(Rotation ~ Corn_weed_management, ncol = 2, labeller = label_wrap_gen(multi_line=FALSE)) + 
   scale_x_continuous(breaks = scales::pretty_breaks(n = 13)) + #don't need this with as.factor(Year)
   labs(x = "Crop species abbreviation and model year",   #/
        y= expression(paste("Seed density (", seeds~m^-2,")"))) +
