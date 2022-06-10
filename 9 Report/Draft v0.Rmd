@@ -18,6 +18,55 @@ library(here)
 ```
 
 
+```{r scenario2-S-B-recombine-test, include = FALSE}
+## trim each matrix in the each S_B contribution list to the needed n row x 1 column
+scenario2_S_B_contribution_2yr_first_col <- rapply(scenario2_S_B_contribution_2yr, \(x) x[, 1, drop=FALSE], how='list')
+
+scenario2_S_B_contribution_3yr_first_col <- rapply(scenario2_S_B_contribution_3yr, \(x) x[, 1, drop=FALSE], how='list')
+
+scenario2_S_B_contribution_4yr_first_col <- rapply(scenario2_S_B_contribution_4yr, \(x) x[, 1, drop=FALSE], how='list')
+
+## reorganize the fecundity matrix
+#2-year
+scenario2_S_B_contribution_2yr_first_col_reorganized <- scenario2_S_B_contribution_2yr_first_col 
+scenario2_S_B_contribution_2yr_first_col_reorganized$C2_scenario2_mean_fecundity_2018_contribution[1:2] <- c(0,0)
+
+scenario2_S_B_contribution_2yr_first_col_reorganized$S2_scenario2_mean_fecundity_2018_contribution[1:2] <- c(0,0)
+
+#3-year 
+scenario2_S_B_contribution_3yr_first_col_reorganized <- scenario2_S_B_contribution_3yr_first_col  
+scenario2_S_B_contribution_3yr_first_col_reorganized$C3_scenario2_mean_fecundity_2018_contribution[1:2] <- c(0,0)
+
+scenario2_S_B_contribution_3yr_first_col_reorganized$S3_scenario2_mean_fecundity_2018_contribution[1:2] <- c(0,0)
+
+scenario2_S_B_contribution_3yr_first_col_reorganized$O3_scenario2_mean_fecundity_2018_contribution[1:2] <- c(0,0)
+
+#4-year 
+scenario2_S_B_contribution_4yr_first_col_reorganized <- scenario2_S_B_contribution_4yr_first_col  
+scenario2_S_B_contribution_4yr_first_col_reorganized$C4_scenario2_mean_fecundity_2018_contribution[1:2] <- c(0,0)
+
+scenario2_S_B_contribution_4yr_first_col_reorganized$S4_scenario2_mean_fecundity_2018_contribution[1:2] <- c(0,0)
+
+scenario2_S_B_contribution_4yr_first_col_reorganized$O4_scenario2_mean_fecundity_2018_contribution[1:2] <- c(0,0)
+
+scenario2_S_B_contribution_4yr_first_col_reorganized$A4_scenario2_mean_fecundity_2018_contribution[1:2] <- c(0,0)
+
+## combine the S_B contribution
+
+scenario2_S_B_contribution_recombined_first_col <- tibble::lst(scenario2_S_B_contribution_2yr_first_col_reorganized, 
+                                           scenario2_S_B_contribution_3yr_first_col_reorganized,
+                                           scenario2_S_B_contribution_4yr_first_col_reorganized)
+
+scenario2_S_B_contribution_recombined_first_col_transpose <- rapply(scenario2_S_B_contribution_recombined_first_col, \(x) t(x), how='list')
+```
+
+scenario1_var_lambda_conv_top_element <- scenario1_var_lambda_conv_elements[str_detect(names(scenario1_var_lambda_conv_elements), "summer")]
+
+scenario1_var_lambda_conv_second_elements <-  scenario1_var_lambda_conv_elements[str_detect(names(scenario1_var_lambda_conv_elements), "fecund")]
+
+scenario1_var_lambda_low_top_element <- scenario1_var_lambda_low_elements[str_detect(names(scenario1_var_lambda_low_elements), "summer")]
+
+scenario1_var_lambda_low_second_element <- scenario1_var_lambda_low_elements[str_detect(names(scenario1_var_lambda_low_elements), "fecund")]
 *Other details to include:*
 
 *why not individual-based: some individual-based vitals cannot describe population-level dynamics*

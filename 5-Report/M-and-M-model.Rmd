@@ -14,6 +14,14 @@ library(flextable)
 library(tidyverse)
 ```
 
+*2 scenarios based on efficacy*
+
+*extend simulation time*
+*cummulative emergence*
+
+*variation in emergence and seedbank densities in 4 blocks*
+
+*no sequence shifting*
 
 ### Experiment design {-}  
 
@@ -193,7 +201,7 @@ The empirically measured data for seedling survival was deemed unrealistically (
 
 ##### Plant fecundity {-}  
 
-The plant fecundity matrix, $B_f$, had the $M_s$ block's diagonal filled with 1's and the first row of the $M_{p,s}$ filled with $f_k, k =\{1,...,6\}$. The 1's in the $M_s$ block's diagonal are placeholders to carry the product from the previous matrices over.  
+The plant fecundity matrix ($B_f$) had the $M_s$ block's diagonal filled with 1's and the first row of the $M_{p,s}$ filled with $f_k, k =\{1,...,6\}$. The 1's in the $M_s$ block's diagonal are placeholders to carry the product from the previous matrices over.  
 
 $$
 \mathbf{B_f} = \left[\begin{array}
