@@ -40,6 +40,7 @@ All the multi-year variables failed the Levene's test for equal variance so thos
 ## Waterhemp sub-annual demographic parameters from empirical measurement {-}
 
 ### Seedling emergence pattern and timing {-}
+The empirically measured emergence rates in C4 were deemed unrealistic as compared to the published literature [], so those numbers were replaced with 0.05. The inflated emergence rates might resulted from low precision of seedbank density assessment.  
 
 Within the same calendar year, whole-season and cohort-based seedling densities were lower in the warm-season crops than in the cool-season crops (Tables \@ref(tab:Julian-19-20-emm) and \@ref(tab:seedlings-density-19-20)). Seedling emergence was delayed in the cool-season crops as compared to that in the warm-season crops (Tables \@ref(tab:Julian-19-20-emm) and \@ref(tab:Julian-19-20-ct-tab)). Waterhemp emergence was delayed by two weeks to a month in alfalfa crop environment as compared to corn and soybean environments. Waterhemp emergence was nine to sixteen days earlier in oat than that in alfalfa.    
 
