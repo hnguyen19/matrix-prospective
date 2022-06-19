@@ -61,3 +61,21 @@ N <- rbind(N0, matrix(0, ncol=2, nrow=steps) )
 
     }
 ```
+```{r}
+#apply tillage
+prj2g<- lapply(seq_along(prj1g), function(i){
+  if(names(prj1g[i]) %in% c("A4_l","A4_c","O3_l","O3_c")) moldboard%*%prj1g[[i]] else 
+    if(names(prj1g[i]) %in% c("C2_c","C2_l","C3_c","C3_l","C4_c","C4_l")) chisel%*%prj1g[[i]]
+    else notill%*%prj1g[[i]]
+})
+
+names(prj2g) <- names(prj1g)
+
+
+#over-winter survival 
+prj3g<-lapply(seq_along(prj2g), function(i){
+  if(names(prj2g[i]) %in% c("A4_l","A4_c","O3_l","O3_c")) overwinter_m1%*%prj2g[[i]] else
+    if(names(prj2g[i]) %in% c("C2_c","C2_l","C3_c","C3_l","C4_c","C4_l")) overwinter_m2%*%prj2g[[i]]
+    else overwinter_m3%*%prj2g[[i]]
+})
+```
