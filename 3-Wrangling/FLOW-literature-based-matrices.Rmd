@@ -302,7 +302,7 @@ off_season_scenario3 <- overwinter_Steckel_07_cohort_list
 ```
 
 ### Prep-planting tillage matrices  
-The field cultivator mean and variance matrices were calculated using the same procedure as for chisel and moldboard ploughs.
+The field cultivator mean and variance matrices were calculated using the same procedure as for chisel and moldboard plow.
 
 ```{r pre-planting-tillage-matrix-for-model}
 #consider dataframe instead of matrix
