@@ -1,0 +1,64 @@
+product,chem1,chem2,chem3,herb.moa1,herb.moa2,herb.moa3,Label.Source
+2.4.D,"2,4-D",NA,NA,auxin,NA,NA,http://www.cdms.net/LDat/ld44N012.pdf
+2.4.D.ester,"2,4-D",NA,NA,auxin,NA,NA,http://www.cdms.net/LDat/ld3CO002.pdf
+2.4.D.LVE4,"2,4-D",NA,NA,auxin,NA,NA,http://www.cdms.net/LDat/ld3CO002.pdf
+2.4.D.SWB,"2,4-D",NA,NA,auxin,NA,NA,http://www.cdms.net/LDat/ld45J005.pdf
+Aatrex,atrazine,NA,NA,ps2_g5,NA,NA,http://www.cdms.net/LDat/ld280025.pdf
+Accent,nicosulfuron,NA,NA,als,NA,NA,http://www.cdms.net/LDat/ld738015.pdf
+Assure.II,quizalofop-P,NA,NA,ACCase,NA,NA,http://www.cdms.net/LDat/ld742006.pdf
+Atrazine,atrazine,NA,NA,ps2_g5,NA,NA,http://www.cdms.net/LDat/ld3D6000.pdf
+Authority.XL,sulfentrazone,Chlorimuron Ethyl,NA,ppo,als,NA,http://www.cdms.net/LDat/ld9N5011.pdf
+Autumn,Iodosulfuron-methyl Na,NA,NA,als,NA,NA,http://www.cdms.net/LDat/ld84L004.pdf
+Autumn.WG,Iodosulfuron-methyl Na,Thiencarbazone-methyl,NA,als,als,NA,http://www.cdms.net/LDat/ldAAO009.pdf
+Basis,rimsulfuron,thifensulfuron-methyl,NA,als,als,NA,http://www.cdms.net/LDat/ld420004.pdf
+Callisto,mesotrione,NA,NA,hddp,NA,NA,http://www.cdms.net/LDat/ld56N005.pdf
+Canopy.XL,Chlorimuron Ethyl,sulfentrazone,NA,als,ppo,NA,http://www.kellysolutions.com/erenewals/documentsubmit/KellyData/OK/pesticide/Product%20Label/352/352-589/352-589_DuPont_Canopy_Xl_Herbicide_7_24_2006_12_01_00_PMSecured.Pdf
+Celebrity.Plus,dicamba,diflufenzopyr,nicosulfuron,auxin,auxin_trans_inhib,als,http://www.cdms.net/ldat/ld3jq004.pdf
+Clarity,dicamba,NA,NA,auxin,NA,NA,http://www.cdms.net/LDat/ld797012.pdf
+Classic,Chlorimuron Ethyl,NA,NA,als,NA,NA,http://www.cdms.net/LDat/ld843000.pdf
+Dimetric.AS,metribuzin,NA,NA,ps2_g5,NA,NA,http://www.cdms.net/LDat/ld6E5006.pdf
+Distinct,diflufenzopyr,dicamba,NA,auxin_trans_inhib,auxin,NA,http://www.kellysolutions.com/erenewals/documentsubmit/KellyData%5COK%5Cpesticide%5CProduct%20Label%5C7969%5C7969-150%5C7969-150_Distinct_Herbicide_8_15_2012_5_24_47_PM.pdf
+Duramax,glyphosate,NA,NA,epsps,NA,NA,http://www.cdms.net/LDat/ld8BU056.pdf
+Durango,glyphosate,NA,NA,epsps,NA,NA,http://www.cdms.net/LDat/ld8AC053.pdf
+Express,Tribenuron-Methyl,NA,NA,als,NA,NA,http://www.cdms.net/LDat/ld7QN009.pdf
+Express.2,Tribenuron-Methyl,NA,NA,als,NA,NA,http://www.cdms.net/LDat/ld7QN009.pdf
+First.Rate,cloransulam-methyl,NA,NA,als,NA,NA,http://www.cdms.net/LDat/ld24M017.pdf
+Flexstar.GT,glyphosate,fomesafen,NA,epsps,ppo,NA,http://www.cdms.net/LDat/ld90C006.pdf
+Glyphomax.Plus,glyphosate,NA,NA,epsps,NA,NA,https://www.lsuagcenter.com/NR/rdonlyres/668FD70D-CD74-4553-99AE-55B943F6B557/95065/14Z2GlyphosateAPPENDIXA2014.pdf
+Glyphomax.XRT,glyphosate,NA,NA,epsps,NA,NA,http://www.aghost.net/images/E0204901/GylphomaxXRT-Durango.pdf
+Glyphosate.41pc,glyphosate,NA,NA,epsps,NA,NA,https://www.lsuagcenter.com/NR/rdonlyres/668FD70D-CD74-4553-99AE-55B943F6B557/95065/14Z2GlyphosateAPPENDIXA2014.pdf
+Glystar,glyphosate,NA,NA,epsps,NA,NA,http://www.cdms.net/LDat/ld4JM018.pdf
+Glystar.Plus,glyphosate,NA,NA,epsps,NA,NA,http://www.cdms.net/LDat/ld4KG002.pdf
+Gramoxone,paraquat dichloride,NA,NA,ps1,NA,NA,http://www.cdms.net/LDat/ldABB000.pdf
+Gramoxone.Inteon,paraquat dichloride,NA,NA,ps1,NA,NA,http://www.cdms.net/LDat/ld77A041.pdf
+Guardsman.Max,dimethenamid,atrazine,NA,vlfca,ps2_g5,NA,http://www.cdms.net/LDat/ld4HC000.pdf
+Harmony.Extra,thifensulfuron-methyl,Tribenuron-Methyl,NA,als,als,NA,http://www.cdms.net/LDat/ld8DB000.pdf
+Harmony.GT,thifensulfuron-methyl,NA,NA,als,NA,NA,http://www.epa.gov/pesticides/chem_search/ppls/000352-00446-20121213.pdf
+Hornet,flumetsulam,clopyralid K salt,NA,als,auxin,NA,http://www.epa.gov/pesticides/chem_search/ppls/062719-00253-20010614.pdf
+Integrity,dimethenamid,saflufenacil,NA,vlfca,ppo,NA,https://agro.basf.ca/East/Products/Product_Labels/INTEGRITY_Label_2013.pdf
+Keystone,acetochlor,atrazine,NA,vlfca,ps2_g5,NA,http://www.cdms.net/LDat/ld5TT002.pdf
+Lasso,alachlor,NA,NA,vlfca,NA,NA,http://www.epa.gov/pesticides/chem_search/ppls/000524-00314-20090817.pdf
+Lexar,metolachlor,atrazine,mesotrione,vlfca,ps2_g5,hddp,http://www.cdms.net/LDat/ld6P2003.pdf
+Lightning,imazethapyr,imazapyr,NA,als,als,NA,http://www.cdms.net/LDat/ld0JP001.pdf
+Lightning.70GD,imazethapyr,imazapyr,NA,als,als,NA,http://www.cdms.net/LDat/ld0JP001.pdf
+Marksman,dicamba,atrazine,NA,auxin,ps2_g5,NA,http://www.cdms.net/LDat/ld187003.pdf
+Optill,imazethapyr,saflufenacil,NA,als,ppo,NA,http://www.cdms.net/LDat/ld9A7007.pdf
+Pendimax,pendimethalin,NA,NA,mitosis,NA,NA,http://www.kellysolutions.com/erenewals/documentsubmit/KellyData%5CNC%5Cpesticide%5CProduct%20Label%5C62719%5C68156-6-62719%5C68156-6-62719_DOW_AGROSCIENCES_PENDIMAX_3_3_10_31_2006_4_42_35_PMSecured.Pdf
+Prefix,metolachlor,fomesafen,NA,vlfca,ppo,NA,http://www.cdms.net/LDat/ld8CB006.pdf
+Princep.4L,simazine,NA,NA,ps2_g5,NA,NA,http://www.cdms.net/LDat/ld01A018.pdf
+Prowl.H2O,pendimethalin,NA,NA,mitosis,NA,NA,http://www.cdms.net/LDat/ld6CT007.pdf
+Raptor.XL,imazamox,NA,NA,als,NA,NA,http://www.cdms.net/LDat/ld20T006.pdf
+Rascal,glyphosate,NA,NA,epsps,NA,NA,http://www.cdms.net/LDat/ld6JI010.pdf
+Rascal.Plus,glyphosate,NA,NA,epsps,NA,NA,http://www.cdms.net/LDat/ld6JI010.pdf
+Roundup.PowerMax,glyphosate,NA,NA,epsps,NA,NA,http://www.cdms.net/LDat/ld8CC010.pdf
+Scepter,imazaquin,NA,NA,als,NA,NA,http://www.epa.gov/pesticides/chem_search/ppls/000241-00289-19960328.pdf
+Scepter.70DG,imazaquin,NA,NA,als,NA,NA,http://www.cdms.net/LDat/ld854013.pdf
+Select.Max,clethodim,NA,NA,ACCase,NA,NA,http://www.cdms.net/LDat/ld6SQ009.pdf
+Sonic,sulfentrazone,cloransulam-methyl,NA,ppo,als,NA,http://www.cdms.net/LDat/ld7NU002.pdf
+Status,dicamba,diflufenzopyr,NA,auxin,auxin_trans_inhib,NA,http://www.cdms.net/LDat/ld0K2001.pdf
+Steadfast,nicosulfuron,rimsulfuron,NA,als,als,NA,http://www.cdms.net/LDat/ld4BE000.pdf
+Surestart,acetochlor,flumetsulam,clopyralid,vlfca,als,auxin,http://www.cdms.net/LDat/ld85J016.pdf
+Syncrony.XP,Chlorimuron Ethyl,thifensulfuron-methyl,NA,als,als,NA,http://www.cdms.net/LDat/ld76U007.pdf
+Touchdown,glyphosate,NA,NA,epsps,NA,NA,http://www.cdms.net/LDat/ld6FB003.pdf
+Transline,clopyralid,NA,NA,auxin,NA,NA,http://www.cdms.net/LDat/ld0BB004.pdf
+Valor.XLT,flumioxazin,Chlorimuron Ethyl,NA,ppo,als,NA,http://www.cdms.net/LDat/ld7SN013.pdf

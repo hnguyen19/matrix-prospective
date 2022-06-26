@@ -1,0 +1,7 @@
+This zip file contains all of the computer code and related data files necessary to run the analyses in the paper.
+
+In recognition of the litigious society we live in:
+This software supplement is provided freely for educational, research, and other non-commercial purposes. It is provided without any guarantees or warrantees of any kind. By installing and/or using this code or data, you accept that any direct or indirect damages, losses or harm it causes of any kind are your own responsibility, and the authors are and shall be free of any obligations or liabilities for such damages, losses, or harm. Use it at your own discretion. You may share it with others free of charge (i.e. you can't sell it!) provided that credit to the original authors and paper are included with it.
+
+Jeffrey Evans
+October 7, 2014

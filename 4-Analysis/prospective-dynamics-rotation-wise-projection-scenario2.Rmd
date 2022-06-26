@@ -3,7 +3,6 @@ output:
     bookdown::word_document2:
       toc: false
       fig_caption: yes
-    reference_docx: style_template.docx
 ---
 
 ```{r, include=FALSE}

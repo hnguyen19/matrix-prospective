@@ -1,0 +1,251 @@
+PackratFormat: 1.4
+PackratVersion: 0.4.1.1
+RVersion: 3.0.2
+Repos: CRAN=http://cran.rstudio.com,
+    CRANextra=http://www.stats.ox.ac.uk/pub/RWin
+
+Package: AICcmodavg
+Source: CRAN
+Version: 1.35
+Hash: ce011d44048f75b7c311c4a43139cda6
+
+Package: BradleyTerry2
+Source: CRAN
+Version: 1.0-5
+Requires: brglm, gtools, lme4
+
+Package: brglm
+Source: CRAN
+Version: 0.5-9
+Requires: profileModel
+
+Package: car
+Source: CRAN
+Version: 2.0-19
+Hash: 5d0167463ab4009a1f8d7d654c148100
+
+Package: caret
+Source: CRAN
+Version: 6.0-35
+Hash: 0ff387c536931304ed89372696a76e6b
+Requires: car, foreach, ggplot2, plyr, reshape2
+
+Package: chron
+Source: CRAN
+Version: 2.3-45
+
+Package: colorspace
+Source: CRAN
+Version: 1.2-4
+Hash: b775bd08a10f968fef582304b7c3ab9c
+
+Package: data.table
+Source: CRAN
+Version: 1.8.10
+Hash: d99e311129bcbea6bf14408000941b82
+
+Package: dichromat
+Source: CRAN
+Version: 2.0-0
+Hash: 42be2136555fa4b6167605df56d8cd7c
+
+Package: digest
+Source: CRAN
+Version: 0.6.4
+Hash: e4bf0e79b15a352510aff0de905d31e2
+
+Package: doSNOW
+Source: CRAN
+Version: 1.0.9
+Hash: f8fc5acb9d05e292ffad673d001d3dcb
+Requires: foreach, iterators, snow
+
+Package: e1071
+Source: CRAN
+Version: 1.6-1
+Hash: 20310035c0d6a0168955237554d46f6b
+
+Package: fields
+Source: CRAN
+Version: 6.9.1
+Hash: 4536134a4d304cec8fc03de7946c43be
+Requires: maps, spam
+
+Package: foreach
+Source: CRAN
+Version: 1.4.1
+Hash: 5873d544429b3ec5d1603a9969d410fd
+Requires: iterators
+
+Package: ggplot2
+Source: CRAN
+Version: 0.9.3.1
+Hash: 17449131d431a862a96595169784c34c
+Requires: digest, gtable, plyr, proto, reshape2, scales
+
+Package: gridExtra
+Source: CRAN
+Version: 0.9.1
+Hash: 1cb7af8c140431ec4e99905f1d8adcc4
+
+Package: gtable
+Source: CRAN
+Version: 0.1.2
+Hash: 0cf4a2b54c02b35dec7e74a8ebed12a0
+
+Package: gtools
+Source: CRAN
+Version: 3.1.1
+Hash: dfdd9b106666a578bc87a709d096899a
+
+Package: iterators
+Source: CRAN
+Version: 1.0.6
+Hash: a876370d0e7c6bf9692db1a643e5697c
+
+Package: labeling
+Source: CRAN
+Version: 0.2
+Hash: 25f63495dfb737e67bd75fc1eb58ff2c
+
+Package: lme4
+Source: CRAN
+Version: 1.0-5
+Hash: 232f7ca60b8e8cc7e645e4f9e0dc9855
+Requires: Matrix, minqa, Rcpp, RcppEigen
+
+Package: maps
+Source: CRAN
+Version: 2.3-6
+Hash: f86a2c8f0eeabc0b43143548de98d1e9
+
+Package: maptools
+Source: CRAN
+Version: 0.8-29
+Hash: 6ffecc472d99b64df12ec1db48545282
+Requires: sp
+
+Package: Matrix
+Source: CRAN
+Version: 1.1-1.1
+Hash: 99915dadd2b5c3458acabdcda8f73547
+
+Package: minqa
+Source: CRAN
+Version: 1.2.2
+Hash: aad611041c3b4244cfe461b6c7bda5a8
+Requires: Rcpp
+
+Package: munsell
+Source: CRAN
+Version: 0.4.2
+Hash: fa8af6d040041439b249351e9d16ae9a
+Requires: colorspace
+
+Package: nloptr
+Source: CRAN
+Version: 1.0.4
+
+Package: packrat
+Source: CRAN
+Version: 0.4.1-1
+Hash: 5716097644904b9c1b4be2692de16005
+
+Package: plyr
+Source: CRAN
+Version: 1.8
+Hash: cd9dcf7b9e5c4f59076ad3a743a9d7d6
+
+Package: ppcor
+Source: CRAN
+Version: 1.0
+Hash: d69ccb39afbcb152862f5f384365e864
+
+Package: profileModel
+Source: CRAN
+Version: 0.5-9
+
+Package: proto
+Source: CRAN
+Version: 0.3-10
+Hash: 668a9e87cedbdc5f56c396edf1bd2648
+
+Package: psych
+Source: CRAN
+Version: 1.3.12
+Hash: a2b86fe540117364edb843abb3e93f8c
+
+Package: pwr
+Source: CRAN
+Version: 1.1.1
+Hash: 3c95b2213124e3fbea9da884186e0c4b
+
+Package: RColorBrewer
+Source: CRAN
+Version: 1.0-5
+Hash: 6a849b729bec970204ca88b96906adbc
+
+Package: Rcpp
+Source: CRAN
+Version: 0.10.6
+Hash: 2d62666f3b0798b50e16c5eb5b2666f5
+
+Package: RcppEigen
+Source: CRAN
+Version: 0.3.2.0.1
+Hash: cccda9320a0d7d1c7c3fda4532d339ad
+Requires: Matrix, Rcpp
+
+Package: reshape2
+Source: CRAN
+Version: 1.2.2
+Hash: f37cc6ddb91d86c14253aabeaa91d252
+Requires: plyr, stringr
+
+Package: rJava
+Source: CRAN
+Version: 0.9-6
+Hash: 5ea21341e7c1d6a40cdde6ef470fec92
+
+Package: rpart.plot
+Source: CRAN
+Version: 1.4-3
+Hash: 5e2dfe25f0ffc5bf8202e4efc00a8c90
+
+Package: scales
+Source: CRAN
+Version: 0.2.3
+Hash: fbcae699d19d3a2cb2068cb4d04b5db6
+Requires: dichromat, labeling, munsell, plyr, RColorBrewer, stringr
+
+Package: snow
+Source: CRAN
+Version: 0.3-13
+Hash: 16dca684ceb4baa0f96c1ca1b3314497
+
+Package: sp
+Source: CRAN
+Version: 1.0-14
+Hash: 6b7356f26f181a0323117a98eb15a214
+
+Package: spam
+Source: CRAN
+Version: 0.40-0
+Hash: a858a40f666382ece8d8cd57aa330f0f
+
+Package: stringr
+Source: CRAN
+Version: 0.6.2
+Hash: cdde0cfa0f52cffeaca23a11a3899779
+
+Package: xlsx
+Source: CRAN
+Version: 0.5.5
+Hash: 1505640d00424c3ea63589a2af905d32
+Requires: rJava, xlsxjars
+
+Package: xlsxjars
+Source: CRAN
+Version: 0.5.0
+Hash: 30bfcdc539f8fbc316d66b557bd80e08
+Requires: rJava

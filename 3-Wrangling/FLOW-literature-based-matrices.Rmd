@@ -487,10 +487,10 @@ summer_seed_survival_scenario2_filled <- summer_seed_survival_scenario2 %>%
          retrieved_viability = 0.8,
          number_retrieved = retrieved_prop*2000,
          number_viable =  retrieved_viability*number_retrieved,
-         var_retrieved = retrieved_prop*(1-retrieved_prop)/number_buried,
-         var_viable = retrieved_viability*(1-retrieved_viability)/number_viable,
+       #  var_retrieved = number_buried*retrieved_prop*(1-retrieved_prop),
+      #   var_viable = number_viable* retrieved_viability*(1-retrieved_viability),
          original_survival_prop = retrieved_prop*retrieved_viability,
-         var_original_survival = var_viable*(number_retrieved^2) + var_retrieved*(number_viable^2),
+         var_original_survival = number_buried*original_survival_prop*(1-original_survival_prop ),
          matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
     arrange(matrix_id, desc(Stratum))
 
@@ -507,9 +507,9 @@ var_summer_seed_survival_scenario2_filled_list <- lapply(split(summer_seed_survi
 # saveRDS(var_summer_seed_survival_scenario2_filled_list, file="../2-Data/Clean/var-summer-seed-survival-scenario2.RData")
 ```
 
-Assuming that the probability of a seed retrieved(X) is independent of its viability(Y): $Var(XY) = E(X^2)Var(Y) + E(Y^2)Var(X)$ <https://stats.stackexchange.com/questions/397839/varxy-if-x-and-y-are-independent-random-variables>
+Assuming that the probability of a seed retrieved(X) is independent of its viability(Y): $Var(XY) = E(X^2)Var(Y) + E(Y^2)Var(X)$. Following this formula returned Var(viable) in the billions.  <https://stats.stackexchange.com/questions/397839/varxy-if-x-and-y-are-independent-random-variables>
 
-Variance of a binomial variable is calculated as $Var(X_i) = np_i(1-p_i)$
+Variance of a binomial variable is calculated as $Var(X_i) = np_i(1-p_i)$. So Vat(survival) = n * survival * mortal, with n being the number of buried seeds and anything that is not found can be considered mortal. It is acceptable in this case because the seeds that are not "found" would not join the tracked seedling population, and further, the mature plant population.   
 
 
 ```{r summer-seed-predation}
