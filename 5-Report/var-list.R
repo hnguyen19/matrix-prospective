@@ -1,3 +1,90 @@
+
+
+
+scenario2_var_female_survival <- readRDS("../2-Data/Clean/var-summer-seedling-survival-scenario2.RData")
+scenario2_var_summer_seed_survival  <- readRDS("../2-Data/Clean/var-summer-seed-survival-scenario1.RData")
+scenario2_var_emergence <- readRDS("../2-Data/Clean/var-emergence-prop-scenario1.RData")
+var_spring_tillage <-  readRDS("../2-Data/Clean/var-pre-planting-tillage.RData")
+var_post_harvest_tillage <- readRDS("../2-Data/Clean/var-post-harvest-tillage.RData")
+scenario2_var_overwinter <- readRDS("../2-Data/Clean/var-winter-seed-survival-scenario1.RData")
+
+scenario2_var_summer_survival <- purrr::map2(scenario2_var_summer_seed_survival, scenario2_var_female_survival, `*`)
+
+scenario2_var_emergence <- readRDS("../2-Data/Clean/var-emergence-prop-scenario1.RData")
+
+scenario2_var_fecundity_2018 <- readRDS("../2-Data/Clean/var-fecundity-18-cohort.RData")
+
+```{r scenario2-var-list, echo=FALSE}
+# <https://en.wikipedia.org/wiki/Taylor_expansions_for_the_moments_of_functions_of_random_variables> .
+
+## Need variance separated for each parameters in the summer survival period 
+## issue: things happening at the same period need to be in one matrix 
+## work-around: comment on period-based changes instead of parameter-based changes 
+
+
+## Combine all variance lists into one grand list, similar to the means list
+
+## Variance list needed for each rotation, but in the opposite order as in the mean list, to accommodate the order of the S_B list
+
+var_scenario2_projection_by_matrix_id <- tibble::lst(var_spring_tillage,
+                                                     scenario2_var_emergence,
+                                                     scenario2_var_summer_survival,
+                                                     scenario2_var_fecundity_2018,
+                                                     var_post_harvest_tillage,
+                                                     scenario2_var_overwinter)
+# A list of 12 bested list
+var_scenario2_projection_by_matrix_id_named <- rapply(var_scenario2_projection_by_matrix_id , 
+                                                      function(x) {dimnames(x) <- rep(list(c("seed_top",
+                                                                                             "seed_bottom", 
+                                                                                             "plant_cohort_1",
+                                                                                             "plant_cohort_2",
+                                                                                             "plant_cohort_3",
+                                                                                             "plant_cohort_4",
+                                                                                             "plant_cohort_5",
+                                                                                             "plant_cohort_6")),2); x}, how="list")
+
+# Transpose the var list to rearrange will create a nested list of 18 lists of 12 matrices each
+var_scenario2_projection_transpose <- purrr::transpose(var_scenario2_projection_by_matrix_id_named)
+
+# Separate variance by rotation x corn weed management 
+var_scenario2_projection_2yr_conv <- var_scenario2_projection_transpose[c("C2_conv","S2_conv")]
+var_scenario2_projection_2yr_conv_unlist <- unlist(var_scenario2_projection_2yr_conv, recursive = FALSE)
+
+var_scenario2_projection_2yr_low <- var_scenario2_projection_transpose[c("C2_low","S2_low")]
+var_scenario2_projection_2yr_low_unlist <- unlist(var_scenario2_projection_2yr_low, recursive = FALSE)
+
+var_scenario2_projection_3yr_conv <- var_scenario2_projection_transpose[c("C3_conv","S3_conv", "O3_conv")]
+var_scenario2_projection_3yr_conv_unlist <- unlist(var_scenario2_projection_3yr_conv, recursive = FALSE)
+
+var_scenario2_projection_3yr_low <- var_scenario2_projection_transpose[c("C3_low","S3_low", "O3_low")]
+var_scenario2_projection_3yr_low_unlist <- unlist(var_scenario2_projection_3yr_low, recursive = FALSE)
+
+var_scenario2_projection_4yr_conv <- var_scenario2_projection_transpose[c("C4_conv","S4_conv", "O4_conv", "A4_conv")]
+var_scenario2_projection_4yr_conv_unlist <- unlist(var_scenario2_projection_4yr_conv, recursive = FALSE)
+
+var_scenario2_projection_4yr_low <- var_scenario2_projection_transpose[c("C4_low","S4_low", "O4_low", "A4_low")]
+var_scenario2_projection_4yr_low_unlist <- unlist(var_scenario2_projection_4yr_low, recursive = FALSE)
+# recombine variance using the same order as S_B
+
+var_scenario2_projection_conv <- tibble::lst(var_scenario2_projection_2yr_conv_unlist,
+                                             var_scenario2_projection_3yr_conv_unlist,
+                                             var_scenario2_projection_4yr_conv_unlist)
+
+#View(var_scenario2_projection_conv)
+
+
+
+var_scenario2_projection_low <- tibble::lst(var_scenario2_projection_2yr_low_unlist,
+                                            var_scenario2_projection_3yr_low_unlist,
+                                            var_scenario2_projection_4yr_low_unlist)
+
+#View(var_scenario2_projection_low)
+```
+
+
+The variance of population growth rate in each rotation was calculated with $Var(\lambda) = \sum_i^b S_b^TV_bS_b$ where $V_h$ is the variance-covariance matrix of each $B_h$ matrix. The variance of annualized population growth rates ($Var(\lambda_2)$, $Var(\lambda_3)$, and $Var(\lambda_4)$) were calculated with Taylor series expansion using the general formula: $Var[f(\lambda)] = {f'(E(\lambda))}^2 Var(\lambda)$, in which $f(\lambda)$ is the nth-root function used to annualize the rotation-wise growth rates. For example, the variance of annualized population growth rate in the 2-year rotation was $Var(\lambda_{2}) = \frac{1}{4\lambda_{2r}}Var(\lambda_{2r})$, where $\lambda_2 = \sqrt{\lambda_{2r}}$.  
+
+
 ### Variance of the lower-level parameters {-}
 The variance-covariance matrix of each matrix $B_h$, $V_h$, was used to calculate the variance of $\lambda$. $V_h$ dimension depended on the dimension of the non-zero block in the relevant $B_h$ matrix. All the $V_h$ matrices, but $V_\tau$ and  $V_\gamma$, are diagonal. Variance of zero is assumed to be zero. 
 
