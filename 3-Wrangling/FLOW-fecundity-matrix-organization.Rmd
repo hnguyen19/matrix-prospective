@@ -61,7 +61,7 @@ fecundity18_sb_log_quantile_summ <- fecundity18_sb_log %>%
   mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, desc(quantile_Biomass)) #arrange by descending order of biomass because 1) biomass is the reproduction potential parameter, 2) cohorts that were suppressed more frequently by crop management may have their reproduction potential compromised, so arranging by biomass can accommodate this reality
 
-#View(fecundity18_sb_log_quantile_summ)
+# View(fecundity18_sb_log_quantile_summ)
 
 # Check if all combinations have 6 bins, for 6 cohorts.
 #table(fecundity18_sb_log_quantile_summ$Crop_ID, fecundity18_sb_log_quantile_summ$quantile_Biomass)
@@ -72,13 +72,13 @@ fecundity18_sb_log_quantile_summ <- fecundity18_sb_log %>%
 
 # Write a list of 8 x 8 matrices, data-based
 
-#fecundity_mean_18_list <-  lapply(split(fecundity18_sb_log_quantile_summ, fecundity18_sb_log_quantile_summ$matrix_id),
-#       function(x)(rbind(cbind(diag(1,2),
-#                         rbind(matrix(c(x$mean_Seed,rep(0,6)), byrow = T, nrow=2))),
-#       matrix(rep(0,48), nrow = 6, byrow = TRUE))))
+fecundity_mean_18_list <-  lapply(split(fecundity18_sb_log_quantile_summ, fecundity18_sb_log_quantile_summ$matrix_id),
+       function(x)(rbind(cbind(diag(1,2),
+                         rbind(matrix(c(x$mean_Seed,rep(0,6)), byrow = T, nrow=2))),
+       matrix(rep(0,48), nrow = 6, byrow = TRUE))))
 
 ## Save the 18 2018 fecundity matrices as a list 
-# saveRDS(fecundity_mean_18_list, file="../2-Data/Clean/fecundity-mean-18-cohort.RData")
+
 
 ```
 
@@ -108,7 +108,7 @@ seeds_18_emm_df <- seeds_18_emm %>%
 
 # Write a list of 8 x 8 mean matrices, model based
 
-fecundity_mean_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_id),
+fecundity_mean_18_list_emm <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_id),
        function(x)(rbind(cbind(diag(1,2),
                          rbind(matrix(c(x$mean_seed,rep(0,6)), byrow = TRUE, nrow=2))),
        matrix(rep(0,48), nrow = 6, byrow = TRUE))))
