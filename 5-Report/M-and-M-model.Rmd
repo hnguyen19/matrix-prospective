@@ -137,20 +137,27 @@ The lower-level demographic parameters are demographic parameters at each sub-an
 The examined lower-level demographic parameters can be grouped based on their impacts to preserving and producing new seeds, hereafter referred to as seed production, seed preservation, and neutral parameters. The seed preserving parameters are the probability of seeds not emerging ($d = 1 - \sum_{k=1}^6 g_k$). The seed producing parameters are the emergence probabilities ($g_k, k = \{1,...6\}$), the survival rates of seeds ($s_{sk}, k = \{1,2\}$) and seedlings ($s_{pk}, k = \{1,...,6\}$) during summer, the fecundity rate ($f_k,  k = \{1,...,6\}$), and the survival rate overwinter ($o_k, k = {1,2}$). Even though emergence reduces the seedbank, the number of seeds that are produced from an emerged seedling that succeeds until seed production are substantial, so emergence is considered positively impacting new seed production [@davisWeedSeedPools2008]. The neutral parameters to both seed preservation and seed production are tillage-induced seed movement across soil strata at the pre-planting ($t_{ij,s}, i,j = \{1,2\}$) and post-harvest $t_{ij,f}, i,j = \{1,2\}$) periods. The tillage-induced seed vertical movement rates are considered neutral parameters because the seeds that are kept at or moved to the 0-2 cm soil layer can be exposed to emergence stimulants or granivores while the seeds that are kept at or moved to the 2-20 cm soil layer can germinate without reaching the soil surface (fatal germination), are exposed to decaying stimuli; or preserved at optimal conditions [@burnsideSeedLongevity411996; @davisEnvironmentalFactorsAffecting2005; @davisInfluenceSeedDepth2007]. 
 
 
-
 Details of how each of the matrices were form are in the Appendix A, but a summary of the range of each parameter is provide below.  
 
 ```{r parameterization, echo=FALSE}
 #https://ardata-fr.github.io/flextable-book/captions-and-cross-references.html
-
+## Scenario 2
 Parameter <- c("Top seeds stay at top stratum",
                 "Top seeds move to the bottom",
-                "Bottom seeds stay at bottom stratum",
                 "Bottom seeds move to the top stratum",
+               "Bottom seeds stay at bottom stratum",
                 "Emergence rate",
                 "Plant survival rate",
                 "Seed survival rate",
                 "Plant fecundity")
+Denomination <- c("t_11,s or t_11,f",
+                  "t_12,s or t_12,f",
+                  "t_21,s or t_21,f",
+                  "t_22,s or t_22,f",
+                  "e_1 through e_6",
+                  "s_1,p through s_6,p",
+                  "s_11,s, s_22,s, o_11,s o_22,s",
+                  "f_1 through f_6")
 
 Unit <- c(rep("seeds/seeds",4),
           "plants/seeds",
@@ -158,7 +165,32 @@ Unit <- c(rep("seeds/seeds",4),
           "seeds/seeds",
           "seeds/plant")
 
-parameterization <- data.frame(Parameter, Unit)
+Corn <- c("pre-planting: 0.59; post-harvest: 0.59", "pre-planting: 0.15; post-harvest: 0.1", "pre-planting: 0.41; post-harvest: 0.41", "pre-planting: 0.85; post-harvest: 0.9",
+          "1.7 x 10^-6 - 0.07", 
+          "0.01 - 0.84",
+          "summer: 0.66 - 0.74; overwinter: 0.66 - 0.74",
+          "Scenario 1: 1.0 - 3518.6; scenario 2: 4.3 - 9003620")
+
+Soybean <- c("pre-planting: 0.59; post-harvest: 1", "pre-planting: 0.15; post-harvest: 0", "pre-planting: 0.41; post-harvest: 0", "pre-planting: 0.85; post-harvest: 1",
+             "1.8 x 10^-6 - 0.02", 
+             "0 - 0.89",
+             "summer: 0.66 - 0.74; overwinter: 0.66 - 0.74",
+             "scenario 1: 0 - 35.5; scenario 2: 0.5 - 4453381.0")
+
+Oat <- c("pre-planting: 0.59; post-harvest: 0.02 - 1", "pre-planting: 0.15; post-harvest: 0 - 0.07", "pre-planting: 0.41; post-harvest: 0 - 0.98", "pre-planting: 0.85; post-harvest: 0.93 - 1",
+         "3.3 x 10^-6 - 0.0006", 
+         "0.1 - 0.9",
+         "summer: 0.66 - 0.74; overwinter: 0.66 - 0.74",
+         "scenario 1: 3.9 - 964.0; scenario 2: 3.9 - 4115522.0")
+
+Alfalfa <- c("pre-planting: 1; post-harvest: 0.02", "pre-planting: 0; post-harvest: 0.07", "pre-planting: 0; post-harvest: 0.98", "pre-planting: 1; post-harvest: 0.93", 
+             "0.0008 - 0.1",
+             "0.1 - 0.5", 
+             "summer: 0.66 - 0.74; overwinter: 0.66 - 0.74",
+             "scenario 1: 0.64 - 11.8; scenario 2: 0.2 - 14478.1")
+
+parameterization <- data.frame(Parameter,Denomination, Unit, 
+                               Corn, Soybean, Oat, Alfalfa)
 
 parameterization %>%
   flextable() %>% 
@@ -170,7 +202,7 @@ parameterization %>%
 ### Modeling {-}
 
  
-Within a year, waterhemp population projection from sub-annual period $k$ to $k+1$ was reflected by the changes in number of seeds and plants and calculated as follow [Chapters 2, 3 and 4, @caswellMatrixPopulationModels2001].  
+Within a year, waterhemp population projection from sub-annual period $h$ to $h+1$ was reflected by the changes in number of seeds and plants and calculated as follow [Chapters 2, 3 and 4, @caswellMatrixPopulationModels2001].  
 $$N_{h+1} = B_h*N_h$$  
 where,  
 $B_h$ is the square transition matrix from time $h$ to time $h+1$, and   
@@ -187,35 +219,37 @@ The main factors that contribute to the success of the control practices used fo
 
 
 
-Matrix calculation in this study was performed in R version 4.2.0 [@rdevelopmentcoreteamLanguageEnvironmentStatistical2022]. The population growth rate ($\lambda$) sensitivity and elasticity were calculated with `eigen.analysis` function in the `popbio` package version 2.7 [@stubbenPopbioConstructionAnalyse2020].  
+Matrix calculation in this study was performed in R version 4.2.0 [@rdevelopmentcoreteamLanguageEnvironmentStatistical2022].  
+
+#### Population growth rate {-}  
+
+The `eigen.analysis` function in the `popbio` package version 2.7 [@stubbenPopbioConstructionAnalyse2020] was applied on matrices $P_{2w}$, $P_{3w}$, and $P_{4w}$ to obtain the population growth rate ($\lambda$) in each rotation crossed with corn weed management regime during the full crop cycle.
+
+The rotation-wise population growth rates ($\lambda_{rw}$, $r = \{2,3,4\}$) were extracted from the `$lambda` element in the comprehensive output of `eigen.analysis` for each of $P_{2w}$, $P_{3w}$, and $P_{4w}$. The annualized population growth rates for each rotation crossed with corn weed management regime ($\lambda(2w)$, $\lambda(3w)$, and $\lambda(4w)$) were obtained from taking the square root, cubic root, and fourth root of $\lambda_{2w}$, $\lambda_{3w}$, and $\lambda_{4w}$.  
 
 #### Sensitivity of population growth rate on each lower-level parameter {-}
 
 In all the Life Table Retrospective Experiment (LTRE) procedures performed here, the conventional corn weed management treatment is the reference treatment and low herbicide regime is the treatment of interest, following @caswellSensitivityAnalysisPeriodic1994's notions.
 
-The sensitivities of $\lambda$ to changes in sub-annual demographic parameters are not presented in this manuscript, but $S_{B_h}$ were used as intermediate parameters to calculate the elasticity of $\lambda$ to each element of a sub-annual projection matrix *and variance of $\lambda$*. The sensitivity of $\lambda$ to each element of each sub-annual periodic matrix is calculated with
+The sensitivities of $\lambda$ to changes in sub-annual demographic parameters are not presented in this manuscript, but $S_{B_h}$ were used as intermediate parameters to calculate the elasticity of $\lambda$ to each element of a sub-annual projection matrix. The sensitivity of $\lambda$ to each element of each sub-annual periodic matrix is calculated with
 
 $$
 S_{B_h} = {(B_{(h-1)}...B_{(1)}...B_{(h+1)})}^TS_{A(h)} = D^T S_{A(h)} \,\,\,(2)
 $$ 
 
 where,
-$B_h$ is the periodic projection matrix for sub-annual period h; $h = \{1,...,6\}$,
+$B_h$ is the periodic projection matrix for sub-annual period h; $h = \{ts, e, s, f, tf, o\}$,
 $D^T$ is the transpose of the matrix product of all the $B_h$, and
-$S_{A(h)}$ is the sensitivity of $\lambda$ to each element of $A^*_h$ (the average annual projection matrix between the reference treatment and the treatment of interest).  
+$S_{A(h)}$ is the sensitivity of $\lambda$ to each element of $A^*_h$ (the average annual projection matrix between the reference treatment and the treatment of interest).  $S_A$ for each $P_{rw}$ was calculated with the `sensitivity` function from the `popbio` package.  
 
 In general, each $S_{B_h}$, except for $S_{B_g}$ - sensitivity of $\lambda$ to summer survival, is a 8 x 2 matrix. In all $S_{B_h}$, only the first column was used in calculating the variance of population growth rate because the first column contains sensitivity values that concerns the population dynamics from changes in eight categories of interest, namely, seed density at the 0-2 cm soil stratum, seed density at the 2-20 cm soil stratum, and plant cohort one through six. The second through eighth columns are irrelevant under this manuscript's scope because those columns explain theoretical changes to $\lambda$ if other patterns occurred in the population dynamics, such as if seeds from the 2-20 cm emerged and contributed (column two), or if plant cohort one "becomes" cohort two (column three), and so on.  
 
-#### Population growth rate and its variance {-}  
 
-The variance of population growth rate in each rotation was calculated with $Var(\lambda) = \sum_i^b S_b^TV_bS_b$ where $V_h$ is the variance-covariance matrix of each $B_h$ matrix. The variance of annualized population growth rates ($Var(\lambda_2)$, $Var(\lambda_3)$, and $Var(\lambda_4)$) were calculated with Taylor series expansion using the general formula: $Var[f(\lambda)] = {f'(E(\lambda))}^2 Var(\lambda)$, in which $f(\lambda)$ is the nth-root function used to annualize the rotation-wise growth rates. For example, the variance of annualized population growth rate in the 2-year rotation was $Var(\lambda_{2}) = \frac{1}{4\lambda_{2r}}Var(\lambda_{2r})$, where $\lambda_2 = \sqrt{\lambda_{2r}}$.  
-
-
-### Elasticity of population growth rate on each lower-level parameter {-}
+#### Elasticity of population growth rate on each lower-level parameter {-}
 
 The elasticity of $\lambda$ to each element of a sub-annual projection matrix is calculated with
 $$
-E_{B(h)} = \frac{b_{ijh}}{\lambda} S_{B(h)} \,\,\,(2)
+E_{B(h)} = \frac{b_{ijh}}{\lambda} S_{B(h)} \,\,\,(3)
 $$ 
 
 where,
