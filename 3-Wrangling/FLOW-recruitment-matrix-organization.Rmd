@@ -52,7 +52,7 @@ mean_after_spring_tillage_pop_scenario1_2by1 <- mean_after_spring_tillage_pop_sc
 
 ```
 
-`
+
 ```{r top-stratum-after-spring-tillage}
 
 ### Write the top stratum of the newly shuffled seed columns (from fall tillage through spring tillage) into a dummy matrix
@@ -103,14 +103,14 @@ emerge_prop_20 <- emerge_20_mean_wide %>%
          cohort6_mean_prop = `6`/top_stratum_density,
          top_mean_remain_prop = 1-(cohort1_mean_prop + cohort2_mean_prop + cohort3_mean_prop +
                                      cohort4_mean_prop + cohort5_mean_prop + cohort6_mean_prop)) %>%
-  mutate(top_var_remain_prop = top_mean_remain_prop*(1-top_mean_remain_prop)/top_stratum_density,
+  mutate(top_var_remain_prop = top_mean_remain_prop*(1-top_mean_remain_prop)*top_stratum_density,
          bottom_var = 0,
-         cohort1_var_prop = cohort1_mean_prop*(1 - cohort1_mean_prop)/top_stratum_density,
-         cohort2_var_prop = cohort2_mean_prop*(1 - cohort2_mean_prop)/top_stratum_density,
-         cohort3_var_prop = cohort3_mean_prop*(1 - cohort3_mean_prop)/top_stratum_density,
-         cohort4_var_prop = cohort4_mean_prop*(1 - cohort4_mean_prop)/top_stratum_density,
-         cohort5_var_prop = cohort5_mean_prop*(1 - cohort5_mean_prop)/top_stratum_density,
-         cohort6_var_prop = cohort6_mean_prop*(1 - cohort6_mean_prop)/top_stratum_density) %>%
+         cohort1_var_prop = cohort1_mean_prop*(1 - cohort1_mean_prop)*top_stratum_density,
+         cohort2_var_prop = cohort2_mean_prop*(1 - cohort2_mean_prop)*top_stratum_density,
+         cohort3_var_prop = cohort3_mean_prop*(1 - cohort3_mean_prop)*top_stratum_density,
+         cohort4_var_prop = cohort4_mean_prop*(1 - cohort4_mean_prop)*top_stratum_density,
+         cohort5_var_prop = cohort5_mean_prop*(1 - cohort5_mean_prop)*top_stratum_density,
+         cohort6_var_prop = cohort6_mean_prop*(1 - cohort6_mean_prop)*top_stratum_density) %>%
   mutate(top_cohort1_covar = -top_mean_remain_prop*cohort1_mean_prop/top_stratum_density,
          top_cohort2_covar = -top_mean_remain_prop*cohort2_mean_prop/top_stratum_density,
          top_cohort3_covar = -top_mean_remain_prop*cohort3_mean_prop/top_stratum_density,
