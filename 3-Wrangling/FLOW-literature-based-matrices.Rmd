@@ -242,7 +242,7 @@ overwinter_mean_Sosnoskie_13_cohort_list <- lapply(split(overwinter_Sosnoskie_13
                    matrix(rep(0,48), nrow = 6)))
                          
 
-# saveRDS(overwinter_mean_Sosnoskie_13_cohort_list, file="../2-Data/Clean/mean-winter-seed-survival-scenario1.RData")
+# saveRDS(overwinter_mean_Sosnoskie_13_cohort_list, file="../2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData")
 
 ## Save overwinter survival variance 
 
@@ -301,7 +301,7 @@ off_season_scenario3 <- overwinter_Steckel_07_cohort_list
 
 ```
 
-### Prep-planting tillage matrices  
+### Pre-planting tillage matrices  
 The field cultivator mean and variance matrices were calculated using the same procedure as for chisel and moldboard plow.
 
 ```{r pre-planting-tillage-matrix-for-model}
@@ -437,6 +437,8 @@ as.matrix(moldboard) %*% seed_column_example
 as.matrix(field_cultivator) %*% seed_column_example
 ```
 
+## Summer seed survival {-}
+
 ```{r summer-seed-survival-matrix}
 # Summer seed consumption on the soil surface,  to be incorporated with recruitment matrix by summation
 
@@ -462,7 +464,7 @@ mean_summer_seed_survival_Sosnoskie_13_cohort_list  <- lapply(split(summer_seed_
 
 ## Save summer seed survival means
 
-# saveRDS(mean_summer_seed_survival_Sosnoskie_13_cohort_list, file="../2-Data/Clean/mean-summer-seed-survival-scenario1.RData")
+# saveRDS(mean_summer_seed_survival_Sosnoskie_13_cohort_list, file="../2-Data/Clean/mean-summer-seed-survival-Sosnoskie.RData")
 
 ## fill the bottom left 6x6 matrix's diagonal with 1's to perform element wise multiplication with female-survival in prospective-dynamics.Rmd 
 var_summer_seed_survival_Sosnoskie_13_cohort_list  <- lapply(split(summer_seed_survival_Sosnoskie_13_cohort , summer_seed_survival_Sosnoskie_13_cohort$matrix_id),
@@ -561,9 +563,9 @@ seedling_survival_corn_filled <- seedling_survival_corn %>%
   mutate(mean_seedling_survival = ifelse(Cohort == 1, 0.84,
                                     ifelse(Cohort %in% c(2,3), 0.48,
                                            ifelse(Cohort %in% c(4,5), 0.04, 0.01)))) %>%
-  mutate(var_seedling_survival = ifelse(Cohort == 1, 0.09,
-                                    ifelse(Cohort %in% c(2,3), 0.09,
-                                           ifelse(Cohort %in% c(4,5), 0.09, 0.09)))) %>%
+#  mutate(var_seedling_survival = ifelse(Cohort == 1, 0.09,
+#                                    ifelse(Cohort %in% c(2,3), 0.09,
+#                                           ifelse(Cohort %in% c(4,5), 0.09, 0.09)))) %>%
   mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, Cohort)
 
@@ -584,26 +586,29 @@ seedling_survival_soybean <- expand.grid(Crop_ID = c("S2","S3","S4"),
 
 
 seedling_survival_soybean_filled <- seedling_survival_soybean %>%
-  mutate(days_after_planting = ifelse(Cohort == 1, 14,
-                                      ifelse(Cohort == 2, 28,
-                                             ifelse(Cohort == 3, 42,
-                                                    ifelse(Cohort == 4, 56,
-                                                           ifelse(Cohort == 5, 70, 84)))))) %>%
+  mutate(mean_seedling_survival = ifelse(Cohort %in% c(1,2), 0.84,
+                                    ifelse(Cohort %in% c(3,4), 0.26, 0.01))) %>%
   mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
-  arrange(matrix_id, Cohort) %>%
-  mutate(const. = 95.4, # the constant variable in the y = a + bx + cx^2
-         x_squared = days_after_planting^2,
-         mean_seedling_survival = (const. + 0.058*days_after_planting - 0.034*(x_squared))/100 ,
-         number_of_plant = 60) 
+  arrange(matrix_id, Cohort)
 
-seedling_survival_soybean_filled$mean_seedling_survival<- pmax(seedling_survival_soybean_filled$mean_seedling_survival,0)
-    
-seedling_survival_soybean_filled <- seedling_survival_soybean_filled %>%
-  mutate(var_seedling_survival = ifelse(mean_seedling_survival > 0,
-                                         mean_seedling_survival*(1-mean_seedling_survival)/number_of_plant, 0))
+#seedling_survival_soybean_filled <- seedling_survival_soybean %>%
+#  mutate(days_after_planting = ifelse(Cohort == 1, 14,
+#                                      ifelse(Cohort == 2, 28,
+#                                             ifelse(Cohort == 3, 42,
+#                                                    ifelse(Cohort == 4, 56,
+#                                                           ifelse(Cohort == 5, 70, 84)))))) %>%
+#  mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
+#  arrange(matrix_id, Cohort) %>%
+#  mutate(const. = 95.4, # the constant variable in the y = a + bx + cx^2
+#         x_squared = days_after_planting^2,
+#         mean_seedling_survival = (const. + 0.058*days_after_planting - 0.034*(x_squared))/100 ,
+#         number_of_plant = 60) 
 
-seedling_survival_soybean_filled_select <- seedling_survival_soybean_filled%>%
-  select(Crop_ID, Corn_weed_management, Cohort, mean_seedling_survival, var_seedling_survival, matrix_id)
+
+seedling_survival_soybean_filled_select <- seedling_survival_soybean_filled %>%
+  select(Crop_ID, Corn_weed_management, Cohort, mean_seedling_survival,
+        # var_seedling_survival,
+         matrix_id)
 
 ### oat table
 
@@ -616,8 +621,7 @@ seedling_survival_oat <- expand.grid(Crop_ID = c("O3","O4"),
 ## in which the earlier cohorts in oat experience lower survival rate 
 seedling_survival_oat_filled <- seedling_survival_oat %>%
   mutate(mean_seedling_survival = ifelse(Cohort %in% c(1,2), 0.1,
-                                         ifelse(Cohort %in% c(3,4), 0.5, 0.9)),
-    var_seedling_survival = 0.09) %>%
+                                         ifelse(Cohort %in% c(3,4), 0.5, 0.9))) %>%
     mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, Cohort)
 
@@ -633,15 +637,14 @@ seedling_survival_alfalfa <- expand.grid(Crop_ID = c("A4"),
                                     Cohort = c(1:6))
 
 seedling_survival_alfalfa_filled <- seedling_survival_alfalfa %>%
-  mutate(mean_seedling_survival = ifelse(Cohort %in% c(1, 2, 3, 4), 0.1, 0.5),
-    var_seedling_survival = 0.09)%>%
+  mutate(mean_seedling_survival = ifelse(Cohort %in% c(1, 2, 3, 4), 0.1, 0.5))%>%
     mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, Cohort)
 
 
 ## combine 4 crop-specific tables
 seedling_survival_Hartzler_et_al <- rbind(seedling_survival_corn_filled,
-                                          seedling_survival_soybean_filled_select,
+                                          seedling_survival_soybean_filled,
                                           seedling_survival_oat_filled,
                                           seedling_survival_alfalfa_filled)
 
@@ -652,11 +655,11 @@ mean_seedling_survival_Hartzler_et_al_raw_list <- lapply(split(seedling_survival
        function(x) rbind(cbind(diag(1,2), matrix(0,nrow = 2, ncol = 6)),
          cbind(matrix(0,nrow=6,ncol=2), diag(x$mean_seedling_survival))))
 
-# saveRDS(mean_seedling_survival_Hartzler_et_al_raw_list, file="../2-Data/Clean/mean-summer-seedling-survival-scenario2.RData")
+# saveRDS(mean_seedling_survival_Hartzler_et_al_raw_list, file="../2-Data/Clean/mean-summer-seedling-survival-Hartzler.RData")
 
-var_seedling_survival_Hartzler_et_al_raw_list <- lapply(split(seedling_survival_Hartzler_et_al, seedling_survival_Hartzler_et_al$matrix_id),
-       function(x) rbind(cbind(diag(1,2), matrix(0,nrow = 2, ncol = 6)),
-         cbind(matrix(0,nrow=6,ncol=2), diag(x$var_seedling_survival))))
+#var_seedling_survival_Hartzler_et_al_raw_list <- lapply(split(seedling_survival_Hartzler_et_al, seedling_survival_Hartzler_et_al$matrix_id),
+#       function(x) rbind(cbind(diag(1,2), matrix(0,nrow = 2, ncol = 6)),
+#         cbind(matrix(0,nrow=6,ncol=2), diag(x$var_seedling_survival))))
 
 # saveRDS(var_seedling_survival_Hartzler_et_al_raw_list, file="../2-Data/Clean/var-summer-seedling-survival-scenario2.RData")
 ```

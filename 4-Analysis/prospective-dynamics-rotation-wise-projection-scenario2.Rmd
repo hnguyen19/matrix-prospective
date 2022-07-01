@@ -34,12 +34,12 @@ scenario2_mean_emergence <- readRDS("../2-Data/Clean/mean-emergence-prop-scenari
 ## Seed survival and plant survival 
 #### seed survival 
 
-scenario2_mean_summer_seed_survival <- readRDS("../2-Data/Clean/mean-summer-seed-survival-scenario1.RData")
+scenario2_mean_summer_seed_survival <- readRDS("../2-Data/Clean/mean-summer-seed-survival-Sosnoskie.RData")
 
 #### plant survival: literature data - named as scenario2, because scenario1 is the point-estimates from the experiment 
 #female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
 
-scenario2_mean_female_survival <- readRDS("../2-Data/Clean/mean-summer-seedling-survival-scenario2.RData")
+scenario2_mean_female_survival <- readRDS("../2-Data/Clean/mean-summer-seedling-survival-Hartzler.RData")
 
 #### combine seed and plant survivals into one matrix with element-wise multiplication: this is not computing, but arranging using 1's as placeholders 
 scenario2_mean_summer_survival <- purrr::map2(scenario2_mean_summer_seed_survival, scenario2_mean_female_survival, `*`)
@@ -50,7 +50,7 @@ scenario2_mean_summer_survival <- purrr::map2(scenario2_mean_summer_seed_surviva
 mean_post_harvest_tillage <- readRDS("../2-Data/Clean/mean-post-harvest-tillage.RData")
 
 ## Overwinter survival 
-scenario2_mean_overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-scenario1.RData")
+scenario2_mean_overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData")
 
 ```
 
