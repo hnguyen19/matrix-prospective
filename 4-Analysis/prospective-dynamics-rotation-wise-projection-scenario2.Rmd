@@ -67,14 +67,14 @@ scenario2_projection_by_matrix_id <- tibble::lst(scenario2_mean_overwinter,
                                                mean_spring_tillage)
 ## name column and row 
 scenario2_projection_by_matrix_id_named <- rapply(scenario2_projection_by_matrix_id, 
-                                                  function(x) {dimnames(x) <- rep(list(c("seed_top",
-                                                                                        "seed_bottom", 
-                                                                                        "plant_cohort_1",
-                                                                                        "plant_cohort_2",
-                                                                                        "plant_cohort_3",
-                                                                                        "plant_cohort_4",
-                                                                                        "plant_cohort_5",
-                                                                                        "plant_cohort_6")),2); x}, how="list")
+                                                  function(x) {dimnames(x) <- rep(list(c("s_t",
+                                                                                        "s_b", 
+                                                                                        "p_co_1",
+                                                                                        "p_co_2",
+                                                                                        "p_co_3",
+                                                                                        "p_co_4",
+                                                                                        "p_co_5",
+                                                                                        "p_co_6")),2); x}, how="list")
 
 # View(scenario2_projection_by_matrix_id_named )
 

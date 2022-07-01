@@ -18,7 +18,7 @@ source("functions.R")
 ```
 
 
-```{r scenario1-periodic-matrices-phases-mean-and-var, include=FALSE}
+```{r scenario1-periodic-matrices-phases-mean, include=FALSE}
 ## Summary: everything the same in all scenarios, but:
 # mean_emergence:
 # summer survival: literature
@@ -27,45 +27,38 @@ source("functions.R")
 
 ## Pre-planting tillage 
 mean_spring_tillage <-  readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
-var_spring_tillage <-  readRDS("../2-Data/Clean/var-pre-planting-tillage.RData")
 
 ## Emergence 
 scenario1_mean_emergence <- readRDS("../2-Data/Clean/mean-emergence-prop-scenario1.RData")
-scenario1_var_emergence <- readRDS("../2-Data/Clean/var-emergence-prop-scenario1.RData")
 
 ## Seed survival and plant survival 
 #### seed survival 
 
-scenario1_mean_summer_seed_survival <- readRDS("../2-Data/Clean/mean-summer-seed-survival-scenario1.RData")
-scenario1_var_summer_seed_survival  <- readRDS("../2-Data/Clean/var-summer-seed-survival-scenario1.RData")
+scenario1_mean_summer_seed_survival <- readRDS("../2-Data/Clean/mean-summer-seed-survival-Sosnoskie.RData")
 
 #### plant survival: literature data - named as scenario2, because scenario1 is the point-estimates from the experiment 
 #female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
 
-scenario1_mean_female_survival <- readRDS("../2-Data/Clean/mean-summer-seedling-survival-scenario2.RData")
-scenario1_var_female_survival <- readRDS("../2-Data/Clean/var-summer-seedling-survival-scenario2.RData")
+scenario1_mean_female_survival <- readRDS("../2-Data/Clean/mean-summer-seedling-survival-Hartzler.RData")
 
 #### combine seed and plant survivals into one matrix with element-wise multiplication: this is not computing, but arranging using 1's as placeholders 
 scenario1_mean_summer_survival <- purrr::map2(scenario1_mean_summer_seed_survival, scenario1_mean_female_survival, `*`)
-
-scenario1_var_summer_survival <- purrr::map2(scenario1_var_summer_seed_survival, scenario1_var_female_survival, `*`)
 
 ## Fecundity: next chunk
 
 ## Post-harvest tillage
 mean_post_harvest_tillage <- readRDS("../2-Data/Clean/mean-post-harvest-tillage.RData")
-var_post_harvest_tillage <- readRDS("../2-Data/Clean/var-post-harvest-tillage.RData")
 
 ## Overwinter survival 
-scenario1_mean_overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-scenario1.RData")
-scenario1_var_overwinter <- readRDS("../2-Data/Clean/var-winter-seed-survival-scenario1.RData")
+scenario1_mean_overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData")
+
 ```
 
 ```{r scenario1-phase-wise-projection-1, include=FALSE}
 ## Circle starts at spring tillage Fecundity scenario 1 - 2019 rates
 scenario1_mean_fecundity_2019 <- readRDS("../2-Data/Clean/mean-fecundity-19-cohort.RData")
 
-scenario1_var_fecundity_2019 <- readRDS("../2-Data/Clean/var-fecundity-19-cohort.RData")
+
 
 scenario1_projection_by_matrix_id <- tibble::lst(scenario1_mean_overwinter,
                                                  mean_post_harvest_tillage,
@@ -75,14 +68,14 @@ scenario1_projection_by_matrix_id <- tibble::lst(scenario1_mean_overwinter,
                                                mean_spring_tillage)
 ## name column and row 
 scenario1_projection_by_matrix_id_named <- rapply(scenario1_projection_by_matrix_id, 
-                                                  function(x) {dimnames(x) <- rep(list(c("seed_top",
-                                                                                        "seed_bottom", 
-                                                                                        "plant_cohort_1",
-                                                                                        "plant_cohort_2",
-                                                                                        "plant_cohort_3",
-                                                                                        "plant_cohort_4",
-                                                                                        "plant_cohort_5",
-                                                                                        "plant_cohort_6")),2); x}, how="list")
+                                                  function(x) {dimnames(x) <- rep(list(c("s_t",
+                                                                                        "s_b", 
+                                                                                        "p_co_1",
+                                                                                        "p_co_2",
+                                                                                        "p_co_3",
+                                                                                        "p_co_4",
+                                                                                        "p_co_5",
+                                                                                        "p_co_6")),2); x}, how="list")
 
 # View(scenario1_projection_by_matrix_id_named )
 
