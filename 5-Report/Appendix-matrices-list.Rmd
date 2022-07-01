@@ -3,11 +3,71 @@ output:
     bookdown::word_document2:
       toc: false
       fig_caption: yes
+bibliography: WH-pop-dynamics.bib
+csl: apa-no-ampersand.csl 
 ---
 
-### Appendix A {-}
+```{r, include=FALSE}
+library(tidyverse)
+```
 
-The structure of all periodic matrices used in the two different scenarios are listed below. All numbers are female-only.
+```{r, include=FALSE}
+## load all matrices 
+## Pre-planting tillage 
+mean_spring_tillage <-  readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
+
+## Emergence 
+scenario1_mean_emergence <- readRDS("../2-Data/Clean/mean-emergence-prop-scenario1.RData")
+
+## Seed survival and plant survival 
+#### seed survival 
+
+scenario1_mean_summer_seed_survival <- readRDS("../2-Data/Clean/mean-summer-seed-survival-Sosnoskie.RData")
+
+#### plant survival: literature data - named as scenario2, because scenario1 is the point-estimates from the experiment 
+#female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
+
+scenario1_mean_female_survival <- readRDS("../2-Data/Clean/mean-summer-seedling-survival-Hartzler.RData")
+
+#### combine seed and plant survivals into one matrix with element-wise multiplication: this is not computing, but arranging using 1's as placeholders 
+scenario1_mean_summer_survival <- purrr::map2(scenario1_mean_summer_seed_survival, scenario1_mean_female_survival, `*`)
+
+
+## Post-harvest tillage
+mean_post_harvest_tillage <- readRDS("../2-Data/Clean/mean-post-harvest-tillage.RData")
+
+## Overwinter survival 
+scenario1_mean_overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData")
+
+scenario1_mean_fecundity_2019 <- readRDS("../2-Data/Clean/mean-fecundity-19-cohort.RData")
+
+scenario2_mean_fecundity_2018 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
+
+## name the list here with _demo suffix to distinguish with the previous *.Rmd files  for scenarios 1 and 2
+
+projection_by_matrix_id_demo <- tibble::lst(scenario1_mean_overwinter,
+                                                 mean_post_harvest_tillage,
+                                                 scenario1_mean_fecundity_2019,
+                                                 scenario2_mean_fecundity_2018, 
+                                                 scenario1_mean_summer_survival,
+                                               scenario1_mean_emergence,
+                                               mean_spring_tillage)
+## name column and row 
+projection_by_matrix_id_named_demo <- rapply(projection_by_matrix_id_demo, 
+                                                  function(x) {dimnames(x) <- rep(list(c("s_t",
+                                                                                        "s_b", 
+                                                                                        "p_co_1",
+                                                                                        "p_co_2",
+                                                                                        "p_co_3",
+                                                                                        "p_co_4",
+                                                                                        "p_co_5",
+                                                                                        "p_co_6")),2); x}, how="list")
+```
+
+The structure of all periodic matrices used in the two different scenarios are listed below. All numbers are female-only. Each theoretical matrix for a sub-annual period is followed by the set of matrices used in that sub-annual period. The abbreviate row and column names are:  
+- s_t: seed at the top stratum (0 - 2 cm),    
+- s_b: seed at the bottom stratum (2 - 20 cm),  
+- p_co_1 through p_co_6: plant cohort 1 through 6.  
 
 #### Published literature data {-}
 
@@ -32,6 +92,13 @@ t_{12,s} & t_{22,s} & 0 & ... & ... & ... & ... & 0\\
 $$   
 
 
+The same pre-planting tillage regimes were applied in 2018 and 2019.    
+
+
+```{r, echo=FALSE}
+projection_by_matrix_id_named_demo$mean_spring_tillage  %>%
+  map(., ~{round(., 2)}) 
+```
 
 
 ##### In-season survival of seeds and seedlings {-}
@@ -57,6 +124,14 @@ The $M_s$ section's diagonal ($s_{s_1}$ and $s_{s_2}$) were filled with survival
 
 The empirically measured data for seedling survival was deemed unrealistically (Appendix) low as compared to the literature, so @nordbyInfluenceCornCommon2004's results were used for corn and @hartzlerEffectCommonWaterhemp2004's results were used for soybean crop environments. The seedling survival rates by cohort ($s_{p_k}, k = \{1,...,6\}$) were assigned such that the earlier cohorts had lower survival rate in the oat crop environment; and those in the alfalfa crop environment were evenly low in all cohorts. These estimated numbers were based on a suggestion that cool-season crop environments can inhibit warm-season weed species growth [@nguyenWeedCommunityComposition2022 and citations given there].
 
+The same summer survival rates were used in 2018 and 2019.  
+
+```{r, echo=FALSE}
+projection_by_matrix_id_named_demo$scenario1_mean_summer_survival  %>%
+  map(., ~{round(., 2)}) 
+```
+
+
 ##### Plant fecundity {-}  
 
 The plant fecundity matrix ($B_f$) had the $M_s$ block's diagonal filled with 1's and the first row of the $M_{p,s}$ filled with $f_k, k = \{1,...,6\}$. The 1's in the $M_s$ block's diagonal are placeholders to carry the product from the previous matrices over.  
@@ -75,8 +150,23 @@ $$
 $$   
 
 
-
 Two scenarios of plant fecundity were used. In scenario 1, plant fecundity ($f_k, k =\{1,...,6\}$) in each crop identity crossed with corn weed management was estimated from plant aboveground mass using eighteen equations from @nguyenImpactCroppingSystem2022. In scenario 2, the plants were partitioned into six size-based bins and their fecundity was summarized as $f_k, k =\{1,...,6\}$ and filled in their relevant positions in the $B_f$ matrix by partitioning. Both practices in scenarios 1 and 2 were based on the assumption that plant size and fecundity decreased as emergence delayed [@hartzlerEffectCommonWaterhemp2004; @nordbyInfluenceCornCommon2004].   
+
+Scenario 1: 2019   
+
+```{r, echo=FALSE}
+projection_by_matrix_id_named_demo$scenario1_mean_fecundity_2019  %>%
+  map(., ~{round(., 2)}) 
+```
+
+
+Scenario 2: 2018    
+
+```{r, echo=FALSE}
+projection_by_matrix_id_named_demo$scenario2_mean_fecundity_2018  %>%
+  map(., ~{round(., 2)}) 
+```
+
 
 ##### Post-harvest tillage induced vertical redistribution of seeds post-harvest tillage {-}
 
@@ -95,6 +185,13 @@ t_{12,f} & t_{22,f} & 0 & ... & ... & ... & ... & 0\\
 \end{array}\right]
 $$   
 
+The same post-harvest tillage regimes were applied in 2018 and 2019.    
+
+```{r, echo=FALSE}
+projection_by_matrix_id_named_demo$mean_post_harvest_tillage  %>%
+  map(., ~{round(., 2)}) 
+```
+
 ##### Overwinter survival {-} 
 
 The compilation of matrix $B_o$ was similar to that of $B_s$, using equations $o_1 = y = 98.9 e^{-0.068x} \%$ and $o_2 = y = 99.5 e^{-0.05x} \%$ [Figures 1 and 3, @sosnoskieGlyphosateResistanceDoes2013]. $o_{ij}$ was calculated with different values of x, denoted as $x_w$ the burial length after post-harvest tillage application until emergence initiation, were assigned at 6 for all crop environments (Table \@ref(tab:Julian-19-20-tab)), equivalent to $12 - x_s$ in the summer seed survival in matrix $B_{\sigma}$.
@@ -111,6 +208,13 @@ o_{11} & 0 & 0 & ... & ... & ... & ... & 0\\
 0 & 0 & 0 & ... & ... & ... & ... & 0\\
 \end{array}\right]
 $$   
+
+The same overwinter survival rates were used in 2018 and 2019. Some zero values were due to rounding.  
+
+```{r, echo=FALSE}
+projection_by_matrix_id_named_demo$scenario1_mean_overwinter  %>%
+  map(., ~{round(., 2)}) 
+``` 
 
 
 #### Empirically measured data {-}
@@ -146,6 +250,12 @@ From steps 2 through 4, the seed column in sub-period h, $N_h$, was transitioned
 
 5 - Divide the seedling density in each cohort, $l_k$, by $s_{11,f}$, the top soil stratum seed density to yield $g_k$.   
 
+The same emergence rates were used in 2018 and 2019. Some zero values in the first column were due to rounding.      
 
+
+```{r, echo=FALSE}
+projection_by_matrix_id_named_demo$scenario1_mean_emergence  %>%
+  map(., ~{round(., 5)}) 
+```
 
 
