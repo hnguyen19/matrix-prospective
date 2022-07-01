@@ -752,7 +752,7 @@ names(scenario2_E_B_contribution_4yr_low ) <- scenario2_E_B_contribution_4yr_low
 
 ```{r scenario2-S-B-recombine, include=FALSE}
 
-## Note: theoretically, seed_top and seed_bottom are included in the _fecundity_ matrices needs to be replaced with zeroes, but since the M_s block in the _fecundity_ matrices
+## Note: theoretically, s_t and s_b are included in the _fecundity_ matrices needs to be replaced with zeroes, but since the M_s block in the _fecundity_ matrices
 ## Gather S_B contribution lists by sub-annual matrices: all the spring tillage matrices in 6 cropping systems together, all the emergence matrices together, ...
 
 scenario2_S_B_contribution_recombined <- tibble::lst(scenario2_S_B_contribution_2yr, 
@@ -822,12 +822,12 @@ scenario2_phase_seed_vectors_long <- scenario2_phase_seed_vectors %>%
 # View(scenario2_annualized_lambda_and_var )
 # https://stackoverflow.com/questions/72426613/individual-text-box-with-greek-letter-on-each-facet-grid-panel/72426740#72426740
 lambda_label <- data.frame(
-  label = c("\u03BB = 38.7 , \n \u03BB(C2) = 3.5, \n \u03BB(S2) = 444.9",
-            "\u03BB = 8.2  \n \u03BB(C3) = 5.6, \n \u03BB(S3) = 6975, \n \u03BB(O3) = 0.6", 
-            "\u03BB = 5.1  \n \u03BB(C4) = 86.6, \n \u03BB(S4) = 42.4, \n \u03BB(O4) = 0.5, \n \u03BB(A4) = 0.6",
-            "\u03BB = 62.2  \n \u03BB(C2) = 16.4, \n \u03BB(S2) = 237.1", 
-            "\u03BB = 19.2 \n \u03BB(C3) = 1.2 \n \u03BB(S3) = 2304.7, \n \u03BB(O3) = 0.5",
-            "\u03BB = 2.1  \n \u03BB(C4) = 43.7, \n \u03BB(S4) = 5.4, \n \u03BB(O4) = 0.5, \n \u03BB(A4) = 0.5"),
+  label = c("\u03BB(2,conv) = 38.12, \n \u03BB(C2,conv) = 3.46, \n \u03BB(S2,conv) = 432.00",
+            "\u03BB(3,conv) = 18.96,  \n \u03BB(C3,conv) = 5.56, \n \u03BB(S3,conv) = 6680.54, \n \u03BB(O3,conv) = 0.56", 
+            "\u03BB(4,conv) = 5.07,  \n \u03BB(C4,conv) = 86.57, \n \u03BB(S4,conv) = 40.41, \n \u03BB(O4,conv) = 0.53, \n \u03BB(A4,conv) = 0.62",
+            "\u03BB(2,low) = 61.83,  \n \u03BB(C2,low) = 16.41, \n \u03BB(S2,low) = 234.12", 
+            "\u03BB(3,low) = 8.05, \n \u03BB(C3,low) = 1.20 \n \u03BB(S3,low) = 2181.11, \n \u03BB(O3,low) = 0.55",
+            "\u03BB(4,low) = 2.10,  \n \u03BB(C4,low) = 43.74, \n \u03BB(S4,low) = 5.25, \n \u03BB(O4,low) = 0.54, \n \u03BB(A4,low) = 0.54"),
   Rotation = rep(c("2-year", "3-year", "4-year"), 2),
   Corn_weed_management = rep(c("conventional", "low"), 3),
   Stratum = rep("placeholder", 6) #need this placeholder for the geom_text in the code chain below to run
@@ -842,14 +842,14 @@ lambda_label <- data.frame(
 scenario2_phase_seed_vectors_long  %>% 
   mutate(ln_Count = log(Count + 1)) %>%
   ggplot() +
-   aes(x = Year, y = Count, group = Stratum) +
+   aes(x = Year, y = ln_Count, group = Stratum) +
   geom_line(aes(y = ln_Count, linetype =  Stratum)) +
   geom_point(aes(y = ln_Count, shape =  Stratum)) +
   geom_hline(aes(yintercept = log(1001), color = "baseline")) +
   facet_wrap(Rotation ~ Corn_weed_management,  ncol = 2, labeller = label_wrap_gen(multi_line=FALSE)) + 
   scale_x_continuous(breaks = scales::pretty_breaks(n = 13)) + # don't need this with as.factor(Year)
   labs(x = "Crop species abbreviation and model year",
-       y= expression(paste("ln(Seed density (seeds+1)",~m^-2,"))"))) +
+       y = expression(paste("ln(Seed density (seeds+1)",~m^-2,"))"))) +
   theme(legend.position = "bottom", legend.title = element_blank(),
         legend.key = element_rect(fill = "transparent", colour = "transparent"),
         panel.background=element_rect(fill="transparent",colour=NA),
@@ -956,7 +956,7 @@ scenario2_E_B_spring_tillage_recombine <- rbind(scenario2_E_B_spring_tillage_con
 scenario2_E_B_spring_tillage_recombine_wide <- scenario2_E_B_spring_tillage_recombine %>%
   select(!c(rowname, group)) %>% 
   pivot_wider(names_from = element_ij, values_from = E_B_ij) %>%
-  mutate(Scenario = 1) %>%
+  mutate(Scenario = 2) %>%
   select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, t_11_s:t_22_s) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
@@ -1018,21 +1018,21 @@ scenario2_E_B_emerge_recombine <- rbind(scenario2_E_B_emerge_conv_unlist, scenar
 scenario2_E_B_emerge_recombine_wide <- scenario2_E_B_emerge_recombine %>%
   select(!rowname) %>% 
   pivot_wider(names_from = group, values_from = E_B_ij) %>%
-  mutate(Scenario = 1)  %>%
-  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, seed_top:plant_cohort_6) %>%
+  mutate(Scenario = 2)  %>%
+  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, s_t:p_co_6) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
                                ifelse(Crop == "O", 3, 4))))%>%
   arrange(Rotation, Order, Corn_weed_management) %>%
-  select(!c(Order, Crop, seed_bottom)) %>% #keep the relevant columns only 
+  select(!c(Order, Crop, s_b)) %>% #keep the relevant columns only 
 #   mutate_at(5:11, round, 2) %>%
-  rename("d" = seed_top,
-        "g_1" = plant_cohort_1,
-        "g_2" = plant_cohort_2,
-        "g_3" = plant_cohort_3,
-        "g_4" = plant_cohort_4,
-        "g_5" = plant_cohort_5,
-        "g_6" = plant_cohort_6)
+  rename("d" = s_t,
+        "g_1" = p_co_1,
+        "g_2" = p_co_2,
+        "g_3" = p_co_3,
+        "g_4" = p_co_4,
+        "g_5" = p_co_5,
+        "g_6" = p_co_6)
 
 #View(scenario2_E_B_emerge_recombine_wide) 
 ```
@@ -1083,22 +1083,22 @@ scenario2_E_B_summer_recombine <- rbind(scenario2_E_B_summer_conv_unlist, scenar
 scenario2_E_B_summer_recombine_wide <- scenario2_E_B_summer_recombine %>%
   select(!rowname) %>% 
   pivot_wider(names_from = group, values_from = E_B_ij) %>%
-  mutate(Scenario = 1) %>%
-  select(Scenario,  Rotation, Crop, Crop_ID, Corn_weed_management, seed_top:plant_cohort_6) %>%
+  mutate(Scenario = 2) %>%
+  select(Scenario,  Rotation, Crop, Crop_ID, Corn_weed_management, s_t:p_co_6) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
                                ifelse(Crop == "O", 3, 4)))) %>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop)) %>% 
 #  mutate_at(5:12, round, 2)  %>%
-  rename("s_s1" = seed_top,
-         "s_s2" = seed_bottom,
-        "s_p1" = plant_cohort_1,
-        "s_p2" = plant_cohort_2,
-        "s_p3" = plant_cohort_3,
-       "s_p4" = plant_cohort_4,
-        "s_p5" = plant_cohort_5,
-        "s_p6" = plant_cohort_6)
+  rename("s_s1" = s_t,
+         "s_s2" = s_b,
+        "s_p1" = p_co_1,
+        "s_p2" = p_co_2,
+        "s_p3" = p_co_3,
+       "s_p4" = p_co_4,
+        "s_p5" = p_co_5,
+        "s_p6" = p_co_6)
 
 #View(scenario2_E_B_summer_recombine_wide) 
 ```
@@ -1127,7 +1127,7 @@ scenario2_E_B_fecund_conv_unlist <- scenario2_E_B_fecund_conv %>%
          group = substring(rowname, 74),
          Crop = substr(rowname, 37, 37),
          Rotation = paste0(substr(rowname, 28, 28),"-year"))  %>%
-  filter(group != c("seed_top", "seed_bottom")) # keep the relevant numbers only 
+  filter(group != c("s_t", "s_b")) # keep the relevant numbers only 
 
 # View(scenario2_E_B_fecund_conv_unlist)
 scenario2_E_B_fecund_low_unlist <- scenario2_E_B_fecund_low %>% 
@@ -1140,7 +1140,7 @@ scenario2_E_B_fecund_low_unlist <- scenario2_E_B_fecund_low %>%
          group = substring(rowname, 72),
          Crop = substr(rowname, 36, 36),
          Rotation = paste0(substr(rowname, 28, 28),"-year"))  %>%
-  filter(group != c("seed_top", "seed_bottom")) # keep the relevant numbers only 
+  filter(group != c("s_t", "s_b")) # keep the relevant numbers only 
 
 # recombine conv and low 
 scenario2_E_B_fecund_recombine <- rbind(scenario2_E_B_fecund_conv_unlist, scenario2_E_B_fecund_low_unlist)
@@ -1148,20 +1148,20 @@ scenario2_E_B_fecund_recombine <- rbind(scenario2_E_B_fecund_conv_unlist, scenar
 scenario2_E_B_fecund_recombine_wide <- scenario2_E_B_fecund_recombine %>%
   select(!rowname) %>% 
   pivot_wider(names_from = group, values_from = E_B_ij) %>%
-  mutate(Scenario = 1) %>%
-  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, plant_cohort_1:plant_cohort_6) %>%
+  mutate(Scenario = 2) %>%
+  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, p_co_1:p_co_6) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
                                ifelse(Crop == "O", 3, 4)))) %>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop))  %>%
 #   mutate_at(5:10, round, 2)  %>%
-  rename("f_1" = plant_cohort_1,
-        "f_2"= plant_cohort_2,
-        "f_3" = plant_cohort_3,
-        "f_4" = plant_cohort_4,
-        "f_5" = plant_cohort_5,
-        "f_6" = plant_cohort_6)
+  rename("f_1" = p_co_1,
+        "f_2"= p_co_2,
+        "f_3" = p_co_3,
+        "f_4" = p_co_4,
+        "f_5" = p_co_5,
+        "f_6" = p_co_6)
 #View(scenario2_E_B_fecund_recombine_wide)
 ```
 
@@ -1226,7 +1226,7 @@ scenario2_E_B_postharvest_tillage_recombine_wide <- scenario2_E_B_postharvest_ti
   select(!c(rowname, group)) %>% 
   pivot_wider(names_from = element_ij, values_from = E_B_ij) %>%
   mutate(Parameter = "post-harvest tillage", 
-         Scenario = 1) %>%
+         Scenario = 2) %>%
   select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, t_11_f:t_22_f) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
@@ -1290,16 +1290,16 @@ scenario2_E_B_overwinter_recombine <- rbind(scenario2_E_B_overwinter_conv_unlist
 scenario2_E_B_overwinter_recombine_wide <- scenario2_E_B_overwinter_recombine %>%
   select(!rowname) %>% 
   pivot_wider(names_from = group, values_from = E_B_ij) %>%
-  mutate(Scenario = 1) %>%
-  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, seed_top, seed_bottom) %>%
+  mutate(Scenario = 2) %>%
+  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, s_t, s_b) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
                                ifelse(Crop == "O", 3, 4))))%>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop)) %>%
 #   mutate_at(5:6, round, 2)   %>%
-  rename("o_11" = seed_top,
-         "o_22"= seed_bottom)
+  rename("o_11" = s_t,
+         "o_22"= s_b)
 
 # View(scenario2_E_B_overwinter_recombine_wide)
 ```

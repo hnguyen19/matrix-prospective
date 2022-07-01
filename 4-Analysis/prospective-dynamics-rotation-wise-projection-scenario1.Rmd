@@ -749,72 +749,7 @@ scenario1_E_B_contribution_4yr_low_names <- gsub('mean', 'E_B', scenario1_E_B_co
 names(scenario1_E_B_contribution_4yr_low ) <- scenario1_E_B_contribution_4yr_low_names 
 ```
 
-```{r scenario1-var-list, echo=FALSE}
-# <https://en.wikipedia.org/wiki/Taylor_expansions_for_the_moments_of_functions_of_random_variables> .
 
-## Need variance separated for each parameters in the summer survival period 
-## issue: things happening at the same period need to be in one matrix 
-## work-around: comment on period-based changes instead of parameter-based changes 
-
-
-## Combine all variance lists into one grand list, similar to the means list
-
-## Variance list needed for each rotation, but in the opposite order as in the mean list, to accommodate the order of the S_B list
-
-var_scenario1_projection_by_matrix_id <- tibble::lst(var_spring_tillage,
-                                                     scenario1_var_emergence,
-                                                      scenario1_var_summer_survival,
-                                                       scenario1_var_fecundity_2019,
-                                                        var_post_harvest_tillage,
-                                                     scenario1_var_overwinter)
-# A list of 12 bested list
-var_scenario1_projection_by_matrix_id_named <- rapply(var_scenario1_projection_by_matrix_id , 
-                                                  function(x) {dimnames(x) <- rep(list(c("seed_top",
-                                                                                        "seed_bottom", 
-                                                                                        "plant_cohort_1",
-                                                                                        "plant_cohort_2",
-                                                                                        "plant_cohort_3",
-                                                                                        "plant_cohort_4",
-                                                                                        "plant_cohort_5",
-                                                                                        "plant_cohort_6")),2); x}, how="list")
-
-# Transpose the var list to rearrange will create a nested list of 18 lists of 12 matrices each
-var_scenario1_projection_transpose <- purrr::transpose(var_scenario1_projection_by_matrix_id_named)
-
-# Separate variance by rotation x corn weed management 
-var_scenario1_projection_2yr_conv <- var_scenario1_projection_transpose[c("C2_conv","S2_conv")]
-var_scenario1_projection_2yr_conv_unlist <- unlist(var_scenario1_projection_2yr_conv, recursive = FALSE)
-
-var_scenario1_projection_2yr_low <- var_scenario1_projection_transpose[c("C2_low","S2_low")]
-var_scenario1_projection_2yr_low_unlist <- unlist(var_scenario1_projection_2yr_low, recursive = FALSE)
-
-var_scenario1_projection_3yr_conv <- var_scenario1_projection_transpose[c("C3_conv","S3_conv", "O3_conv")]
-var_scenario1_projection_3yr_conv_unlist <- unlist(var_scenario1_projection_3yr_conv, recursive = FALSE)
-
-var_scenario1_projection_3yr_low <- var_scenario1_projection_transpose[c("C3_low","S3_low", "O3_low")]
-var_scenario1_projection_3yr_low_unlist <- unlist(var_scenario1_projection_3yr_low, recursive = FALSE)
-
-var_scenario1_projection_4yr_conv <- var_scenario1_projection_transpose[c("C4_conv","S4_conv", "O4_conv", "A4_conv")]
-var_scenario1_projection_4yr_conv_unlist <- unlist(var_scenario1_projection_4yr_conv, recursive = FALSE)
-
-var_scenario1_projection_4yr_low <- var_scenario1_projection_transpose[c("C4_low","S4_low", "O4_low", "A4_low")]
-var_scenario1_projection_4yr_low_unlist <- unlist(var_scenario1_projection_4yr_low, recursive = FALSE)
-# recombine variance using the same order as S_B
-
-var_scenario1_projection_conv <- tibble::lst(var_scenario1_projection_2yr_conv_unlist,
-                                             var_scenario1_projection_3yr_conv_unlist,
-                                             var_scenario1_projection_4yr_conv_unlist)
-
-#View(var_scenario1_projection_conv)
-
-
-
-var_scenario1_projection_low <- tibble::lst(var_scenario1_projection_2yr_low_unlist,
-                                             var_scenario1_projection_3yr_low_unlist,
-                                             var_scenario1_projection_4yr_low_unlist)
-
-#View(var_scenario1_projection_low)
-```
 
 ```{r scenario1-S-B-recombine, echo=FALSE}
 ## Gather S_B contribution lists by sub-annual matrices: all the spring tillage matrices in 6 cropping systems together, all the emergence matrices together, ...
@@ -834,62 +769,6 @@ scenario1_S_B_contribution_recombined_first_col <- rapply(scenario1_S_B_contribu
 scenario1_S_B_contribution_recombined_first_col_transpose <- rapply(scenario1_S_B_contribution_recombined_first_col, \(x) t(x), how='list')
 ```
 
-```{r scenario1-var-rot-lambda, echo=FALSE}
-scenario1_var_lambda_conv_elements  <- Map(\(x, y, z) Reduce(`%*%`,
-                      list(x, y, z)),
-    unlist(scenario1_S_B_contribution_recombined_first_col_transpose, recursive = FALSE),
-    unlist(var_scenario1_projection_conv, recursive = FALSE),
-    unlist(scenario1_S_B_contribution_recombined_first_col, recursive = FALSE))
-
-scenario1_var_lambda_conv_2yr <- sum(unlist(scenario1_var_lambda_conv_elements[1:12]))
-scenario1_var_lambda_conv_3yr <- sum(unlist(scenario1_var_lambda_conv_elements[13:30]))
-scenario1_var_lambda_conv_4yr <- sum(unlist(scenario1_var_lambda_conv_elements[31:54]))
-
-scenario1_var_lambda_low_elements  <- Map(\(x, y, z) Reduce(`%*%`,
-                      list(x, y, z)),
-    unlist(scenario1_S_B_contribution_recombined_first_col_transpose, recursive = FALSE),
-    unlist(var_scenario1_projection_low, recursive = FALSE),
-    unlist(scenario1_S_B_contribution_recombined_first_col, recursive = FALSE))
-
-
-
-scenario1_var_lambda_low_2yr <- sum(unlist(scenario1_var_lambda_low_elements[1:12]))
-scenario1_var_lambda_low_3yr <- sum(unlist(scenario1_var_lambda_low_elements[13:30]))
-scenario1_var_lambda_low_4yr <- sum(unlist(scenario1_var_lambda_low_elements[31:54]))
-```
-
-
-```{r scenario1-var-annualized-lambda, echo=FALSE}
-# combine all variance into a data frame and calculate annualized lambda's var
-
-scenario1_annualized_lambda_df_long$Rotation_var_lambda <- c(scenario1_var_lambda_conv_2yr,
-                                      scenario1_var_lambda_low_2yr,
-                                      scenario1_var_lambda_conv_3yr,
-                                      scenario1_var_lambda_low_3yr,
-                                      scenario1_var_lambda_conv_4yr,
-                                      scenario1_var_lambda_low_4yr)
-
-# add multiplier to the var table
-scenario1_annualized_lambda_df_long$multiplier <- c(1/4, 1/4, 1/9, 1/9, 1/16, 1/16)
-
-
-
-# how to explain negative variance components?
-
-
-# combine lambda, var(lambda), and *variance contribution* and rename the data frame
-scenario1_annualized_lambda_and_var <- scenario1_annualized_lambda_df_long %>%
-  mutate(squared_annualized_lambda = annualized_lambda^2,
-         var_annualized_lambda = multiplier * Rotation_var_lambda/squared_annualized_lambda,
-         Scenario = "1") %>%
-  select(Scenario, .id, Corn_weed_management, annualized_lambda, var_annualized_lambda)
-
-
-## subset all the lists
-#View( scenario1_annualized_lambda_and_var)
-#https://community.rstudio.com/t/subset-a-nested-list-to-get-all-the-lower-level-lists-with-the-same-characters-in-their-names/138320
-
-```
 
 ```{r scenario1-phase-wise-lambda, include=FALSE}
 scenario1_phase_lambda <-  scenario1_phase_projection_trimmed %>% 
@@ -930,6 +809,7 @@ scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
                       rep(" ", 13)))
  #        Year_Crop = paste(Year, Sequence, sep = "_")) # using "/" as a sep will break the x-axis border later
 
+#View(scenario1_annualized_lambda_df_long)
 # View( scenario1_phase_seed_vectors_long)
 
 
@@ -938,12 +818,12 @@ scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
 # View(scenario1_annualized_lambda_and_var )
 # https://stackoverflow.com/questions/72426613/individual-text-box-with-greek-letter-on-each-facet-grid-panel/72426740#72426740
 lambda_label <- data.frame(
-  label = c("\u03BB = 0.567 (1663.3) \n \u03BB(C2) = 0.63 \n \u03BB(S2) = 0.52", 
-            "\u03BB = 0.544 (46598.7) \n \u03BB(C3) = 0.59 \n \u03BB(S3) = 0.53 \n \u03BB(O3) = 0.53",
-            "\u03BB = 0.701 (268.9) \n \u03BB(C4) = 3.24 \n \u03BB(S4) = 0.52 \n \u03BB(O4) = 0.52, \n \u03BB(A4) = 0.53",
-            "\u03BB = 0.537 (1876.0) \n \u03BB(C2) = 0.55 \n \u03BB(S2) = 0.52",
-            "\u03BB = 0.542 (46996.3) \n \u03BB(C3) = 0.59 \n \u03BB(S3) = 0.52 \n \u03BB(O3) = 0.54", 
-            "\u03BB = 0.968 (141.3) \n \u03BB(C4) = 14.34 \n \u03BB(S4) = 0.52 \n \u03BB(O4) = 0.52, \n \u03BB(A4) = 0.53"),
+  label = c("\u03BB(2,conv) = 0.57 \n \u03BB(C2,conv) = 0.63 \n \u03BB(S2,conv) = 0.52", 
+            "\u03BB(3,conv) = 0.54 \n \u03BB(C3,conv) = 0.59 \n \u03BB(S3,conv) = 0.53 \n \u03BB(O3,conv) = 0.53",
+            "\u03BB(4,conv) = 0.70 \n \u03BB(C4, conv) = 3.24 \n \u03BB(S4,conv) = 0.52 \n \u03BB(O4,conv) = 0.52, \n \u03BB(A4,conv) = 0.53",
+            "\u03BB(2,low) = 0.54 \n \u03BB(C2,low) = 0.55 \n \u03BB(S2,low) = 0.52",
+            "\u03BB(3,low) = 0.54 \n \u03BB(C3,low) = 0.59 \n \u03BB(S3,low) = 0.54 \n \u03BB(O3,low) = 0.52", 
+            "\u03BB(4,low) = 0.97 \n \u03BB(C4,low) = 14.34 \n \u03BB(S4,low) = 0.52 \n \u03BB(O4,low) = 0.52, \n \u03BB(A4,low) = 0.53"),
   Rotation = rep(c("2-year", "3-year", "4-year"), 2),
   Corn_weed_management = rep(c("conventional", "low"), 3),
   Stratum = rep("placeholder", 6) #need this placeholder for the geom_text in the code chain below to run
@@ -951,24 +831,25 @@ lambda_label <- data.frame(
 
 ## reverse legend: https://www.geeksforgeeks.org/reversing-the-order-of-a-ggplot2-legend/
 scenario1_phase_seed_vectors_long  %>% 
+  mutate(ln_Count = log(Count + 1)) %>%
   ggplot() +
-   aes(x = Year, y = Count, group = Stratum) +
-  geom_line(aes(y = Count, linetype =  Stratum)) +
-  geom_point(aes(y = Count, shape =  Stratum)) +
-  geom_hline(aes(yintercept = 1000, color = "baseline")) +
+   aes(x = Year, y = ln_Count, group = Stratum) +
+  geom_line(aes(y = ln_Count, linetype =  Stratum)) +
+  geom_point(aes(y = ln_Count, shape =  Stratum)) +
+  geom_hline(aes(yintercept = log(1001), color = "baseline")) +
   facet_wrap(Rotation ~ Corn_weed_management, ncol = 2, labeller = label_wrap_gen(multi_line=FALSE)) + 
   scale_x_continuous(breaks = scales::pretty_breaks(n = 13)) + #don't need this with as.factor(Year)
   labs(x = "Crop species abbreviation and model year",   #/
-       y= expression(paste("Seed density (", seeds~m^-2,")"))) +
+       y = expression(paste("ln(Seed density (seeds+1)",~m^-2,"))"))) +
 #  theme(axis.text.x = element_text(angle = 90)) +
   theme(legend.position = "bottom", legend.title = element_blank(),
         legend.key = element_rect(fill = "transparent", colour = "transparent"),
         panel.background=element_rect(fill="transparent",colour=NA),
       plot.background=element_rect(fill="transparent",colour=NA)) +
   #annotate("text", label = paste("\u03BB =", c("0.567 (1663.3)", "0.537 (1876.0)", "0.544 (46598.7)", "0.542 (46996.3)", "0.701 (268.9)", "0.968 (141.3)")) , size = 3, x = 8, y = 10000) +
-  geom_text(data = lambda_label, aes(label = label), size = 3, x = 8, y = 10500) +
+  geom_text(data = lambda_label, aes(label = label), size = 3, x = 2, y = 3) +
       geom_text(aes(x = Year, 
-                  y = 1800 ,  #leave space between bar and label
+                  y = 7.5 ,  #leave space between bar and label
                   label = Sequence), 
               size = 2.5) +
   guides(colour = "none") 
@@ -1125,20 +1006,20 @@ scenario1_E_B_emerge_recombine_wide <- scenario1_E_B_emerge_recombine %>%
   select(!rowname) %>% 
   pivot_wider(names_from = group, values_from = E_B_ij) %>%
   mutate(Scenario = 1)  %>%
-  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, seed_top:plant_cohort_6) %>%
+  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, s_t:p_co_6) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
                                ifelse(Crop == "O", 3, 4))))%>%
   arrange(Rotation, Order, Corn_weed_management) %>%
-  select(!c(Order, Crop, seed_bottom)) %>% #keep the relevant columns only 
+  select(!c(Order, Crop, s_b)) %>% #keep the relevant columns only 
  #  mutate_at(5:11, round, 2) %>%
-  rename("d" = seed_top,
-        "g_1" = plant_cohort_1,
-        "g_2" = plant_cohort_2,
-        "g_3" = plant_cohort_3,
-        "g_4" = plant_cohort_4,
-        "g_5" = plant_cohort_5,
-        "g_6" = plant_cohort_6)
+  rename("d" = s_t,
+        "g_1" = p_co_1,
+        "g_2" = p_co_2,
+        "g_3" = p_co_3,
+        "g_4" = p_co_4,
+        "g_5" = p_co_5,
+        "g_6" = p_co_6)
 
 #View(scenario1_E_B_emerge_recombine_wide) 
 ```
@@ -1190,21 +1071,21 @@ scenario1_E_B_summer_recombine_wide <- scenario1_E_B_summer_recombine %>%
   select(!rowname) %>% 
   pivot_wider(names_from = group, values_from = E_B_ij) %>%
   mutate(Scenario = 1) %>%
-  select(Scenario,  Rotation, Crop, Crop_ID, Corn_weed_management, seed_top:plant_cohort_6) %>%
+  select(Scenario,  Rotation, Crop, Crop_ID, Corn_weed_management, s_t:p_co_6) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
                                ifelse(Crop == "O", 3, 4)))) %>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop)) %>% 
   #  mutate_at(5:12, round, 2)  %>%
-  rename("s_s1" = seed_top,
-         "s_s2" = seed_bottom,
-        "s_p1" = plant_cohort_1,
-        "s_p2" = plant_cohort_2,
-        "s_p3" = plant_cohort_3,
-       "s_p4" = plant_cohort_4,
-        "s_p5" = plant_cohort_5,
-        "s_p6" = plant_cohort_6)
+  rename("s_s1" = s_t,
+         "s_s2" = s_b,
+        "s_p1" = p_co_1,
+        "s_p2" = p_co_2,
+        "s_p3" = p_co_3,
+       "s_p4" = p_co_4,
+        "s_p5" = p_co_5,
+        "s_p6" = p_co_6)
 
 
 #View(scenario1_E_B_summer_recombine_wide) 
@@ -1234,7 +1115,7 @@ scenario1_E_B_fecund_conv_unlist <- scenario1_E_B_fecund_conv %>%
          group = substring(rowname, 74),
          Crop = substr(rowname, 37, 37),
          Rotation = paste0(substr(rowname, 28, 28),"-year"))  %>%
-  filter(group != c("seed_top", "seed_bottom")) # keep the relevant numbers only 
+  filter(group != c("s_t", "s_b")) # keep the relevant numbers only 
 
 # View(scenario1_E_B_fecund_conv_unlist)
 scenario1_E_B_fecund_low_unlist <- scenario1_E_B_fecund_low %>% 
@@ -1247,7 +1128,7 @@ scenario1_E_B_fecund_low_unlist <- scenario1_E_B_fecund_low %>%
          group = substring(rowname, 72),
          Crop = substr(rowname, 36, 36),
          Rotation = paste0(substr(rowname, 28, 28),"-year"))  %>%
-  filter(group != c("seed_top", "seed_bottom")) # keep the relevant numbers only 
+  filter(group != c("s_t", "s_b")) # keep the relevant numbers only 
 
 # recombine conv and low 
 scenario1_E_B_fecund_recombine <- rbind(scenario1_E_B_fecund_conv_unlist, scenario1_E_B_fecund_low_unlist)
@@ -1256,19 +1137,19 @@ scenario1_E_B_fecund_recombine_wide <- scenario1_E_B_fecund_recombine %>%
   select(!rowname) %>% 
   pivot_wider(names_from = group, values_from = E_B_ij) %>%
   mutate(Scenario = 1) %>%
-  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, plant_cohort_1:plant_cohort_6) %>%
+  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, p_co_1:p_co_6) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
                                ifelse(Crop == "O", 3, 4)))) %>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop))  %>%
 #   mutate_at(5:10, round, 2)  %>%
-  rename("f_1" = plant_cohort_1,
-        "f_2"= plant_cohort_2,
-        "f_3" = plant_cohort_3,
-        "f_4" = plant_cohort_4,
-        "f_5" = plant_cohort_5,
-        "f_6" = plant_cohort_6)
+  rename("f_1" = p_co_1,
+        "f_2"= p_co_2,
+        "f_3" = p_co_3,
+        "f_4" = p_co_4,
+        "f_5" = p_co_5,
+        "f_6" = p_co_6)
 
 #View(scenario1_E_B_fecund_recombine_wide)
 ```
@@ -1399,15 +1280,15 @@ scenario1_E_B_overwinter_recombine_wide <- scenario1_E_B_overwinter_recombine %>
   select(!rowname) %>% 
   pivot_wider(names_from = group, values_from = E_B_ij) %>%
   mutate(Scenario = 1) %>%
-  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, seed_top, seed_bottom) %>%
+  select(Scenario, Rotation, Crop, Crop_ID, Corn_weed_management, s_t, s_b) %>%
   mutate(Order = ifelse(Crop == "C", 1,
                         ifelse(Crop == "S", 2,
                                ifelse(Crop == "O", 3, 4))))%>%
   arrange(Rotation, Order, Corn_weed_management) %>%
   select(!c(Order, Crop)) %>%
 #   mutate_at(5:6, round, 2)  %>%
-  rename("o_11" = seed_top,
-         "o_22"= seed_bottom)
+  rename("o_11" = s_t,
+         "o_22"= s_b)
 
 # View(scenario1_E_B_overwinter_recombine_wide)
 ```
