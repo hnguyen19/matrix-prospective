@@ -1,5 +1,5 @@
 ---
-title: "Effects of crop rotation on common waterhemp population dynamics: A prospective and retrospective analysis"
+title: "Effects of crop rotation on common waterhemp population dynamics: prospective and retrospective analyses"
 output:
     bookdown::word_document2:
       toc: false
@@ -35,14 +35,13 @@ theme_set(theme_bw())
 ```
 
 # Results and discussion {-}
-All the multi-year variables failed the Levene's test for equal variance so those data was analyzed by year.  
+All the multi-year variables failed the Levene's test for equal variance so those data were analyzed by year.  
 
 ## Waterhemp sub-annual demographic parameters from empirical measurement {-}
 
 ### Seedling emergence pattern and timing {-}
-The empirically measured emergence rates in C4 were deemed unrealistic as compared to the published literature [], so those numbers were replaced with 0.05. The inflated emergence rates might resulted from low precision of seedbank density assessment.  
 
-Within the same calendar year, whole-season and cohort-based seedling densities were lower in the warm-season crops than in the cool-season crops (Tables \@ref(tab:Julian-19-20-emm) and \@ref(tab:seedlings-density-19-20)). Seedling emergence was delayed in the cool-season crops as compared to that in the warm-season crops (Tables \@ref(tab:Julian-19-20-emm) and \@ref(tab:Julian-19-20-ct-tab)). Waterhemp emergence was delayed by two weeks to a month in alfalfa crop environment as compared to corn and soybean environments. Waterhemp emergence was nine to sixteen days earlier in oat than that in alfalfa.    
+Within the same calendar year, cumulative whole-season and cohort-based seedling densities were lower in the warm-season crops than in the cool-season crops (Tables \@ref(tab:Julian-19-20-emm) and \@ref(tab:seedlings-density-19-20)). Seedling emergence was delayed in the cool-season crops as compared to that in the warm-season crops (Tables \@ref(tab:Julian-19-20-emm) and \@ref(tab:Julian-19-20-ct-tab)). Waterhemp emergence was delayed by two weeks to a month in the alfalfa crop environment as compared to corn and soybean environments. Waterhemp emergence was nine to sixteen days earlier in oat than that in alfalfa.    
 
 ```{r, child= "~/Documents/Dissertation/AMATA-demography/4-Analysis/emergence-pattern-timing-Julian.Rmd"}
 # diagnosis plots still look concerning
@@ -58,12 +57,14 @@ Within the same calendar year, whole-season and cohort-based seedling densities 
 
 ## Waterhemp population growth rates {-}
 
+In 2019, individual plant size at maturity was measured for six cohorts in each quadrat of each eu and two stratum of soil seedbank were estimated between crop harvest and post-harvest tillage. In 2018, a different number of cohorts were followed in different crop environments because of limited labor availability and adverse weather conditions. 2019 data was used as scenario 1. 
+
 ### Scenario 1 {-}
 Using 2019 fecundity rates that were estimated from individual plant size using eighteen equations from @nguyenImpactCroppingSystem2022, waterhemp population densities were projected to decrease in all rotations, most quickly in the 2-year rotation under low herbicide corn weed management and the 3-year rotation under both corn weed management programs (Figure \@ref(fig:scenario1-phase-wise-lambda-plot)). $\lambda$'s decreased right after the first phase of the 2-year (C2) and 3-year (C3) rotations, but increased in the first phase of the 4-year rotation (C4) by three ($\lambda(C4,low)$ = 3.24) to fourteen ($\lambda(C4,low)$ = 14.34) fold. The steady decrease of population density in the soybean, oat, and alfalfa phases ($\lambda$'s = 0.5) of the 4-year rotation were sufficient to keep the rotation-wise populations decreasing within a four year cycle even if $\lambda$ increased again when the cropping system returned to the corn phase. The majority of the seedbank in the 4-year rotation was in the 2-20 cm stratum, limiting the seed pool density for seedling emergence.   
 
 ### Scenario 2 {-}
 
-Using 2018 fecundity rates, waterhemp population densities would increase rapidly in all rotations, but most quickly in the 2-year rotation (Figure \@ref(fig:scenario2-phase-wise-lambda-plot)). The population increase in the 3-year rotation under low herbicide corn weed management was similar to that of the 4-year rotation. Even though $\lambda(r)$ were all increasing, the partition of seedbanks differed between rotations. Within the same rotation, a consistent pattern of top:bottom ratios of seed densities was observed between two corn weed management regimes. In the 2-year rotation, a large portion of the seedbanks were at the 0-2 cm soil stratum; in the 3-year rotation, the top and bottom soil strata were fairly evenly populated; and in the 4-year rotation, the majority of the seedbanks were at the bottom stratum.   
+Using 2018 fecundity rates, waterhemp population densities would increase rapidly in all rotations, but most quickly in the 2-year rotation (Figure \@ref(fig:scenario2-phase-wise-lambda-plot)). The population increase in the 3-year rotation under low herbicide corn weed management was similar to that of the 4-year rotation. Even though $\lambda(r)$ were all increasing, the partition of seedbanks differed between rotations. Within the same rotation, a consistent pattern of top:bottom ratios of seed densities was observed between two corn weed management regimes. In the 2-year rotation, a large portion of the seedbanks were in the 0-2 cm soil stratum; in the 3-year rotation, the top and bottom soil strata were fairly evenly populated; and in the 4-year rotation, the majority of the seedbanks were at the bottom stratum.   
 
 The oat phase of the 3-year rotation (O3) and the alfalfa phase of the 4-year rotation (A4) offered opportunities for decreasing $\lambda$, which was not possible in any other crop phases in the three examined rotations. However, the declines in $\lambda(r)$'s in O3 ($\lambda(O3,low)$ = 0.68) and A4 ($\lambda(A4,low)$ = 0.60) were not strong enough to deplete the replenishment from the corn ($\lambda(C3,low)$ = 2553 and $\lambda(C4,low)$ = 35676.54) and soybean phases ($\lambda(S3,low)$ = 14567.90 and $\lambda(S4,low)$ = 30.20). 
 
