@@ -64,7 +64,8 @@ mean_after_spring_tillage_pop_scenario1_df <- mean_after_spring_tillage_pop_scen
   unlist(use.names = TRUE) %>%
   as.data.frame() %>%
   rownames_to_column("matrix_id") %>% 
-  rename(top_stratum_density = ".")
+  rename(top_stratum_density = ".") %>%
+  mutate(top_stratum_female_density = top_stratum_density/2) #assume 1:1 male:female
 
 
 #mean_after_spring_tillage_pop_scenario1_dummy <-  lapply(split(mean_after_spring_tillage_pop_scenario1_df, mean_after_spring_tillage_pop_scenario1_df$matrix_id),
@@ -95,43 +96,43 @@ emerge_20_mean_wide <- emerge_20_mean_df %>%
 ## Theoretically, the covariance of top and bottom seeds props are non-zeros, but this particular matrix only concerns the relationships of the top stratum and 6 seedling cohorts. 
 emerge_prop_20 <- emerge_20_mean_wide %>% 
   left_join(mean_after_spring_tillage_pop_scenario1_df, by = "matrix_id") %>%
-  mutate(cohort1_mean_prop = `1`/top_stratum_density,
-         cohort2_mean_prop = `2`/top_stratum_density,
-         cohort3_mean_prop = `3`/top_stratum_density,
-         cohort4_mean_prop = `4`/top_stratum_density,
-         cohort5_mean_prop = `5`/top_stratum_density,
-         cohort6_mean_prop = `6`/top_stratum_density,
+  mutate(cohort1_mean_prop = `1`/top_stratum_female_density,
+         cohort2_mean_prop = `2`/top_stratum_female_density,
+         cohort3_mean_prop = `3`/top_stratum_female_density,
+         cohort4_mean_prop = `4`/top_stratum_female_density,
+         cohort5_mean_prop = `5`/top_stratum_female_density,
+         cohort6_mean_prop = `6`/top_stratum_female_density,
          top_mean_remain_prop = 1-(cohort1_mean_prop + cohort2_mean_prop + cohort3_mean_prop +
                                      cohort4_mean_prop + cohort5_mean_prop + cohort6_mean_prop)) %>%
   mutate(top_var_remain_prop = top_mean_remain_prop*(1-top_mean_remain_prop)*top_stratum_density,
          bottom_var = 0,
-         cohort1_var_prop = cohort1_mean_prop*(1 - cohort1_mean_prop)*top_stratum_density,
-         cohort2_var_prop = cohort2_mean_prop*(1 - cohort2_mean_prop)*top_stratum_density,
-         cohort3_var_prop = cohort3_mean_prop*(1 - cohort3_mean_prop)*top_stratum_density,
-         cohort4_var_prop = cohort4_mean_prop*(1 - cohort4_mean_prop)*top_stratum_density,
-         cohort5_var_prop = cohort5_mean_prop*(1 - cohort5_mean_prop)*top_stratum_density,
-         cohort6_var_prop = cohort6_mean_prop*(1 - cohort6_mean_prop)*top_stratum_density) %>%
-  mutate(top_cohort1_covar = -top_mean_remain_prop*cohort1_mean_prop/top_stratum_density,
-         top_cohort2_covar = -top_mean_remain_prop*cohort2_mean_prop/top_stratum_density,
-         top_cohort3_covar = -top_mean_remain_prop*cohort3_mean_prop/top_stratum_density,
-         top_cohort4_covar = -top_mean_remain_prop*cohort4_mean_prop/top_stratum_density,
-         top_cohort5_covar = -top_mean_remain_prop*cohort5_mean_prop/top_stratum_density,
-         top_cohort6_covar = -top_mean_remain_prop*cohort6_mean_prop/top_stratum_density,
-         cohort1_2_covar = -cohort1_mean_prop*cohort2_mean_prop/top_stratum_density,
-         cohort1_3_covar = -cohort1_mean_prop*cohort3_mean_prop/top_stratum_density,
-         cohort1_4_covar = -cohort1_mean_prop*cohort4_mean_prop/top_stratum_density,
-         cohort1_5_covar = -cohort1_mean_prop*cohort5_mean_prop/top_stratum_density,
-         cohort1_6_covar = -cohort1_mean_prop*cohort6_mean_prop/top_stratum_density,
-         cohort2_3_covar = -cohort2_mean_prop*cohort3_mean_prop/top_stratum_density,
-         cohort2_4_covar = -cohort2_mean_prop*cohort4_mean_prop/top_stratum_density,
-         cohort2_5_covar = -cohort2_mean_prop*cohort5_mean_prop/top_stratum_density,
-         cohort2_6_covar = -cohort2_mean_prop*cohort6_mean_prop/top_stratum_density,
-         cohort3_4_covar = -cohort3_mean_prop*cohort4_mean_prop/top_stratum_density,
-         cohort3_5_covar = -cohort3_mean_prop*cohort5_mean_prop/top_stratum_density,
-         cohort3_6_covar = -cohort3_mean_prop*cohort6_mean_prop/top_stratum_density,
-         cohort4_5_covar = -cohort4_mean_prop*cohort5_mean_prop/top_stratum_density,
-         cohort4_6_covar = -cohort4_mean_prop*cohort6_mean_prop/top_stratum_density,
-         cohort5_6_covar = -cohort5_mean_prop*cohort6_mean_prop/top_stratum_density)
+         cohort1_var_prop = cohort1_mean_prop*(1 - cohort1_mean_prop)*top_stratum_female_density,
+         cohort2_var_prop = cohort2_mean_prop*(1 - cohort2_mean_prop)*top_stratum_female_density,
+         cohort3_var_prop = cohort3_mean_prop*(1 - cohort3_mean_prop)*top_stratum_female_density,
+         cohort4_var_prop = cohort4_mean_prop*(1 - cohort4_mean_prop)*top_stratum_female_density,
+         cohort5_var_prop = cohort5_mean_prop*(1 - cohort5_mean_prop)*top_stratum_female_density,
+         cohort6_var_prop = cohort6_mean_prop*(1 - cohort6_mean_prop)*top_stratum_female_density) %>%
+  mutate(top_cohort1_covar = -top_mean_remain_prop*cohort1_mean_prop/top_stratum_female_density,
+         top_cohort2_covar = -top_mean_remain_prop*cohort2_mean_prop/top_stratum_female_density,
+         top_cohort3_covar = -top_mean_remain_prop*cohort3_mean_prop/top_stratum_female_density,
+         top_cohort4_covar = -top_mean_remain_prop*cohort4_mean_prop/top_stratum_female_density,
+         top_cohort5_covar = -top_mean_remain_prop*cohort5_mean_prop/top_stratum_female_density,
+         top_cohort6_covar = -top_mean_remain_prop*cohort6_mean_prop/top_stratum_female_density,
+         cohort1_2_covar = -cohort1_mean_prop*cohort2_mean_prop/top_stratum_female_density,
+         cohort1_3_covar = -cohort1_mean_prop*cohort3_mean_prop/top_stratum_female_density,
+         cohort1_4_covar = -cohort1_mean_prop*cohort4_mean_prop/top_stratum_female_density,
+         cohort1_5_covar = -cohort1_mean_prop*cohort5_mean_prop/top_stratum_female_density,
+         cohort1_6_covar = -cohort1_mean_prop*cohort6_mean_prop/top_stratum_female_density,
+         cohort2_3_covar = -cohort2_mean_prop*cohort3_mean_prop/top_stratum_female_density,
+         cohort2_4_covar = -cohort2_mean_prop*cohort4_mean_prop/top_stratum_female_density,
+         cohort2_5_covar = -cohort2_mean_prop*cohort5_mean_prop/top_stratum_female_density,
+         cohort2_6_covar = -cohort2_mean_prop*cohort6_mean_prop/top_stratum_female_density,
+         cohort3_4_covar = -cohort3_mean_prop*cohort4_mean_prop/top_stratum_female_density,
+         cohort3_5_covar = -cohort3_mean_prop*cohort5_mean_prop/top_stratum_female_density,
+         cohort3_6_covar = -cohort3_mean_prop*cohort6_mean_prop/top_stratum_female_density,
+         cohort4_5_covar = -cohort4_mean_prop*cohort5_mean_prop/top_stratum_female_density,
+         cohort4_6_covar = -cohort4_mean_prop*cohort6_mean_prop/top_stratum_female_density,
+         cohort5_6_covar = -cohort5_mean_prop*cohort6_mean_prop/top_stratum_female_density)
 
 ### Mean matrix list 
 mean_emerge_prop_20 <- emerge_prop_20 %>%
@@ -158,7 +159,7 @@ mean_emergence_prop_matrix_list <- lapply(split(mean_emerge_prop_20, mean_emerge
        cbind(matrix(x$mean_emerge_prop, nrow = 6, ncol = 1),matrix(0,nrow =6, ncol=7))))
 
 ### write the emergence proportion matrix
- saveRDS(mean_emergence_prop_matrix_list , file="../2-Data/Clean/mean-emergence-prop.RData")
+# saveRDS(mean_emergence_prop_matrix_list , file="../2-Data/Clean/mean-emergence-prop.RData")
 
 ### Var-covar matrix list
 
