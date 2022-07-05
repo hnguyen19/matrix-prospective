@@ -29,7 +29,7 @@ source("functions.R")
 mean_spring_tillage <-  readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
 
 ## Emergence 
-scenario2_mean_emergence <- readRDS("../2-Data/Clean/mean-emergence-prop-scenario1.RData")
+scenario2_mean_emergence <- readRDS("../2-Data/Clean/mean-emergence-prop.RData")
 
 ## Seed survival and plant survival 
 #### seed survival 
@@ -788,7 +788,7 @@ scenario2_phase_lambda <-  scenario2_phase_projection_trimmed %>%
 # View(scenario2_phase_lambda )
 ```
 
-```{r scenario2-phase-wise-lambda-plot, echo=FALSE, fig.width= 8, fig.height= 12, fig.cap= "Scenario 1: Changes of natural-logarithm of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). Seed densities were natural-logarithm transformed because of scales. The model started at year 0 with 1000 and 0 seeds per squared meter at the top (0 - 2 cm) and bottom (2 - 20 cm) strata, respectively. The red horizontal line shows the number of seeds at the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
+```{r scenario2-phase-wise-lambda-plot, echo=FALSE, fig.width= 8, fig.height= 12, fig.cap= "Scenario 1: Changes of natural-logarithm of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). Seed densities were natural-logarithm transformed because of scales. The model started at year 0 with 1000 and 0 seeds per squared meter in the top (0 - 2 cm) and bottom (2 - 20 cm) strata, respectively. The red horizontal line shows the number of seeds at the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
 #The annualized population growth rates are followed by their variances in brackets. The models years are followed by the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa.
 
 #scenario2_phase_seed_vectors$Sequence <- c(rep("start-C-S-C-S-C-S-C-S-C-S-C-S",2),
@@ -822,12 +822,12 @@ scenario2_phase_seed_vectors_long <- scenario2_phase_seed_vectors %>%
 # View(scenario2_annualized_lambda_and_var )
 # https://stackoverflow.com/questions/72426613/individual-text-box-with-greek-letter-on-each-facet-grid-panel/72426740#72426740
 lambda_label <- data.frame(
-  label = c("\u03BB(2,conv) = 38.12, \n \u03BB(C2,conv) = 3.46, \n \u03BB(S2,conv) = 432.00",
-            "\u03BB(3,conv) = 18.96,  \n \u03BB(C3,conv) = 5.56, \n \u03BB(S3,conv) = 6680.54, \n \u03BB(O3,conv) = 0.56", 
-            "\u03BB(4,conv) = 5.07,  \n \u03BB(C4,conv) = 86.57, \n \u03BB(S4,conv) = 40.41, \n \u03BB(O4,conv) = 0.53, \n \u03BB(A4,conv) = 0.62",
-            "\u03BB(2,low) = 61.83,  \n \u03BB(C2,low) = 16.41, \n \u03BB(S2,low) = 234.12", 
-            "\u03BB(3,low) = 8.05, \n \u03BB(C3,low) = 1.20 \n \u03BB(S3,low) = 2181.11, \n \u03BB(O3,low) = 0.55",
-            "\u03BB(4,low) = 2.10,  \n \u03BB(C4,low) = 43.74, \n \u03BB(S4,low) = 5.25, \n \u03BB(O4,low) = 0.54, \n \u03BB(A4,low) = 0.54"),
+  label = c("\u03BB(2,conv) = 74.78, \n \u03BB(C2,conv) = 6.56, \n \u03BB(S2,conv) = 863.69",
+            "\u03BB(3,low) = 12.10, \n \u03BB(C3,low) = 2.00 \n \u03BB(S3,low) = 4361.91, \n \u03BB(O3,low) = 0.56",
+            "\u03BB(4,conv) = 8.24,  \n \u03BB(C4,conv) = 172.81, \n \u03BB(S4,conv) = 80.51, \n \u03BB(O4,conv) = 0.54, \n \u03BB(A4,conv) = 0.70",
+            "\u03BB(2,low) = 123.13,  \n \u03BB(C2,low) = 32.48, \n \u03BB(S2,low) = 467.93", 
+                        "\u03BB(3,conv) = 31.15,  \n \u03BB(C3,conv) = 10.77, \n \u03BB(S3,conv) = 13360.77, \n \u03BB(O3,conv) = 0.60", 
+            "\u03BB(4,low) = 3.98,  \n \u03BB(C4,low) = 87.14, \n \u03BB(S4,low) = 10.18, \n \u03BB(O4,low) = 0.57, \n \u03BB(A4,low) = 0.54"),
   Rotation = rep(c("2-year", "3-year", "4-year"), 2),
   Corn_weed_management = rep(c("conventional", "low"), 3),
   Stratum = rep("placeholder", 6) #need this placeholder for the geom_text in the code chain below to run
@@ -856,7 +856,7 @@ scenario2_phase_seed_vectors_long  %>%
       plot.background=element_rect(fill="transparent",colour=NA)) +
   geom_text(data = lambda_label, aes(label = label), x = 6, y = 40, size = 3) + 
         geom_text(aes(x = Year, 
-                  y = 55,  #leave space between bar and label
+                  y = 62,  #leave space between bar and label
                   label = Sequence), 
               size = 2.5) +
   guides(colour = "none") 
@@ -1331,7 +1331,7 @@ scenario2_E_B_recombine_wide_ranked <- data.frame(scenario2_E_B_recombine_wide[,
 ```
 
 
-```{r scenario2-E-B-by-rot-rank, echo = FALSE,  fig.cap = "Scenario 2: Elasticity of annualized population growth rates to changes in lower-level demographic parameters. Bar height represents parameter's ranking. Each bar is labeled with the natural lograrithm of absolute value of the contribution of the parameter to elasticity of annualized population growth rates (-Inf labels indicates the parameters whose contribution to elasticity of lambda were zero). Crop identities are color-coded by crop species. From left to right of the x-axis, the sub-annual demographic parameters are: t_11_s - probability that a seed at the 0-2 cm soil stratum stay at that statum after pre-planting tillage; t_21_s - probability that a seed at the 2-20 cm soil stratum move to the 0-2 cm soil stratum after pre-planting tillage; t_12_s - probability that a seed at the 0-2 cm soil stratum move to the 2-20 cm stratum after pre-planting tillage; and t_22_s - probability that a seed at the 2-20 cm soil stratum stay at that statum after pre-planting tillage; d - the probability that a seed is not germinating; g_1 through g_6: the probabiblites that a seed emerge to seedling cohorts 1 through 6; s_s1 and s_s2 - the survival rate of seeds at the 0-2 cm and 2-20 cm soil strata in the cropped season; s_p1 through s_p6: the probability that seedling cohorts 1 through 6 reach reproductive maturity; f_1 through f_6 - the fecundity rates of mature plant cohorts 1 through 6; t_11_f - probability that a seed at the 0-2 cm soil stratum stay at that statum after post-harvest tillage; t_21_f - probability that a seed at the 2-20 cm soil stratum move to the 0-2 cm soil stratum after post-harvest tillage; t_12_f - probability that a seed at the 0-2 cm soil stratum move to the 2-20 cm stratum after post-harvest tillage; and t_22_f - probability that a seed at the 2-20 cm soil stratum stay at that statum after post-harvest tillage; o_11 and o_12 - overwiter survival rates in the 0-2 cm and 2-20 cm soil strata." , fig.height= 16, fig.width=12}
+```{r scenario2-E-B-by-rot-rank, echo = FALSE,  fig.cap = "Scenario 2: Elasticity of annualized population growth rates to changes in lower-level demographic parameters. Bar height represents parameter's ranking. Each bar is labeled with the absolute value of the contribution of the parameter to elasticity of annualized population growth rates (zeros on top of some of the medium height bars were due to rounding). Crop identities are color-coded by crop species. From left to right of the x-axis, the sub-annual demographic parameters are: t_11_s - probability that a seed at the 0-2 cm soil stratum stay at that statum after pre-planting tillage; t_21_s - probability that a seed at the 2-20 cm soil stratum move to the 0-2 cm soil stratum after pre-planting tillage; t_12_s - probability that a seed at the 0-2 cm soil stratum move to the 2-20 cm stratum after pre-planting tillage; and t_22_s - probability that a seed in the 2-20 cm soil stratum stay at that statum after pre-planting tillage; d - the probability that a seed is not germinating; g_1 through g_6: the probabiblites that a seed emerge to seedling cohorts 1 through 6; s_s1 and s_s2 - the survival rate of seeds in the 0-2 cm and 2-20 cm soil strata in the cropped season; s_p1 through s_p6: the probability that seedling cohorts 1 through 6 reach reproductive maturity; f_1 through f_6 - the fecundity rates of mature plant cohorts 1 through 6; t_11_f - probability that a seed in the 0-2 cm soil stratum stay at that statum after post-harvest tillage; t_21_f - probability that a seed in the 2-20 cm soil stratum move to the 0-2 cm soil stratum after post-harvest tillage; t_12_f - probability that a seed in the 0-2 cm soil stratum move to the 2-20 cm stratum after post-harvest tillage; and t_22_f - probability that a seed in the 2-20 cm soil stratum stay at that statum after post-harvest tillage; o_11 and o_12 - overwiter survival rates in the 0-2 cm and 2-20 cm soil strata." , fig.height= 16, fig.width=12, message=FALSE, warning=FALSE}
 ## Prepare bar labels (with absolute values of E_B)
 
 scenario2_E_B_recombine_long <- scenario2_E_B_recombine_wide %>%
@@ -1345,7 +1345,8 @@ scenario2_E_B_recombine_ranked_long <- scenario2_E_B_recombine_wide_ranked %>%
 
 scenario2_E_B_recombine_ranked_value <- scenario2_E_B_recombine_ranked_long %>% 
   left_join(scenario2_E_B_recombine_long) %>%
-  mutate(ln_Value = log(Value),
+  mutate(Value_rounded = as.character(round(Value,2)),
+         ln_Value = log(Value),
          ln_Value_rounded = as.character(round(ln_Value, 2)))
 
 
@@ -1376,12 +1377,12 @@ ggplot(aes(x=Parameter, y=Rank, fill = Crop)) +
   geom_bar(stat = "identity") +
     scale_fill_brewer(palette = "Set1") +
     geom_text(aes(x = Parameter, 
-                  y = Rank + 5,  #leave space between bar and label
-                  label = ln_Value_rounded), 
+                  y = 50,  #leave space between bar and label
+                  label = Value_rounded), 
               angle = 90,
               size = 2.5) +
   facet_grid(Crop_ID ~ Corn_weed_management) +
-  ylim(0, 40) +
+  ylim(0, 70) +
   labs(x = "Parameter",
        y= expression(paste("Elasticity of ", lambda, " to changes in lower-level demographic parameters"))) +
   theme(axis.text.x = element_text(angle = 45)) +
