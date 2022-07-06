@@ -25,7 +25,7 @@ emergence_scenario1 <- readRDS("../2-Data/Clean/emergence-prop-scenario1.RData")
 ## Seed survival and plant survival 
 #### seed survival 
 
-summer_seed_survival_scenario1  <- readRDS("../2-Data/Clean/summer-seed-survival-scenario1.RData")
+summer_seed_survival_scenario1  <- readRDS("../2-Data/Clean/summer-seed-survival-Harzler.RData")
 
 #### plant survival
 female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")

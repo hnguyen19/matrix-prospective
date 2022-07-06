@@ -34,7 +34,7 @@ mean_post_harvest_tillage_pop <- purrr::map2(mean_post_harvest_tillage, seed_col
 
 ```{r overwinter-seed-survival, include=FALSE}
 ## Scenario 1 - Sosnoskie et al., 2013
-mean_overwinter_scenario1 <- readRDS("../2-Data/Clean/mean-winter-seed-survival-scenario1.RData")
+mean_overwinter_scenario1 <- readRDS("../2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData")
 
 mean_over_winter_pop_scenario1 <- purrr::map2(mean_overwinter_scenario1, mean_post_harvest_tillage_pop, `%*%`)
 ```
