@@ -46,11 +46,9 @@ fecundity18_sb_log <- fecundity18_sb %>%
   group_by(Crop_ID, Corn_weed_management) %>% # pool all plants from the same CropID x Corn weed mgt
   mutate(quantile_Biomass = ntile(log_Biomass , 6),
          quantile_Seed = ntile(log_Seed, 6)) %>%
-  dplyr::mutate(tag = ifelse(quantile_Biomass > quantile_Seed, "mismatched", "matched"))  # check if Biomass and Seed quantiles are aligned
+  dplyr::mutate(tag = ifelse(quantile_Biomass == quantile_Seed, "matched", "mismatched"))  # check if Biomass and Seed quantiles are aligned  ONLY 202 are matched.
 
-#fecundity18_sb_log %>% filter(Crop_ID == "S2", Corn_weed_management == "low") %>% View()
 
-# nrow(fecundity18_sb_log %>% filter(tag == "mismatched")) # 86 entries with mismatched bins of biomass and seeds. The difference is one bin only. # 63 mismatched bins only, if all the plants were pooled
 
 ## Calculate quantile-means, with log and original data
 fecundity18_sb_log_quantile_summ <- fecundity18_sb_log %>%
