@@ -84,12 +84,23 @@ fecundity_mean_18_list <-  lapply(split(fecundity18_sb_log_quantile_summ, fecund
 # Estimated marginal means and var of 2018 fecundity 
 # Since the effects of corn weed management and crop identity on fecundity were mediated by biomass 
 # at = list(log_Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08), from cut(fecundity18_sb_log_quantile_summ$geometric_mean_Biomass, 5)
-# need to refine the cut() to reflect appropriate size bin partitioning, especially the big plants
+# cut(fecundity18_sb$Biomass, 5)
+# log_Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08) is equivalent to list(Biomass = c( 0.04, 0.28, 2.28, 18.36, 148.41, 1187.97)) CAN BE USE TO TEST AN EXTREME CASE
 
-# log_Biomass = c(-3.35, -1.26, 0.824, 2.91, 5, 7.08) is equivalent to list(Biomass = c( 0.04, 0.28, 2.28, 18.36, 148.41, 1187.97))
+# Refine the cut() to reflect appropriate size bin partitioning, especially the big plants:
+fecundity18_sb_ln_whole <- fecundity18_sb %>% 
+  mutate(ln_Biomass = log(Biomass + 0.005),
+         ln_Seed = log(Seed + 1)) %>%
+  mutate(quantile_Biomass = ntile(ln_Biomass , 6),
+         quantile_Seed = ntile(ln_Seed, 6)) %>%
+  group_by(quantile_Biomass) %>% 
+  summarize(grand_mean_Biomass = mean(Biomass))
+
+# New cut: fecundity18_sb_ln_whole$grand_mean_Biomass
+
 seeds_18_emm <- emmeans(allcrops.biom.seed.gls, ~ 
                        Crop_ID * Corn_weed_management | Biomass,
-                     at = list(Biomass = c( 0.04, 0.28, 2.28, 18.36, 148.41, 1187.97)),
+                     at = list(Biomass = fecundity18_sb_ln_whole$grand_mean_Biomass),
                      type = "response")  # 6 bins, as **pooled** by the whole experiment
 
 
@@ -115,8 +126,8 @@ fecundity_mean_18_list_emm <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$mat
 # saveRDS(fecundity_mean_18_list, file="../2-Data/Clean/mean-fecundity-18-cohort.RData")
 
 ## cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
-fecundity_var_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_id),
-       function(x) rbind(matrix(0,nrow = 2, ncol =8), cbind(matrix(0,nrow = 6, ncol = 2), diag(x$var_seed,6))))
+#fecundity_var_18_list <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_id),
+#       function(x) rbind(matrix(0,nrow = 2, ncol =8), cbind(matrix(0,nrow = 6, ncol = 2), diag(x$var_seed,6))))
          
 
 
