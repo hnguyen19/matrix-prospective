@@ -170,6 +170,8 @@ View(N)
 ```
  
 ```{r}
+
+# calculate n[i+1]/n[i] for top and bottom seeds https://stackoverflow.com/questions/64027021/dividing-each-row-by-the-previous-one-in-r
 N_df <- N %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
