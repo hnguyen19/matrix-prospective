@@ -1,0 +1,154 @@
+---
+title: "Q1-fecund-prep"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+```
+
+```{r}
+# bring over the seed - biomass relationship from AMATA-fecundity, seed production allowance in A4 is a good start because lambda = 1.03
+fecundity18 <- read_csv("../2-Data/Clean/fecundity_18.csv", 
+    col_types = cols(Biomass = col_number(), 
+        Seed = col_number()), na = "empty")
+
+fecundity18$Crop_ID <- factor(fecundity18$Crop_ID, 
+                              levels = c("C2", "S2",
+                                         "C3", "S3", "O3",
+                                         "C4", "S4", "O4", "A4"))
+
+# Make sure that Block, Crop ID, Corn_weed_management, and bt are factors
+fecundity18  <- fecundity18   %<>%
+  mutate_at(c("Block","Crop_ID","Corn_weed_management", "bt"),funs(factor(.)))
+
+# sb stands for seed and biomass
+fecundity18_sb <- fecundity18[complete.cases(fecundity18$Seed, fecundity18$Biomass), ]
+
+fecundity18_sb_ln <- fecundity18_sb %>% 
+  mutate(ln_Biomass = log(Biomass + 0.005),
+         ln_Seed = log(Seed + 1)) %>%
+  group_by(Crop_ID, Corn_weed_management) %>% # pool all plants from the same CropID x Corn weed mgt
+  mutate(quantile_Biomass = ntile(ln_Biomass , 6),
+         quantile_Seed = ntile(ln_Seed, 6)) %>%
+  dplyr::mutate(tag = ifelse(quantile_Biomass == quantile_Seed,  "matched", "mismatched"))  # check if Biomass and Seed quantiles are aligned: ONLY 202 are matched.
+
+##
+fecundity18_seed_ln_q_mean <-  fecundity18_sb_ln %>%
+  group_by(Crop_ID, Corn_weed_management, quantile_Seed) %>%
+  summarize(mean_ln_Seed = mean(ln_Seed))
+```
+
+```{r ln-seed-bar, fig.cap= Summary of individual fecundity on natural logarithm in six quantiles", echo = FALSE}
+## since biomass is used to estimate fecundity, use biomass bins to partition data
+fecundity18_seed_ln_q_mean  %>% 
+  ggplot(aes(x = mean_ln_Seed, y = as.factor(quantile_Seed))) + 
+  facet_grid(Crop_ID ~ Corn_weed_management) +
+  geom_bar(stat = "identity") + 
+  ylab("Quantile") + 
+  xlab(expression(paste("mean of ln( ", Seed ,"+ 1)")))
+
+# fecundity18_seed_ln_q_mean %>% filter(Crop_ID == "A4") # 5.44/2.88 = 1.88; 3.16/2.32 = 1.36
+```
+```{r biom-seed-eq-copy}
+## overall quantile means, partition the original biomass by its geometric mean's quantile 
+fecundity18_sb_ln_whole <- fecundity18_sb %>% 
+  mutate(ln_Biomass = log(Biomass + 0.005),
+         ln_Seed = log(Seed + 1)) %>%
+  mutate(quantile_Biomass = ntile(ln_Biomass , 6),
+         quantile_Seed = ntile(ln_Seed, 6)) %>%
+  group_by(quantile_Biomass) %>% 
+  summarize(quant_n = n(),
+            grand_mean_Biomass = mean(Biomass))
+
+## copy of ancova model 
+allcrops.biom.seed.gls <- gls(log(Seed+1) ~ Block + 
+                                log(Biomass + 0.005) + 
+                                Crop_ID + Corn_weed_management +
+                      Crop_ID:Corn_weed_management +
+                      Crop_ID:log(Biomass + 0.005) +
+                        Corn_weed_management:log(Biomass + 0.005) +
+                      Crop_ID:Corn_weed_management:log(Biomass + 0.005),
+  correlation=corCompSymm(form= ~1 | bt), #identifies each treatment within block
+  data=fecundity18_sb)
+
+## seed crop ID x corn weed management influence on means
+sb_emm_6bin <- emmeans(allcrops.biom.seed.gls ,
+        ~ Crop_ID * Corn_weed_management | Biomass,
+        at = list(Biomass = fecundity18_sb_ln_whole$grand_mean_Biomass))
+
+sb_emm_6bin_df <- sb_emm_6bin %>% 
+  as.data.frame() %>%
+  rename(ln_Seed = "emmean",
+         SE_Seed = "SE")
+
+# regression with grand Biomass mean fecundity18_sb_ln_whole$grand_mean_ln_Biomass
+sb_emm_6bin_grand_mean <- emmeans(allcrops.biom.seed.gls , ~  Biomass,
+        at = list(Biomass = fecundity18_sb_ln_whole$grand_mean_Biomass))
+
+sb_emm_6bin_grand_mean_df <-  sb_emm_6bin_grand_mean %>% 
+  as.data.frame() %>%
+  rename(ln_Seed = "emmean",
+         SE_ln_Seed = "SE") %>%
+  mutate(var_ln_Seed = SE_ln_Seed^2,
+         raw_Seed = exp(ln_Seed + var_ln_Seed/2),
+         quant_n = fecundity18_sb_ln_whole$quant_n, # number of obs in each bin in the original data
+         sd_ln_Seed = SE_ln_Seed*sqrt(quant_n))
+```
+
+```{r fecund-rlnorm-guess}
+# Guess from sb_emm_6bin_grand_mean_df
+
+## Theoretical relationships: 
+# Raw_mean = exp(log scale mean + log scale variance/2).  Note: variance, not sd here.
+# (sd/raw_mean)*100 =  Coefficient_of_variation = sqrt( exp(log scale variance) – 1) 
+
+raw_seed_mean = mean(fecundity18_sb$Seed)
+ln_seed_mean = mean(log(fecundity18_sb$Seed))
+ln_seed_var = var(log(fecundity18_sb$Seed))
+
+raw_seed_sd = sd(fecundity18_sb$Seed) 
+CV = 100*(raw_seed_sd/raw_seed_mean)
+
+# gls Model-based ln_seed and SE_seed 
+#
+sb_emm_6bin_grand_mean_df
+
+
+```
+
+```{r sb-ln-and-ori-long, include=FALSE}
+# make a long table 
+fecundity18_sb_ln_long <- fecundity18_sb_ln %>% 
+  select(Block, Corn_weed_management, Crop_ID, Crop,ln_Biomass, ln_Seed) %>%
+  pivot_longer(!c(Block, Corn_weed_management, Crop_ID, Crop),
+               names_to = "Category_ln", values_to = "Value_ln")
+
+fecundity18_sb_long <- fecundity18_sb_ln %>% 
+  select(Block, Corn_weed_management, Crop_ID, Crop, Biomass, Seed) %>%
+  pivot_longer(!c(Block, Corn_weed_management, Crop_ID, Crop),
+               names_to = "Category_ori", values_to = "Value_ori")
+
+
+```
+
+
+```{r sb-ln-boxp, echo=FALSE, fig.cap= "Individual aboveground mass and fecundity distribution on natural logarithm scale"}
+## side by size box plot
+
+fecundity18_sb_ln_long %>% 
+  ggplot(aes(y = Category_ln, x = Value_ln,  fill = Crop)) + 
+  facet_grid(Crop_ID ~ Corn_weed_management) +
+  geom_boxplot() +
+  xlab(" ") +
+  theme(legend.position = "none") +
+  ylab("Variable") +
+  scale_y_discrete(labels=c("ln_Seed" = "Seed", "ln_Biomass" = "Biomass"))
+#  theme(axis.ticks.y = element_blank(),
+#        axis.text.y = element_blank()) +
+#  theme(legend.position = "bottom",
+#        legend.title  = element_blank())
+
+
+```
+

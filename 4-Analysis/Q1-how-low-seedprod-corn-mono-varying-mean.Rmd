@@ -1,7 +1,9 @@
 ---
-title: 'Q1: how low is seed production allowed'
+title: 'Q1: how low is seed production allowance - corn monoculture'
 output: html_document 
 ---
+
+## General pattern: In a corn monoculture, aiming at 945 seeds/plant (sd on natural logarithm scale under 0.86) shall keep the original population of 1000 seeds per meter squared stable.
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -75,93 +77,12 @@ summer_survival$C2_conv
 
 # Final goal: flatten the fecundity distribution curve in corn and soybean to see seed production "allowance" in cohorts 1 and 2
 
-### find good pairs of mean and sd for rlnorm 
-
-# bring over the seed - biomass relationship from AMATA-fecundity, seed production allowance in A4 is a good start because lambda = 1.03
-fecundity18 <- read_csv("../2-Data/Clean/fecundity_18.csv", 
-    col_types = cols(Biomass = col_number(), 
-        Seed = col_number()), na = "empty")
-
-fecundity18$Crop_ID <- factor(fecundity18$Crop_ID, 
-                              levels = c("C2", "S2",
-                                         "C3", "S3", "O3",
-                                         "C4", "S4", "O4", "A4"))
-
-# Make sure that Block, Crop ID, Corn_weed_management, and bt are factors
-fecundity18  <- fecundity18   %<>%
-  mutate_at(c("Block","Crop_ID","Corn_weed_management", "bt"),funs(factor(.)))
-
-# sb stands for seed and biomass
-fecundity18_sb <- fecundity18[complete.cases(fecundity18$Seed, fecundity18$Biomass), ]
-
-fecundity18_sb_ln <- fecundity18_sb %>% 
-  mutate(ln_Biomass = log(Biomass + 0.005),
-         ln_Seed = log(Seed + 1)) %>%
-  group_by(Crop_ID, Corn_weed_management) %>% # pool all plants from the same CropID x Corn weed mgt
-  mutate(quantile_Biomass = ntile(ln_Biomass , 6),
-         quantile_Seed = ntile(ln_Seed, 6)) %>%
-  dplyr::mutate(tag = ifelse(quantile_Biomass == quantile_Seed,  "matched", "mismatched"))  # check if Biomass and Seed quantiles are aligned: ONLY 202 are matched.
+### find good pairs of mean and sd for rlnorm in Q1-fecund-prep
 ```
 
 
-```{r sb-hist}
-## since biomass is used to estimate fecundity, use biomass bins to partition data
-fecundity18_sb_ln  %>% 
-  ggplot(aes(x = ln_Biomass)) + 
-  facet_grid(Crop_ID ~ Corn_weed_management) +
-  geom_histogram(binwidth = 1.5) 
 
-# make a wide table 
-
-#fecundity18_sb_wide <- fecundity18_sb %>% 
-#  mutate(cut_ = )
-```
-
-
-```{r biom-boxp}
-## side by size box plot
-
-biom_boxp <- fecundity18_sb_ln  %>% 
-  ggplot(aes(x = ln_Biomass)) + 
-  facet_grid(Crop_ID ~ Corn_weed_management) +
-  geom_boxplot() +
-  theme(axis.ticks.y = element_blank(),
-        axis.text.y = element_blank())
-
-
-seed_boxp <-fecundity18_sb_ln  %>% 
-  ggplot(aes(x = ln_Seed)) + 
-  facet_grid(Crop_ID ~ Corn_weed_management) +
-  geom_boxplot() +
-  theme(axis.ticks.y = element_blank(),
-        axis.text.y = element_blank())
-
-biom_boxp | seed_boxp
-
-```
-```
-```{r biom-seed-eq-copy}
-allcrops.biom.seed.gls <- gls(log(Seed+1) ~ Block + 
-                                log(Biomass + 0.005) + 
-                                Crop_ID + Corn_weed_management +
-                      Crop_ID:Corn_weed_management +
-                      Crop_ID:log(Biomass + 0.005) +
-                        Corn_weed_management:log(Biomass + 0.005) +
-                      Crop_ID:Corn_weed_management:log(Biomass + 0.005),
-  correlation=corCompSymm(form= ~1 | bt), #identifies each treatment within block
-  data=fecundity18_sb)
-
-
-sb_emm_6bin <- emmeans(allcrops.biom.seed.gls ,
-        ~ Crop_ID * Corn_weed_management | Biomass,
-        at = list(Biomass = c( 0.04, 0.28, 2.28, 18.36, 148.41, 1187.97)))
-
-# expand the regression line, focused on the lower end  
-
-
-```
-
-#### 1000 seeds at t=1, 600 at t=2 and beyond
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.85, 0.86)
 
 ```{r corn1}
 # event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
@@ -184,7 +105,7 @@ corn1 <- function(vec, poh, ow, prt, em, sv){
      early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
      early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
    
-    new_seeds_total <-  mature_plant_total * rlnorm(1, 6.802395, 4.49981)
+    new_seeds_total<-  mature_plant_total * rlnorm(1, 6.85, 0.86)
   
     summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
     
@@ -197,7 +118,7 @@ corn1 <- function(vec, poh, ow, prt, em, sv){
 
 ```{r c2-conv-sim1}
 
-t <- 30
+t <- 300
 N <- list() # blank dataframe to save loop output 
 ## Calculate N0
 N0 <- corn1(vec = starting_point[2:3], 
@@ -241,12 +162,12 @@ N_df <- N %>%
 ```{r sim1-plot}
 N_df %>%
   ggplot() +
-   aes(x = time_step, y = log(no_), group = stratum) +
-  geom_line(aes(y = log(no_), linetype =  stratum)) +
-  geom_point(aes(y  = log(no_), shape =  stratum))
+   aes(x = time_step, y = no_, group = stratum) +
+  geom_line(aes(y = no_, linetype =  stratum)) +
+  geom_point(aes(y  = no_, shape =  stratum))
 ```
 
-#### 1000 seeds at t=1, 1200 at t=2 and beyond
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 5.65, 0.95)
 
 ```{r corn2}
 # to test mechanism
@@ -265,7 +186,7 @@ corn2 <- function(vec, poh, ow, prt, em, sv){
      early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
      early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
    
-    new_seeds_total <-  mature_plant_total * sample(rnorm(1000, 1200, 205), 1) #whole-population annual fecundity
+    new_seeds_total <-  mature_plant_total * rlnorm(1, 5.65, 0.95) #whole-population annual fecundity
   
     summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
     
@@ -323,10 +244,11 @@ M_df %>%
   ggplot() +
    aes(x = time_step, y = no_, group = stratum) +
   geom_line(aes(y =  no_, linetype =  stratum)) +
-  geom_point(aes(y  = no_, shape =  stratum))
+  geom_point(aes(y  = no_, shape =  stratum)) +
+  xlim(0, 50)
 ```
 
-#### 1000 seeds at t=1, 1005 at t=2 and beyond
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.7, 3.05)
 
 ```{r corn3}
 # to test mechanism
@@ -345,7 +267,7 @@ corn3 <- function(vec, poh, ow, prt, em, sv){
      early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
      early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
    
-    new_seeds_total <-  mature_plant_total *  sample(rnorm(1000, 1005, 60), 1)
+    new_seeds_total <-  mature_plant_total *  rlnorm(1, 6.7, 3.05)
   
     summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
     
@@ -357,7 +279,6 @@ corn3 <- function(vec, poh, ow, prt, em, sv){
 
 
 ```{r c2-conv-sim3}
-
 P <- list() # blank dataframe to save loop output 
   ## Calculate P0
 P0 <- corn3(vec = starting_point[2:3], 
@@ -403,6 +324,88 @@ P_df %>%
   ggplot() +
    aes(x = time_step, y = no_, group = stratum) +
   geom_line(aes(y =  no_, linetype =  stratum)) +
-  geom_point(aes(y  = no_, shape =  stratum))
+  geom_point(aes(y  = no_, shape =  stratum)) 
+
+```
+
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.7, 0.86)
+
+```{r corn4}
+# to test mechanism
+# event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
+
+# create a function 
+# em, sv, fe
+
+corn4 <- function(vec, poh, ow, prt, em, sv){
+   early_summer_sb <- prt %*%  ow %*%  poh %*% vec # post-harvest through pre-planting
+
+   mature_plant_total <-  early_summer_sb[1]*em[3,1]*sv[[3,3]] + 
+     early_summer_sb[1]*em[4,1]*sv[[4,4]] +
+     early_summer_sb[1]*em[5,1]*sv[[5,5]] +
+     early_summer_sb[1]*em[6,1]*sv[[6,6]] + 
+     early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
+     early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
+   
+    new_seeds_total <-  mature_plant_total *  rlnorm(1, 6.7, 0.86)
+  
+    summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
+    
+    post_harvest_sb <- c(new_seeds_total+summer_till_harvest_sb[1], summer_till_harvest_sb[2])
+   
+   c(0, post_harvest_sb) # emerged not subtracted yet 
+}
+```
+
+
+```{r c2-conv-sim3}
+
+Q <- list() # blank dataframe to save loop output 
+  ## Calculate P0
+Q0 <- corn3(vec = starting_point[2:3], 
+   poh = chisel, 
+   ow = overwinter,
+   prt = field_cultivator,
+   em = emergence[["C2_conv"]],
+   sv = summer_survival[["C2_conv"]])
+
+Q[[1]] <- Q0
+
+
+#loop over the "corn" function for C2-conv for "t" times 
+
+for (i in 2:t) { 
+    Q[[i]] = corn3(vec = Q[[i-1]][2:3],
+                  poh = chisel, 
+                  ow = overwinter,
+                  prt = field_cultivator,
+                  em = emergence[["C2_conv"]],
+                  sv = summer_survival[["C2_conv"]])
+}
+ 
+Q_df <- Q %>% 
+  unlist(recursive = FALSE) %>%
+  data.frame() %>%
+    dplyr::rename(no_ = ".") %>%
+  dplyr::mutate(category = rep(c("plant", "seed_top", "seed_bottom"),t)) %>%
+    filter(category != "plant") %>%
+ # dplyr::select(!rowname) %>%
+  tidyr::pivot_wider(names_from = category,
+                     values_from = no_,
+                     values_fn = list) %>% 
+    unnest(cols = everything() ) %>%
+    mutate(time_step = seq(1:t)) %>%
+  pivot_longer(!time_step, names_to = "stratum", values_to = "no_")
+  
+
+```
+
+```{r sim4-plot}
+Q_df %>%
+  ggplot() +
+   aes(x = time_step, y = no_, group = stratum) +
+  geom_line(aes(y =  no_, linetype =  stratum)) +
+  geom_point(aes(y  = no_, shape =  stratum)) 
+#  xlim(0,50)
 
 ```
