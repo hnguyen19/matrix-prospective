@@ -108,15 +108,17 @@ rot_2year <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,
     
 #   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec # corn phase dynamics
 
-#   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn # soybean phase dynamics
+   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn # soybean phase dynamics
 
-  full_cycle <-  seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C
+#  full_cycle <-  seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C
   
-  lambda_cycle <- popbio::lambda(full_cycle)
+#  lambda_cycle <- popbio::lambda(full_cycle)
   
-  lambda_cycle_annualized <- sqrt(lambda_cycle)
+#  lambda_cycle_annualized <- sqrt(lambda_cycle)
  
-  c(lambda_cycle,lambda_cycle_annualized)
+#  c(lambda_cycle,lambda_cycle_annualized)
+   
+   after_soy
 }
 ```
 
