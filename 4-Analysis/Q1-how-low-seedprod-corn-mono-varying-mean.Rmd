@@ -328,7 +328,7 @@ P_df %>%
 
 ```
 
-#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.7, 0.86)
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.2, 0.86)
 
 ```{r corn4}
 # to test mechanism
@@ -347,7 +347,7 @@ corn4 <- function(vec, poh, ow, prt, em, sv){
      early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
      early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
    
-    new_seeds_total <-  mature_plant_total *  rlnorm(1, 6.7, 0.86)
+    new_seeds_total <-  mature_plant_total *  rlnorm(1, 6.75, 0.86)
   
     summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
     
@@ -358,11 +358,11 @@ corn4 <- function(vec, poh, ow, prt, em, sv){
 ```
 
 
-```{r c2-conv-sim3}
+```{r c2-conv-sim4}
 
 Q <- list() # blank dataframe to save loop output 
   ## Calculate P0
-Q0 <- corn3(vec = starting_point[2:3], 
+Q0 <- corn4(vec = starting_point[2:3], 
    poh = chisel, 
    ow = overwinter,
    prt = field_cultivator,
@@ -375,7 +375,7 @@ Q[[1]] <- Q0
 #loop over the "corn" function for C2-conv for "t" times 
 
 for (i in 2:t) { 
-    Q[[i]] = corn3(vec = Q[[i-1]][2:3],
+    Q[[i]] = corn4(vec = Q[[i-1]][2:3],
                   poh = chisel, 
                   ow = overwinter,
                   prt = field_cultivator,
@@ -403,9 +403,9 @@ Q_df <- Q %>%
 ```{r sim4-plot}
 Q_df %>%
   ggplot() +
-   aes(x = time_step, y = no_, group = stratum) +
-  geom_line(aes(y =  no_, linetype =  stratum)) +
-  geom_point(aes(y  = no_, shape =  stratum)) 
-#  xlim(0,50)
+   aes(x = time_step, y = log(no_), group = stratum) +
+  geom_line(aes(y =  log(no_), linetype =  stratum)) +
+  geom_point(aes(y  = log(no_), shape =  stratum)) 
+
 
 ```

@@ -1,7 +1,8 @@
 ---
-title: 'Q1: how low is seed production allowed'
+title: 'Q1: how low is seed production allowed: corn monoculture, continued'
 output: html_document 
 ---
+## Follow-up from "4-Analysis/Q1-how-low-seed-prod-corn-mono-varying-mean", try varying sd, set ln_mean between 6 and 6.7 
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -80,7 +81,7 @@ summer_survival$C2_conv
 
 
 
-#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.85, 0.86)
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.5, 0.86)
 
 ```{r corn1}
 # event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
@@ -103,7 +104,7 @@ corn1 <- function(vec, poh, ow, prt, em, sv){
      early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
      early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
    
-    new_seeds_total<-  mature_plant_total * rlnorm(1, 6.85, 0.86)
+    new_seeds_total<-  mature_plant_total * rlnorm(1, 6.5, 0.86)
   
     summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
     
@@ -165,7 +166,7 @@ N_df %>%
   geom_point(aes(y  = no_, shape =  stratum))
 ```
 
-#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 5.65, 0.95)
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.7, 0.95)
 
 ```{r corn2}
 # to test mechanism
@@ -184,7 +185,7 @@ corn2 <- function(vec, poh, ow, prt, em, sv){
      early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
      early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
    
-    new_seeds_total <-  mature_plant_total * rlnorm(1, 5.65, 0.95) #whole-population annual fecundity
+    new_seeds_total <-  mature_plant_total * rlnorm(1, 6.5, 0.95) #whole-population annual fecundity
   
     summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
     
@@ -240,13 +241,13 @@ M_df <- M %>%
 ```{r sim2-plot}
 M_df %>%
   ggplot() +
-   aes(x = time_step, y = no_, group = stratum) +
-  geom_line(aes(y =  no_, linetype =  stratum)) +
-  geom_point(aes(y  = no_, shape =  stratum)) +
-  xlim(0, 50)
+   aes(x = time_step, y = log(no_), group = stratum) +
+  geom_line(aes(y =  log(no_), linetype =  stratum)) +
+  geom_point(aes(y  = log(no_), shape =  stratum)) # +
+#  xlim(0, 50)
 ```
 
-#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.7, 0.95)
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.5, 0.6)
 
 ```{r corn3}
 # to test mechanism
@@ -265,7 +266,7 @@ corn3 <- function(vec, poh, ow, prt, em, sv){
      early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
      early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
    
-    new_seeds_total <-  mature_plant_total *  rlnorm(1, 6.7, 0.95)
+    new_seeds_total <-  mature_plant_total *  rlnorm(1, 6.5, 1.1)
   
     summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
     
@@ -301,7 +302,7 @@ for (i in 2:t) {
                   sv = summer_survival[["C2_conv"]])
 }
  
-P_df <- M %>% 
+P_df <- P %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
     dplyr::rename(no_ = ".") %>%
@@ -321,14 +322,14 @@ P_df <- M %>%
 ```{r sim3-plot}
 P_df %>%
   ggplot() +
-   aes(x = time_step, y = no_, group = stratum) +
-  geom_line(aes(y =  no_, linetype =  stratum)) +
-  geom_point(aes(y  = no_, shape =  stratum)) + 
-  xlim(0,50)
+   aes(x = time_step, y = log(no_), group = stratum) +
+  geom_line(aes(y = log(no_), linetype =  stratum)) +
+  geom_point(aes(y  = log(no_), shape =  stratum)) # + 
+#  xlim(0,50)
 
 ```
 
-#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.7, 0.86)
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.5, 0.4)
 
 ```{r corn4}
 # to test mechanism
@@ -347,7 +348,7 @@ corn4 <- function(vec, poh, ow, prt, em, sv){
      early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
      early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
    
-    new_seeds_total <-  mature_plant_total *  rlnorm(1, 6.7, 0.86)
+    new_seeds_total <-  mature_plant_total *  rlnorm(1, 6.5, 0.4)
   
     summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
     
@@ -406,6 +407,88 @@ Q_df %>%
    aes(x = time_step, y = no_, group = stratum) +
   geom_line(aes(y =  no_, linetype =  stratum)) +
   geom_point(aes(y  = no_, shape =  stratum)) 
+#  xlim(0,50)
+
+```
+
+#### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 6.5, 0.25)
+
+```{r corn4}
+# to test mechanism
+# event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
+
+# create a function 
+# em, sv, fe
+
+corn4 <- function(vec, poh, ow, prt, em, sv){
+   early_summer_sb <- prt %*%  ow %*%  poh %*% vec # post-harvest through pre-planting
+
+   mature_plant_total <-  early_summer_sb[1]*em[3,1]*sv[[3,3]] + 
+     early_summer_sb[1]*em[4,1]*sv[[4,4]] +
+     early_summer_sb[1]*em[5,1]*sv[[5,5]] +
+     early_summer_sb[1]*em[6,1]*sv[[6,6]] + 
+     early_summer_sb[1]*em[7,1]*sv[[7,7]] + 
+     early_summer_sb[1]*em[8,1]*sv[[8,8]]   # emerge through maturity 
+   
+    new_seeds_total <-  mature_plant_total *  rlnorm(1, 6.5, 0.25)
+  
+    summer_till_harvest_sb <- em[1:2,1:2] %*% early_summer_sb  # dormant seeds dynamics until new seeds
+    
+    post_harvest_sb <- c(new_seeds_total+summer_till_harvest_sb[1], summer_till_harvest_sb[2])
+   
+   c(0, post_harvest_sb) # emerged not subtracted yet 
+}
+```
+
+
+```{r c2-conv-sim3}
+
+R <- list() # blank dataframe to save loop output 
+  ## Calculate P0
+R0 <- corn3(vec = starting_point[2:3], 
+   poh = chisel, 
+   ow = overwinter,
+   prt = field_cultivator,
+   em = emergence[["C2_conv"]],
+   sv = summer_survival[["C2_conv"]])
+
+R[[1]] <- R0
+
+
+#loop over the "corn" function for C2-conv for "t" times 
+
+for (i in 2:t) { 
+    R[[i]] = corn3(vec = R[[i-1]][2:3],
+                  poh = chisel, 
+                  ow = overwinter,
+                  prt = field_cultivator,
+                  em = emergence[["C2_conv"]],
+                  sv = summer_survival[["C2_conv"]])
+}
+ 
+R_df <- R %>% 
+  unlist(recursive = FALSE) %>%
+  data.frame() %>%
+    dplyr::rename(no_ = ".") %>%
+  dplyr::mutate(category = rep(c("plant", "seed_top", "seed_bottom"),t)) %>%
+    filter(category != "plant") %>%
+ # dplyr::select(!rowname) %>%
+  tidyr::pivot_wider(names_from = category,
+                     values_from = no_,
+                     values_fn = list) %>% 
+    unnest(cols = everything() ) %>%
+    mutate(time_step = seq(1:t)) %>%
+  pivot_longer(!time_step, names_to = "stratum", values_to = "no_")
+  
+
+```
+
+```{r sim4-plot}
+R_df %>%
+  ggplot() +
+   aes(x = time_step, y = log(no_), group = stratum) +
+  geom_line(aes(y =  log(no_), linetype =  stratum)) +
+  geom_point(aes(y  = log(no_), shape =  stratum)) 
 #  xlim(0,50)
 
 ```
