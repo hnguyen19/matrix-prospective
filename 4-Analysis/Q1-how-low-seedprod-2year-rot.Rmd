@@ -13,6 +13,7 @@ library(magrittr) # for %<>%
 library(nlme) # for gls
 library(emmeans) # for joint_tests
 library(patchwork)
+library(popbio)
 set.seed(722)
 ```
 
@@ -105,12 +106,17 @@ rot_2year <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,
   seed_S[2,3] <- rlnorm(1, 4.88, 0.95)
 
     
-   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec # corn phase dynamics
+#   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec # corn phase dynamics
 
-   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn # soybean phase dynamics
+#   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn # soybean phase dynamics
 
-   after_soy 
- #  after_corn
+  full_cycle <-  seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C
+  
+  lambda_cycle <- popbio::lambda(full_cycle)
+  
+  lambda_cycle_annualized <- sqrt(lambda_cycle)
+ 
+  c(lambda_cycle,lambda_cycle_annualized)
 }
 ```
 
@@ -157,20 +163,26 @@ for (i in 2:t) {
    em_S  = emergence$S2_conv,
    sv_S = summer_survival$S2_conv)
 }
+
+View(N) 
+```
  
+```{r}
 N_df <- N %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
     dplyr::rename(no_ = ".") %>%
-#  dplyr::mutate(category = rep(c("plant", "seed_top", "seed_bottom"),t)) %>%
-    filter(category != "plant") %>%
+  dplyr::mutate(category = rep(c("seed_top", "seed_bottom", "cohort_1", "cohort_2", "cohort_3", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
+    filter(category %in% c("seed_top", "seed_bottom")) %>%
  # dplyr::select(!rowname) %>%
-#  tidyr::pivot_wider(names_from = category,
-#                     values_from = no_,
+  tidyr::pivot_wider(names_from = category,
+                    values_from = no_,
                      values_fn = list) %>% 
     unnest(cols = everything() ) %>%
-    mutate(time_step = seq(1:t)) %>%
-  pivot_longer(!time_step, names_to = "stratum", values_to = "no_")
+    mutate(cycle_no = seq(1:t))
+
+#%>%
+#  pivot_longer(!cycle_no, names_to = "stratum", values_to = "no_")
   
 
 ```
