@@ -4,7 +4,14 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-
+library(tidyverse)
+library(data.table)
+library(readr)
+library(magrittr) # for %<>%
+library(nlme) # for gls
+library(emmeans) # for joint_tests
+library(patchwork)
+set.seed(722)
 ```
 
 ```{r}
@@ -112,9 +119,10 @@ CV = 100*(raw_seed_sd/raw_seed_mean)
 
 # gls Model-based ln_seed and SE_seed 
 #
+#round(,2)
+
+
 sb_emm_6bin_grand_mean_df
-
-
 ```
 
 ```{r sb-ln-and-ori-long, include=FALSE}
