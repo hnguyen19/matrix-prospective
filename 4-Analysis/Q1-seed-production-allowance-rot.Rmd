@@ -660,8 +660,15 @@ seed_allowance_sim_df <- rbind(N_2yr_conv_df,
 seed_allowance_sim_df %>%
    ggplot() +
    aes(x = cycle_no, y = lambda_annualized, group = category) +
-  geom_line(aes(y = lambda_annualized, linetype =  category)) +
+ # geom_line(aes(y = lambda_annualized, color =  category)) +
+#  geom_point(aes(y  = lambda_annualized, color =  category)) +
   geom_point(aes(y  = lambda_annualized, shape =  category)) +
+  scale_color_brewer(palette = "Set1") +
+#  geom_hline(yintercept = 1, color = "black") +
   geom_hline(yintercept = 1, color = "red") +
-  facet_wrap(Corn_weed_management ~ Rotation)
+  facet_grid(Corn_weed_management ~ Rotation) + 
+  ylab("Annualized population growth rate") +
+  xlab("Cycle number") + 
+  theme(legend.position = "bottom",
+        legend.title = element_blank()) 
 ```
