@@ -95,7 +95,7 @@ at t = 1: 10000 seeds, cohorts 1 through 3:  rlnorm(1, 3.09, 1.13)
 # prt: pre-planting-tillage
 # em: emergence
 # sv: seed survival rate and seedling to maturity success rate
-# poh_S, ow_S, prt_S, em_S, sv_S
+
 rot_2year<- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
   
@@ -106,33 +106,25 @@ rot_2year<- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
 #  seed_C[1,6] <- rlnorm(1, 3.66, 1.44) #original data partitioned into 6 bins
 
 
-
   seed_S[1,3] <- rlnorm(1, 3.09, 1.13)
   seed_S[1,4] <- rlnorm(1, 3.09, 1.13)
   seed_S[1,5] <- rlnorm(1, 3.09, 1.13)
 #  seed_S[1,6] <- rlnorm(1, 3.66, 1.44)
 
-    
-   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec # corn phase dynamics
+ # corn phase dynamics   
+   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec 
+# soybean phase dynamics
 
-   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn # soybean phase dynamics
+   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn 
 
-#  full_cycle <-  seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C
-  
-#  lambda_cycle <- popbio::lambda(full_cycle)
-  
-#  lambda_cycle_annualized <- sqrt(lambda_cycle)
- 
-#  c(lambda_cycle,lambda_cycle_annualized)
-   
    after_soy
 }
 ```
 
 ```{r 2yr-conv-sim1}
 
-t <- 5000
-N_2yr_conv <- list() # blank dataframe to save loop output 
+t <- 100
+N_2yr_conv <- list() # blank data frame to save loop output 
 ## Calculate N0
 N0_2yr_conv  <- rot_2year(vec = starting_point, 
 #corn dynamics
@@ -151,7 +143,7 @@ seed_C = fecundity18$C2_conv,
    sv_S = summer_survival$S2_conv,
 seed_S = fecundity18$S2_conv)
 
-# N0
+
 
  N_2yr_conv[[1]] <- N0_2yr_conv 
 
@@ -159,21 +151,21 @@ seed_S = fecundity18$S2_conv)
 #loop over the "corn" function for C2-conv for "t" times 
 
 for (i in 2:t) { 
-    N_2yr_conv[[i]] = rot_2year(vec = N_2yr_conv[[i-1]],
-                  poh_C = fall_tillage$C2_conv,
-   ow_C = overwinter$C2_conv,
-   prt_C  = spring_tillage$C2_conv,
-   em_C  = emergence$C2_conv,
-   sv_C = summer_survival$C2_conv,
-   seed_C = fecundity18$C2_conv,
-
-#soybean dynamics   
-  poh_S = fall_tillage$S2_conv,
-   ow_S = overwinter$S2_conv,
-   prt_S  = spring_tillage$S2_conv,
-   em_S  = emergence$S2_conv,
-   sv_S = summer_survival$S2_conv,
-seed_S = fecundity18$S2_conv)
+  N_2yr_conv[[i]] = rot_2year(vec = N_2yr_conv[[i-1]],
+                              poh_C = fall_tillage$C2_conv,
+                              ow_C = overwinter$C2_conv,
+                              prt_C  = spring_tillage$C2_conv,
+                              em_C  = emergence$C2_conv,
+                              sv_C = summer_survival$C2_conv,
+                              seed_C = fecundity18$C2_conv,
+                              
+                              #soybean dynamics   
+                              poh_S = fall_tillage$S2_conv,
+                              ow_S = overwinter$S2_conv,
+                              prt_S  = spring_tillage$S2_conv,
+                              em_S  = emergence$S2_conv,
+                              sv_S = summer_survival$S2_conv,
+                              seed_S = fecundity18$S2_conv)
 }
 
 N_2yr_conv_df <-  N_2yr_conv %>% 
@@ -190,7 +182,9 @@ N_2yr_conv_df <-  N_2yr_conv %>%
     mutate(cycle_no = rep(1:t, each = 2)) %>%
   group_by(category) %>%
   mutate(lambda_cycle = counts/lag(counts),
-         lambda_annualized = sqrt(lambda_cycle)) %>%
+         lambda_annualized = sqrt(lambda_cycle),
+          Rotation = "2-year",
+         Corn_weed_management = "conventional") %>%
     na.omit()
 ```
  
@@ -200,23 +194,23 @@ N_2yr_conv_df <-  N_2yr_conv %>%
 N_2yr_low <- list() # blank dataframe to save loop output 
 ## Calculate N0
 N0_2yr_low  <- rot_2year(vec = starting_point, 
-#corn dynamics
-   poh_C = fall_tillage$C2_low,
-   ow_C = overwinter$C2_low,
-   prt_C  = spring_tillage$C2_low,
-   em_C  = emergence$C2_low,
-   sv_C = summer_survival$C2_low,
-seed_C = fecundity18$C2_low,
+                         #corn dynamics
+                         poh_C = fall_tillage$C2_low,
+                         ow_C = overwinter$C2_low,
+                         prt_C  = spring_tillage$C2_low,
+                         em_C  = emergence$C2_low,
+                         sv_C = summer_survival$C2_low,
+                         seed_C = fecundity18$C2_low,
+                         
+                         #soybean dynamics   
+                         poh_S = fall_tillage$S2_low,
+                         ow_S = overwinter$S2_low,
+                         prt_S  = spring_tillage$S2_low,
+                         em_S  = emergence$S2_low,
+                         sv_S = summer_survival$S2_low,
+                         seed_S = fecundity18$S2_low)
 
-#soybean dynamics   
-  poh_S = fall_tillage$S2_low,
-   ow_S = overwinter$S2_low,
-   prt_S  = spring_tillage$S2_low,
-   em_S  = emergence$S2_low,
-   sv_S = summer_survival$S2_low,
-seed_S = fecundity18$S2_low)
 
-# N0
 
  N_2yr_low[[1]] <- N0_2yr_low
 
@@ -224,21 +218,21 @@ seed_S = fecundity18$S2_low)
 #loop over the "corn" function for C2-conv for "t" times 
 
 for (i in 2:t) { 
-    N_2yr_low[[i]] = rot_2year(vec = N_2yr_low[[i-1]],
-                  poh_C = fall_tillage$C2_low,
-   ow_C = overwinter$C2_low,
-   prt_C  = spring_tillage$C2_low,
-   em_C  = emergence$C2_low,
-   sv_C = summer_survival$C2_low,
-   seed_C = fecundity18$C2_low,
-
-#soybean dynamics   
-  poh_S = fall_tillage$S2_low,
-   ow_S = overwinter$S2_low,
-   prt_S  = spring_tillage$S2_low,
-   em_S  = emergence$S2_low,
-   sv_S = summer_survival$S2_low,
-seed_S = fecundity18$S2_low)
+  N_2yr_low[[i]] = rot_2year(vec = N_2yr_low[[i-1]],
+                             poh_C = fall_tillage$C2_low,
+                             ow_C = overwinter$C2_low,
+                             prt_C  = spring_tillage$C2_low,
+                             em_C  = emergence$C2_low,
+                             sv_C = summer_survival$C2_low,
+                             seed_C = fecundity18$C2_low,
+                             
+                             #soybean dynamics   
+                             poh_S = fall_tillage$S2_low,
+                             ow_S = overwinter$S2_low,
+                             prt_S  = spring_tillage$S2_low,
+                             em_S  = emergence$S2_low,
+                             sv_S = summer_survival$S2_low,
+                             seed_S = fecundity18$S2_low)
 }
 
 N_2yr_low_df <-  N_2yr_low %>% 
@@ -247,18 +241,16 @@ N_2yr_low_df <-  N_2yr_low %>%
     dplyr::rename(counts = ".") %>%
   dplyr::mutate(category = rep(c("seed_top", "seed_bottom", "cohort_1", "cohort_2", "cohort_3", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
     filter(category %in% c("seed_top", "seed_bottom")) %>%
- # dplyr::select(!rowname) %>%
- # tidyr::pivot_wider(names_from = category,
-#                    values_from = no_,
-#                     values_fn = list) %>% 
     unnest(cols = everything() ) %>%
     mutate(cycle_no = rep(1:t, each = 2)) %>%
   group_by(category) %>%
   mutate(lambda_cycle = counts/lag(counts),
-         lambda_annualized = sqrt(lambda_cycle)) %>%
+         lambda_annualized = sqrt(lambda_cycle),
+          Rotation = "2-year",
+         Corn_weed_management = "low") %>%
     na.omit()
 
-View(N_2yr_low_df)
+#View(N_2yr_low_df)
 ```
   
 #### 3-year rotation {-}
@@ -270,25 +262,22 @@ rot_3year <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S ,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
   
-#  seed_C <- fecundity18$C3_conv
+
   seed_C[1,3] <- rlnorm(1, 3.09, 1.13)
   seed_C[1,4] <- rlnorm(1, 3.09, 1.13)
   seed_C[1,5] <- rlnorm(1, 3.09, 1.13) 
 
-  
-#  seed_S <- fecundity18$S3_conv
+
   seed_S[1,3] <- rlnorm(1, 3.09, 1.13)
   seed_S[1,4] <- rlnorm(1, 3.09, 1.13)
   seed_S[1,5] <- rlnorm(1, 3.09, 1.13)
 
-
-#  seed_O <- fecundity18$O3_conv
-  
-   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec # corn phase dynamics
-
-   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn # soybean phase dynamics
-
-after_oat <- seed_O %*% sv_O %*% em_O %*% prt_O %*%  ow_O %*%  poh_O %*% after_soy # soybean phase dynamics
+# corn phase dynamics  
+   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec 
+ # soybean phase dynamics
+   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn
+# oat phase dynamics
+   after_oat <- seed_O %*% sv_O %*% em_O %*% prt_O %*%  ow_O %*%  poh_O %*% after_soy 
    
   after_oat
 }
@@ -299,59 +288,58 @@ after_oat <- seed_O %*% sv_O %*% em_O %*% prt_O %*%  ow_O %*%  poh_O %*% after_s
 N_3yr_conv <- list() # blank dataframe to save loop output 
 ## Calculate N0
 N0_3yr_conv  <- rot_3year(vec = starting_point, 
-#corn dynamics
-   poh_C = fall_tillage$C3_conv,
-   ow_C = overwinter$C3_conv,
-   prt_C  = spring_tillage$C3_conv,
-   em_C  = emergence$C3_conv,
-   sv_C = summer_survival$C3_conv,
-seed_C = fecundity18$C3_conv,
+                          #corn dynamics
+                          poh_C = fall_tillage$C3_conv,
+                          ow_C = overwinter$C3_conv,
+                          prt_C  = spring_tillage$C3_conv,
+                          em_C  = emergence$C3_conv,
+                          sv_C = summer_survival$C3_conv,
+                          seed_C = fecundity18$C3_conv,
+                          
+                          #soybean dynamics   
+                          poh_S = fall_tillage$S3_conv,
+                          ow_S = overwinter$S3_conv,
+                          prt_S  = spring_tillage$S3_conv,
+                          em_S  = emergence$S3_conv,
+                          sv_S = summer_survival$S3_conv,
+                          seed_S = fecundity18$S3_conv,
+                          
+                          #oat dynamics   
+                          poh_O = fall_tillage$O3_conv,
+                          ow_O = overwinter$O3_conv,
+                          prt_O  = spring_tillage$O3_conv,
+                          em_O  = emergence$O3_conv,
+                          sv_O = summer_survival$O3_conv,
+                          seed_O = fecundity18$O3_conv)
 
-#soybean dynamics   
-  poh_S = fall_tillage$S3_conv,
-   ow_S = overwinter$S3_conv,
-   prt_S  = spring_tillage$S3_conv,
-   em_S  = emergence$S3_conv,
-   sv_S = summer_survival$S3_conv,
-seed_S = fecundity18$S3_conv,
-
-#oat dynamics   
-  poh_O = fall_tillage$O3_conv,
-   ow_O = overwinter$O3_conv,
-   prt_O  = spring_tillage$O3_conv,
-   em_O  = emergence$O3_conv,
-   sv_O = summer_survival$O3_conv,
-seed_O = fecundity18$O3_conv)
-
-# N0
 
  N_3yr_conv[[1]] <- N0_3yr_conv 
 
 
 for (i in 2:t) { 
-    N_3yr_conv[[i]] = rot_3year(vec = N_3yr_conv[[i-1]],
-                  poh_C = fall_tillage$C3_conv,
-   ow_C = overwinter$C3_conv,
-   prt_C  = spring_tillage$C3_conv,
-   em_C  = emergence$C3_conv,
-   sv_C = summer_survival$C3_conv,
-   seed_C = fecundity18$C3_conv,
-
-#soybean dynamics   
-  poh_S = fall_tillage$S3_conv,
-   ow_S = overwinter$S3_conv,
-   prt_S  = spring_tillage$S3_conv,
-   em_S  = emergence$S3_conv,
-   sv_S = summer_survival$S3_conv,
-seed_S = fecundity18$S3_conv,
-
-#oat dynamics   
-  poh_O = fall_tillage$O3_conv,
-   ow_O = overwinter$O3_conv,
-   prt_O  = spring_tillage$O3_conv,
-   em_O  = emergence$O3_conv,
-   sv_O = summer_survival$O3_conv,
-seed_O = fecundity18$O3_conv)
+  N_3yr_conv[[i]] = rot_3year(vec = N_3yr_conv[[i-1]],
+                              poh_C = fall_tillage$C3_conv,
+                              ow_C = overwinter$C3_conv,
+                              prt_C  = spring_tillage$C3_conv,
+                              em_C  = emergence$C3_conv,
+                              sv_C = summer_survival$C3_conv,
+                              seed_C = fecundity18$C3_conv,
+                              
+                              #soybean dynamics   
+                              poh_S = fall_tillage$S3_conv,
+                              ow_S = overwinter$S3_conv,
+                              prt_S  = spring_tillage$S3_conv,
+                              em_S  = emergence$S3_conv,
+                              sv_S = summer_survival$S3_conv,
+                              seed_S = fecundity18$S3_conv,
+                              
+                              #oat dynamics   
+                              poh_O = fall_tillage$O3_conv,
+                              ow_O = overwinter$O3_conv,
+                              prt_O  = spring_tillage$O3_conv,
+                              em_O  = emergence$O3_conv,
+                              sv_O = summer_survival$O3_conv,
+                              seed_O = fecundity18$O3_conv)
 }
 
 N_3yr_conv_df <-  N_3yr_conv %>% 
@@ -360,15 +348,13 @@ N_3yr_conv_df <-  N_3yr_conv %>%
     dplyr::rename(counts = ".") %>%
   dplyr::mutate(category = rep(c("seed_top", "seed_bottom", "cohort_1", "cohort_2", "cohort_3", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
     filter(category %in% c("seed_top", "seed_bottom")) %>%
- # dplyr::select(!rowname) %>%
- # tidyr::pivot_wider(names_from = category,
-#                    values_from = no_,
-#                     values_fn = list) %>% 
     unnest(cols = everything() ) %>%
     mutate(cycle_no = rep(1:t, each = 2)) %>%
   group_by(category) %>%
   mutate(lambda_cycle = counts/lag(counts),
-         lambda_annualized = nthroot(lambda_cycle,3)) %>%
+         lambda_annualized = nthroot(lambda_cycle,3),
+          Rotation = "3-year",
+         Corn_weed_management = "conventional") %>%
     na.omit()
 ```
  
@@ -378,59 +364,57 @@ N_3yr_conv_df <-  N_3yr_conv %>%
 N_3yr_low <- list() # blank dataframe to save loop output 
 ## Calculate N0
 N0_3yr_low  <- rot_3year(vec = starting_point, 
-#corn dynamics
-   poh_C = fall_tillage$C3_low,
-   ow_C = overwinter$C3_low,
-   prt_C  = spring_tillage$C3_low,
-   em_C  = emergence$C3_low,
-   sv_C = summer_survival$C3_low,
-seed_C = fecundity18$C3_low,
-
-#soybean dynamics   
-  poh_S = fall_tillage$S3_low,
-   ow_S = overwinter$S3_low,
-   prt_S  = spring_tillage$S3_low,
-   em_S  = emergence$S3_low,
-   sv_S = summer_survival$S3_low,
-seed_S = fecundity18$S3_low,
-
-#oat dynamics   
-  poh_O = fall_tillage$O3_low,
-   ow_O = overwinter$O3_low,
-   prt_O  = spring_tillage$O3_low,
-   em_O  = emergence$O3_low,
-   sv_O = summer_survival$O3_low,
-seed_O = fecundity18$O3_low)
-
-# N0
+                         #corn dynamics
+                         poh_C = fall_tillage$C3_low,
+                         ow_C = overwinter$C3_low,
+                         prt_C  = spring_tillage$C3_low,
+                         em_C  = emergence$C3_low,
+                         sv_C = summer_survival$C3_low,
+                         seed_C = fecundity18$C3_low,
+                         
+                         #soybean dynamics   
+                         poh_S = fall_tillage$S3_low,
+                         ow_S = overwinter$S3_low,
+                         prt_S  = spring_tillage$S3_low,
+                         em_S  = emergence$S3_low,
+                         sv_S = summer_survival$S3_low,
+                         seed_S = fecundity18$S3_low,
+                         
+                         #oat dynamics   
+                         poh_O = fall_tillage$O3_low,
+                         ow_O = overwinter$O3_low,
+                         prt_O  = spring_tillage$O3_low,
+                         em_O  = emergence$O3_low,
+                         sv_O = summer_survival$O3_low,
+                         seed_O = fecundity18$O3_low)
 
  N_3yr_low[[1]] <- N0_3yr_low
 
 
 for (i in 2:t) { 
-    N_3yr_low[[i]] = rot_3year(vec = N_3yr_low[[i-1]],
-                  poh_C = fall_tillage$C3_conv,
-   ow_C = overwinter$C3_low,
-   prt_C  = spring_tillage$C3_low,
-   em_C  = emergence$C3_low,
-   sv_C = summer_survival$C3_low,
-   seed_C = fecundity18$C3_low,
-
-#soybean dynamics   
-  poh_S = fall_tillage$S3_low,
-   ow_S = overwinter$S3_low,
-   prt_S  = spring_tillage$S3_low,
-   em_S  = emergence$S3_low,
-   sv_S = summer_survival$S3_low,
-seed_S = fecundity18$S3_low,
-
-#oat dynamics   
-  poh_O = fall_tillage$O3_low,
-   ow_O = overwinter$O3_low,
-   prt_O  = spring_tillage$O3_low,
-   em_O  = emergence$O3_low,
-   sv_O = summer_survival$O3_low,
-seed_O = fecundity18$O3_low)
+  N_3yr_low[[i]] = rot_3year(vec = N_3yr_low[[i-1]],
+                             poh_C = fall_tillage$C3_conv,
+                             ow_C = overwinter$C3_low,
+                             prt_C  = spring_tillage$C3_low,
+                             em_C  = emergence$C3_low,
+                             sv_C = summer_survival$C3_low,
+                             seed_C = fecundity18$C3_low,
+                             
+                             #soybean dynamics   
+                             poh_S = fall_tillage$S3_low,
+                             ow_S = overwinter$S3_low,
+                             prt_S  = spring_tillage$S3_low,
+                             em_S  = emergence$S3_low,
+                             sv_S = summer_survival$S3_low,
+                             seed_S = fecundity18$S3_low,
+                             
+                             #oat dynamics   
+                             poh_O = fall_tillage$O3_low,
+                             ow_O = overwinter$O3_low,
+                             prt_O  = spring_tillage$O3_low,
+                             em_O  = emergence$O3_low,
+                             sv_O = summer_survival$O3_low,
+                             seed_O = fecundity18$O3_low)
 }
 
 N_3yr_low_df <-  N_3yr_low %>% 
@@ -439,15 +423,13 @@ N_3yr_low_df <-  N_3yr_low %>%
     dplyr::rename(counts = ".") %>%
   dplyr::mutate(category = rep(c("seed_top", "seed_bottom", "cohort_1", "cohort_2", "cohort_3", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
     filter(category %in% c("seed_top", "seed_bottom")) %>%
- # dplyr::select(!rowname) %>%
- # tidyr::pivot_wider(names_from = category,
-#                    values_from = no_,
-#                     values_fn = list) %>% 
     unnest(cols = everything() ) %>%
     mutate(cycle_no = rep(1:t, each = 2)) %>%
   group_by(category) %>%
   mutate(lambda_cycle = counts/lag(counts),
-         lambda_annualized = nthroot(lambda_cycle,3)) %>%
+         lambda_annualized = nthroot(lambda_cycle,3),
+          Rotation = "3-year",
+         Corn_weed_management = "low") %>%
     na.omit()
 ```
 
@@ -462,27 +444,23 @@ rot_4year <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                        poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
   
-
   seed_C[1,3] <- rlnorm(1, 3.09, 1.13)
   seed_C[1,4] <- rlnorm(1, 3.09, 1.13)
   seed_C[1,5] <- rlnorm(1, 3.09, 1.13) 
 
-  
 
   seed_S[1,3] <- rlnorm(1, 3.09, 1.13)
   seed_S[1,4] <- rlnorm(1, 3.09, 1.13)
   seed_S[1,5] <- rlnorm(1, 3.09, 1.13)
 
-
-
-  
-   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec # corn phase dynamics
-
-   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn # soybean phase dynamics
-
-after_oat <- seed_O %*% sv_O %*% em_O %*% prt_O %*%  ow_O %*%  poh_O %*% after_soy # oat phase dynamics
-
-after_alfalfa <- seed_A %*% sv_A %*% em_A %*% prt_A %*%  ow_A %*%  poh_A %*% after_oat # soybean phase dynamics
+# corn phase dynamics
+   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec
+# soybean phase dynamics
+   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn
+# oat phase dynamics
+after_oat <- seed_O %*% sv_O %*% em_O %*% prt_O %*%  ow_O %*%  poh_O %*% after_soy 
+# alfalfa phase dynamics
+after_alfalfa <- seed_A %*% sv_A %*% em_A %*% prt_A %*%  ow_A %*%  poh_A %*% after_oat 
    
   after_alfalfa
 }
@@ -569,15 +547,13 @@ N_4yr_conv_df <-  N_4yr_conv %>%
   dplyr::rename(counts = ".") %>%
   dplyr::mutate(category = rep(c("seed_top", "seed_bottom", "cohort_1", "cohort_2", "cohort_4", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
   filter(category %in% c("seed_top", "seed_bottom")) %>%
-  # dplyr::select(!rowname) %>%
-  # tidyr::pivot_wider(names_from = category,
-  #                    values_from = no_,
-  #                     values_fn = list) %>% 
   unnest(cols = everything() ) %>%
   mutate(cycle_no = rep(1:t, each = 2)) %>%
   group_by(category) %>%
   mutate(lambda_cycle = counts/lag(counts),
-         lambda_annualized = nthroot(lambda_cycle,4)) %>%
+         lambda_annualized = nthroot(lambda_cycle,4),
+         Rotation = "4-year",
+         Corn_weed_management = "conventional") %>%
   na.omit()
 ```
  
@@ -663,16 +639,29 @@ N_4yr_low_df <-  N_4yr_low %>%
   dplyr::rename(counts = ".") %>%
   dplyr::mutate(category = rep(c("seed_top", "seed_bottom", "cohort_1", "cohort_2", "cohort_4", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
   filter(category %in% c("seed_top", "seed_bottom")) %>%
-  # dplyr::select(!rowname) %>%
-  # tidyr::pivot_wider(names_from = category,
-  #                    values_from = no_,
-  #                     values_fn = list) %>% 
   unnest(cols = everything() ) %>%
   mutate(cycle_no = rep(1:t, each = 2)) %>%
   group_by(category) %>%
   mutate(lambda_cycle = counts/lag(counts),
-         lambda_annualized = nthroot(lambda_cycle,4)) %>%
+         lambda_annualized = nthroot(lambda_cycle,4),
+         Rotation = "4-year",
+         Corn_weed_management = "low") %>%
   na.omit()
 ```
 
 ```{r seed-allowance-sim-plot}
+seed_allowance_sim_df <- rbind(N_2yr_conv_df,
+                                N_2yr_low_df,
+                               N_3yr_conv_df,
+                                N_3yr_low_df,
+                               N_4yr_conv_df,
+                                N_4yr_low_df)
+
+seed_allowance_sim_df %>%
+   ggplot() +
+   aes(x = cycle_no, y = lambda_annualized, group = category) +
+  geom_line(aes(y = lambda_annualized, linetype =  category)) +
+  geom_point(aes(y  = lambda_annualized, shape =  category)) +
+  geom_hline(yintercept = 1, color = "red") +
+  facet_wrap(Corn_weed_management ~ Rotation)
+```
