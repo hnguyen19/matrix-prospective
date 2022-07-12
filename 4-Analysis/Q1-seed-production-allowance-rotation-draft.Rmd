@@ -4,6 +4,40 @@ title: "Q1 seed production allowance rotation draft"
 output: html_document
 ---
 
+```{r gather-sim}
+## gather all simulations to make a faceted plot ()
+
+# calculate n[i+1]/n[i] for top and bottom seeds https://stackoverflow.com/questions/64027021/dividing-each-row-by-the-previous-one-in-r
+N_df <- N %>% 
+  unlist(recursive = FALSE) %>%
+  data.frame() %>%
+    dplyr::rename(counts = ".") %>%
+  dplyr::mutate(category = rep(c("seed_top", "seed_bottom", "cohort_1", "cohort_2", "cohort_3", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
+    filter(category %in% c("seed_top", "seed_bottom")) %>%
+ # dplyr::select(!rowname) %>%
+ # tidyr::pivot_wider(names_from = category,
+#                    values_from = no_,
+#                     values_fn = list) %>% 
+    unnest(cols = everything() ) %>%
+    mutate(cycle_no = rep(1:t, each = 2)) %>%
+  group_by(category) %>%
+  mutate(lambda_cycle = counts/lag(counts),
+         lambda_annualized = sqrt(lambda_cycle)) %>%
+    na.omit()
+
+  
+
+N_df %>%
+  ggplot() +
+   aes(x = cycle_no, y = lambda_annualized, group = category) +
+  geom_line(aes(y = lambda_annualized, linetype =  category)) +
+  geom_point(aes(y  = lambda_annualized, shape =  category)) +
+  geom_hline(yintercept = 1, color = "red")  +
+ xlim(1000, 1200)
+```
+
+
+
 #### at t = 1: 1000 seeds, from t = 2: rlnorm(1, 5.65, 0.95)
 
 ```{r corn2}
