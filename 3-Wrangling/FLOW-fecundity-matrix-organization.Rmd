@@ -113,6 +113,8 @@ seeds_18_emm_df <- seeds_18_emm %>%
   mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, desc(mean_seed)) 
 
+# write.csv(seeds_18_emm_df, "../2-Data/Clean/mean-fecundity-18-cohort-df.csv")
+
 # View(seeds_18_emm_df)
 
 # Write a list of 8 x 8 mean matrices, model based
