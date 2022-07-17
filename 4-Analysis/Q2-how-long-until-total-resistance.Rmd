@@ -8,41 +8,36 @@ output: html_document
 set.seed(722)
 ```
 
-```{r}
+```{r, echo=FALSE}
 resistant_prop <- 0.05
 susceptible_prop <- 1 - resistant_prop
 
 profile_start <- c(resistant_prop, susceptible_prop)
 
-starting_point <- c(0, 1000, 0)
+starting_point <-  c(10000, 0, 0, 0, 0, 0, 0, 0) #10000 seeds top soil, 0 seed deep soil,0 plants from cohorts 1 through 6
 ```
 
-```{r tillage-sim}
-notill <- diag(1,2)
+```{r tillage-sim2, include=FALSE}
+fall_tillage <-readRDS("../2-Data/Clean/mean-post-harvest-tillage.RData")
 
-moldboard <- matrix(c(0.017857143,	0.072961329, 0.982142857,	0.927038671), byrow = TRUE, nrow = 2)
-
-chisel <- matrix(c(0.589108911,	0.103123159, 0.410891089,	0.896876841), byrow = TRUE, nrow = 2) 
-
-field_cultivator <- matrix(c(0.594855305,	0.149901381, 0.405144695,	0.850098619), byrow = TRUE, nrow = 2)
+spring_tillage <-readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
 ```
 
 ### overwinter survival matrix  
 
-```{r overwinter-sim}
-overwinter <- matrix(c(0.6576641,	0, 0,	0.7371141), byrow = TRUE, nrow = 2)
+```{r overwinter-sim2}
+overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData")
 ```
 
 ### emergence matrix  
 
-```{r emerge-sim, echo=FALSE}
+```{r emerge-sim2, echo=FALSE}
 emergence <-readRDS("../2-Data/Clean/mean-emergence-prop.RData")
-emergence$C2_conv
 ```
 
 ### seed survival rate and seedling to maturity success rate 
 
-```{r survive-sim, echo=FALSE}
+```{r survive-sim2, echo=FALSE}
 summer_seed_survival <- readRDS("../2-Data/Clean/mean-summer-seed-survival-Sosnoskie.RData")
 
 #### plant survival: literature data - named as scenario2, because scenario1 is the point-estimates from the experiment 
@@ -54,7 +49,7 @@ summer_survival <- purrr::map2(summer_seed_survival, female_survival, `*`)
 ```
 
 
-```{r fecund-sim}
+```{r fecund-sim2, echo=FALSE}
 ### Scenario 1 fecundity
 fecundity_scenario1 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 
@@ -62,3 +57,28 @@ fecundity_scenario1 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 fecundity_scenario2 <- readRDS("../2-Data/Clean/mean-fecundity-19-cohort.RData")
 ```
 
+```{r rot-2yr-function, echo=FALSE}
+# event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
+
+# create a function 
+# vec: starting seed column
+# poh: post-harvest tillage
+# ow: over winter seed survival
+# prt: pre-planting-tillage
+# em: emergence
+# sv: seed survival rate and seedling to maturity success rate
+# seed: fecundity
+
+rot_2year_resistance <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
+                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
+  
+ # corn phase dynamics   
+   after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec 
+# soybean phase dynamics
+
+   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn 
+
+   after_soy
+}
+
+```
