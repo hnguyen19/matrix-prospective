@@ -4,6 +4,12 @@ title: "Q1 seed production allowance rotation draft"
 output: html_document
 ---
 
+2 - How long does it take for a population with 5% herbicide resistant seeds to reach total resistance?
+
+##### Weed control efficacy {-}  
+##### Time to total resistance {-}  
+
+
 ```{r gather-sim}
 ## gather all simulations to make a faceted plot ()
 

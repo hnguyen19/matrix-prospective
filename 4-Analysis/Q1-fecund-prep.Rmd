@@ -1,9 +1,16 @@
 ---
 title: "Q1-fecund-prep"
-output: html_document
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+bibliography: WH-pop-dynamics.bib
+csl: apa-no-ampersand.csl 
 ---
 
-```{r setup, include=FALSE}
+We pooled all the data points in @nguyenImpactCroppingSystem2022 into one regression of ln(individual fecundity +1) against ln(individual aboveground mass + 0.005) and estimated twenty-four means of fecundity on natural logarithm scales using `emmeans(model, ~ Biomass, at = list(Biomass = c()`. The values in `Biomass = c()` were the mean of 24 quantiles of individual plant size on the original scale (gram/individual). 
+
+```{r, include=FALSE}
 library(tidyverse)
 library(data.table)
 library(readr)
@@ -11,11 +18,12 @@ library(magrittr) # for %<>%
 library(nlme) # for gls
 library(emmeans) # for joint_tests
 library(patchwork)
+library(flextable)
 set.seed(722)
 ```
 
-```{r}
-# bring over the seed - biomass relationship from AMATA-fecundity, seed production allowance in A4 is a good start because lambda = 1.03
+```{r, include=FALSE}
+# bring over the seed - biomass relationship from AMATA-fecundity, 
 fecundity18 <- read_csv("../2-Data/Clean/fecundity_18.csv", 
     col_types = cols(Biomass = col_number(), 
         Seed = col_number()), na = "empty")
@@ -46,7 +54,9 @@ fecundity18_seed_ln_q_mean_6bin <-  fecundity18_sb_ln_6bin %>%
   summarize(mean_ln_Seed = mean(ln_Seed))
 ```
 
-```{r ln-seed-bar, fig.cap= Summary of individual fecundity on natural logarithm in six quantiles", echo = FALSE}
+
+
+```{r ln-seed-bar, fig.cap= "Summary of individual fecundity on natural logarithm in six quantiles", include = FALSE}
 ## since biomass is used to estimate fecundity, use biomass bins to partition data
 fecundity18_seed_ln_q_mean_6bin  %>% 
   ggplot(aes(x = mean_ln_Seed, y = as.factor(quantile_Seed))) + 
@@ -57,7 +67,7 @@ fecundity18_seed_ln_q_mean_6bin  %>%
 
 # fecundity18_seed_ln_q_mean %>% filter(Crop_ID == "A4") # 5.44/2.88 = 1.88; 3.16/2.32 = 1.36
 ```
-```{r biom-seed-eq-copy}
+```{r biom-seed-eq-copy, include=FALSE}
 ## overall quantile means, partition the original biomass by its geometric mean's quantile 
 fecundity18_sb_ln_whole_6bin <- fecundity18_sb %>% 
   mutate(ln_Biomass = log(Biomass + 0.005),
@@ -110,7 +120,7 @@ sb_emm_6bin_grand_mean_df <-  sb_emm_6bin_grand_mean %>%
          sd_ln_Seed = SE_ln_Seed*sqrt(quant_n))
 ```
 
-```{r fecund-rlnorm-guess}
+```{r fecund-rlnorm-guess, include=FALSE}
 # Guess from sb_emm_6bin_grand_mean_df
 
 ## Theoretical relationships: 
@@ -129,45 +139,27 @@ CV = 100*(raw_seed_sd/raw_seed_mean)
 #round(,2)
 
 
-sb_emm_6bin_grand_mean_df
+#View(sb_emm_6bin_grand_mean_df %>% select(ln_Seed, sd_ln_Seed))
 ```
 
 ```{r sb-ln-and-ori-long, include=FALSE}
 # make a long table 
-fecundity18_sb_ln_long <- fecundity18_sb_ln %>% 
-  select(Block, Corn_weed_management, Crop_ID, Crop,ln_Biomass, ln_Seed) %>%
-  pivot_longer(!c(Block, Corn_weed_management, Crop_ID, Crop),
-               names_to = "Category_ln", values_to = "Value_ln")
+# fecundity18_sb_ln_long <- fecundity18_sb_ln %>% 
+#  select(Block, Corn_weed_management, Crop_ID, Crop,ln_Biomass, ln_Seed) %>%
+#  pivot_longer(!c(Block, Corn_weed_management, Crop_ID, Crop),
+#               names_to = "Category_ln", values_to = "Value_ln")
 
-fecundity18_sb_long <- fecundity18_sb_ln %>% 
-  select(Block, Corn_weed_management, Crop_ID, Crop, Biomass, Seed) %>%
-  pivot_longer(!c(Block, Corn_weed_management, Crop_ID, Crop),
-               names_to = "Category_ori", values_to = "Value_ori")
-
-
-```
-
-
-```{r sb-ln-boxp, echo=FALSE, fig.cap= "Individual aboveground mass and fecundity distribution on natural logarithm scale"}
-## side by size box plot
-
-fecundity18_sb_ln_long %>% 
-  ggplot(aes(y = Category_ln, x = Value_ln,  fill = Crop)) + 
-  facet_grid(Crop_ID ~ Corn_weed_management) +
-  geom_boxplot() +
-  xlab(" ") +
-  theme(legend.position = "none") +
-  ylab("Variable") +
-  scale_y_discrete(labels=c("ln_Seed" = "Seed", "ln_Biomass" = "Biomass"))
-#  theme(axis.ticks.y = element_blank(),
-#        axis.text.y = element_blank()) +
-#  theme(legend.position = "bottom",
-#        legend.title  = element_blank())
+#fecundity18_sb_long <- fecundity18_sb_ln %>% 
+#  select(Block, Corn_weed_management, Crop_ID, Crop, Biomass, Seed) %>%
+#  pivot_longer(!c(Block, Corn_weed_management, Crop_ID, Crop),
+#               names_to = "Category_ori", values_to = "Value_ori")
 
 
 ```
 
-```{r 12-bin}
+
+
+```{r 12-bin, include=FALSE}
 
 fecundity18_sb_ln_whole_12bin <- fecundity18_sb %>% 
   mutate(ln_Biomass = log(Biomass + 0.005),
@@ -195,6 +187,44 @@ sb_emm_12bin_grand_mean_df <-  sb_emm_12bin_grand_mean %>%
          quant_n = fecundity18_sb_ln_whole_12bin$quant_n, # number of obs in each bin in the original data
          sd_ln_Seed = SE_ln_Seed*sqrt(quant_n))
 
-sb_emm_12bin_grand_mean_df %>%
-  select(ln_Seed, sd_ln_Seed)
+#View(sb_emm_12bin_grand_mean_df %>% select(ln_Seed, sd_ln_Seed))
+```
+
+```{r 24-bin, echo=FALSE}
+
+fecundity18_sb_ln_whole_24bin <- fecundity18_sb %>% 
+  mutate(ln_Biomass = log(Biomass + 0.005),
+         ln_Seed = log(Seed + 1)) %>%
+  mutate(quantile_Biomass = ntile(ln_Biomass , 24),
+         quantile_Seed = ntile(ln_Seed, 24)) %>%
+  group_by(quantile_Biomass) %>% 
+  summarize(quant_n = n(),
+            grand_mean_Biomass = mean(Biomass))
+
+
+sb_emm_24bin_grand_mean <- emmeans(allcrops.biom.seed.gls , ~  Biomass,
+        at = list(Biomass = fecundity18_sb_ln_whole_24bin$grand_mean_Biomass))
+
+sb_emm_24bin_grand_mean_raw <- emmeans(allcrops.biom.seed.gls , ~  Biomass,
+        at = list(Biomass = fecundity18_sb_ln_whole_24bin$grand_mean_Biomass), type = "response")
+
+
+sb_emm_24bin_grand_mean_df <-  sb_emm_24bin_grand_mean %>% 
+  as.data.frame() %>%
+  rename(ln_Seed = "emmean",
+         SE_ln_Seed = "SE") %>%
+  mutate(var_ln_Seed = SE_ln_Seed^2,
+        Seed = exp(ln_Seed + var_ln_Seed/2) - 1,
+         quant_n = fecundity18_sb_ln_whole_24bin$quant_n, # number of obs in each bin in the original data
+         sd_ln_Seed = SE_ln_Seed*sqrt(quant_n))
+
+#View(sb_emm_24bin_grand_mean_df %>% select(Biomass, raw_Seed, ln_Seed, sd_ln_Seed))
+
+sb_emm_24bin_grand_mean_df %>% 
+  select(Biomass, Seed, ln_Seed, SE_ln_Seed, sd_ln_Seed) %>%
+  rename(m = "ln_Seed", s = "sd_ln_Seed", `Aboveground mass` = "Biomass", M = "Seed") %>%
+  flextable() %>%
+  colformat_double(big.mark=",", digits = 2, na_str = "N/A") %>%
+  set_caption("Mean on original scale (M) and mean (m) and standard deviation (s) on natural logarithm scale estimation from a set of mean aboveground mass values. m and s were used to assign the mean and standard deviation values in the rlnorm function in the simulation.")
+
 ```

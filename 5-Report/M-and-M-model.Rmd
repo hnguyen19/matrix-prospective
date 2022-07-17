@@ -35,7 +35,7 @@ The current demographic information presented here is only for female waterhemp 
 
 #### Seed densities and seed fates in the soil seedbank {-}  
 
-Nine groups of four 20-cm deep soil cores arranged in a 3 x 3 grid were collected in the fall of 2019 from each experimental unit (eu). Each soil core was cut into two sections, the top 2 cm and the bottom 18 cm. No deeper sampling was conducted because the tillage regimes applied at the experiment affected the top 0 - 20 cm of the soil. All the 0-2 cm sections in each (eu) were packed separately from all the 2-20 cm sections, so each eu yielded two data points, one for each of the two soil strata. Seeds were separated from the soil materials and plant residues using elutriation and floatation. Clean seeds were placed on germination paper imbibed with distilled water in Petri dishes and incubated in 28/18 degree Celsius light/dark - 18/8 hour night/day for five days. Proportions of seeds that were dormant, readily germinable, and dead were recorded: germinated as readily germinable; firm and unyielding to forceps pressure as dormant; and yielding to forceps pressure as dead (Borza et al., 2007). Readily germinable and dormant seeds were grouped as viable and used to calculate emergence proportion (details on how the 2019 fall soil seedbank sample was used with data for 2020 seedling emergence to determine the emergence proportion is provided in the *Parameterization* section).
+Nine groups of four 20-cm deep soil cores arranged in a 3 x 3 grid were collected in the fall of 2019 from each experimental unit (eu). Each soil core was cut into two sections, the top 2 cm and the bottom 18 cm. No deeper sampling was conducted because the tillage regimes applied at the experiment affected the top 0 - 20 cm of the soil. All the 0-2 cm sections in each (eu) were packed separately from all the 2-20 cm sections, so each eu yielded two data points, one for each of the two soil strata. Seeds were separated from the soil materials and plant residues using elutriation and flotation [@ballComparisonTechniquesEstimation]. Clean seeds were placed on germination paper imbibed with distilled water in Petri dishes and incubated in 28/18 degree Celsius light/dark - 18/8 hour night/day for five days. Proportions of seeds that were dormant, readily germinable, and dead were recorded: germinated as readily germinable; firm and unyielding to forceps pressure as dormant; and yielding to forceps pressure as dead (Borza et al., 2007). Readily germinable and dormant seeds were grouped as viable and used to calculate emergence proportion (details on how the 2019 fall soil seedbank sample was used with data for 2020 seedling emergence to determine the emergence proportion is provided in the *Parameterization* section).
 
 #### Seedling emergence pattern and timing {-}
  
@@ -47,7 +47,8 @@ The number of seedlings in each cohort was converted to densities (seedlings/m$^
 
 #### Statistical analysis of the measured parameters {-}
 
-All the response variables were analyzed with two-factorial mixed-effect models, in which crop identity (crop species in each rotation) was the main-plot effect, corn weed management was the split-plot effect, and cohort identity was the covariance. The response variables were transformed as needed to correct heteroscedasticity.   
+All the response variables were analyzed with two-factorial mixed-effect models, in which crop identity (crop species in each rotation) was the main-plot effect, corn weed management was the split-plot effect, and cohort identity was the covariance. The response variables were transformed as needed to correct heteroscedasticity.  
+
 For the emergence timing evaluation, a two-factorial model with crop species, instead of crop identity, being the main-plot factor  and the corn weed management being the split-plot factor was fitted on the Julian's date of first emergence because of small sample size. We feel that a slight modification of statistical structure was acceptable because we were interested in the difference in waterhemp emergence in different crop species environments.
 
 ### Model assumptions {-}   
@@ -257,3 +258,14 @@ $$
 where,
 
 $b_{ijh}$ is the entry at row i column j of matrix $B_h$, and other elements as defined in Equation (2).
+
+#### Simulations {-}  
+Since plant fecundity was the most influential on population growth and waterhemp was more prolific in the warm-season crop environments than the cool-season crop environments, we followed up with a simulation of seed production allowance in corn and soybean. We used a theoretical plot of 1 meter squared with 10000 seeds in the top 0 - 2 cm soil stratum and 0 seed in the 2 - 20 cm soil stratum and followed that theoretical plot in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management regimes (conventional and low herbicide), as empirically experimented at our research site. We were interested in the following question: 
+
+*How much weed control efficacy is necessary to keep a waterhemp population stable ($\lambda \approx 1$)? Control efficacy in waterhemp in this study is measured by seed production (seeds/m$^2$) instead of plant density because waterhemp plant size is highly variable.*
+
+ 
+All the population dynamics, except for plant fecundity of cohort 1 through 3, were kept as in the prospective modeling exercise. We estimated the necessary control efficacy in the corn and soybean crop environments by simulating seed production allowance for plant cohorts 1 through 3. We only manipulated fecundity of cohorts 1 through 3 because 1) the first three cohorts are most likely exposed to herbicides or cultivation than the later cohorts, 2) the first three cohorts, especially cohorts 1 and 2, have higher survival rates than the later cohorts, and 3) in general, the earlier cohorts are more capable of accumulating larger aboveground mass than later cohorts.   
+
+In each simulation iteration, a randomized number of seeds was generated for each of cohorts 1 through 3 using function `rlnorm(1, m, s)`, in which m is the mean fecundity on natural logarithm scale and s is the standard deviation on the natural logarithm scale. m and s were obtained from the a general relationship of ln(individual fecundity +1) against ln(individual aboveground mass + 0.005) [@nguyenImpactCroppingSystem2022] that pooled all the 389 data points from the whole experiment. Twenty-four pairs of s and m were estimated (details are in Table \@ref(tab:24-bin) in the Appendix). Different pairs of s and m were tried in the simulation until ($\lambda \approx 1$).     
+

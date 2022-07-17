@@ -99,12 +99,24 @@ The second-ranked group of demographic parameters to $\lambda_r$ differed by rot
 
 
 
-
 ```{r, child = "prospective-dynamics-rotation-wise-projection-scenario1.Rmd"}
 ```
 
 
 ```{r, child = "prospective-dynamics-rotation-wise-projection-scenario2.Rmd"}
+```
+
+## Simulation {-}
+
+The more diverse rotations (3-year and 4-year) can tolerate higher seed production than the 2-year rotation can (Figure \@ref(fig:seed-allowance-sim-plot)). This pattern is consistent with the population projection presented previously.  
+
+Using the population dynamics demonstrated in Scenario 1, an initial population density of 10000 seeds/m$^2$ would remain stable if the first three cohorts in C2 and S2 produced 42 seeds/m$^2$ in total (or 0.04 gram/$^2$ of dried aboveground mass), which would be equivalent to almost total control.  
+
+The 4-year rotation can tolerate bigger plants in the corn and soybean phases than the 3-year rotation, but the different was more substantial under low herbicide corn weed management. When corn was managed with conventional herbicide, 4821 seeds/m$^2$ in C4 versus 1101 seeds/m$^2$ in C3 and 3017 seeds/m$^2$ in S4 versus 2531 seeds/m$^2$ in S3 was tolerated. Within the seed production allowance under conventional corn weed management, 2187 seeds/m$^2$ could be tolerated in C4's and S4's first three waterhemp cohorts but 627 seeds/m$^2$ could be tolerated in C3's  and S3's first three waterhemp cohorts. However, when low herbicide regime was used for corn weed management, 2394 seeds/m$^2$ in C4 versus 889 seeds/m$^2$ in C3 and 2672 seeds/m$^2$ in S4 versus 785 seeds/m$^2$ in S3 was tolerated. Within the seed production allowance under low herbicide corn weed management, 2187 seeds/m$^2$ could be tolerated in C4's and S4's first three waterhemp cohorts but 627 seeds/m$^2$ could be tolerated in C3's and S3's first three waterhemp cohorts.
+
+
+
+```{r, child = "Q1-seed-production-allowance-rot.Rmd"}
 ```
 
 ## Conclusion {-}
@@ -119,7 +131,7 @@ Since the elasticity of $\lambda$ was the least affected by seedling emergence i
 
 A reduction in the mass of applied herbicide active ingredients [@nguyenWeedCommunityComposition2022] was not coincident with population declining in the Scenario 1 ($\lambda < 1$) but did coincide with population increases in scenario 2 ($\lambda > 1$). In consideration of Scenario 2, population-increasing, it would be useful to examine how many years of continuous overwinter crops would be necessary and which cool-season crop species would be most efficient in decreasing waterhemp $\lambda$ after steady seedbank replenishment. Such an investigation is needed because even if the increased abundance of waterhemp and other weed species has not been observed at the experiment site [@nguyenWeedCommunityComposition2022], an abundant seedbank of a highly competitive weed species harbors risks of weed outbreaks.
 
-
+The weed control pressure for the corn and soybean phases could be lessened with more extended rotations as bigger waterhemp plants in cohorts 1 through 3 can be tolerated in the 3-year and 4-year rotation than in the 2-year rotation. This higher tolerance can be attributed to the weed control effects provided by extending a cropping system of corn and soybean only with cool-season crops. As waterhemp fecundity was manipulated for cohorts 1 through 3 in corn and soybean environments only, it is implied that if effort was made to severely suppress waterhemp in corn and soybean phases, no additional weed management may be needed in the oat and alfalfa phases, so even the big waterhemp plants in oat and alfalfa phases would not need attention.  
 
 ## Appendix {-}
 
@@ -250,5 +262,10 @@ plot(emerge_cohort_20_gls, resid(., type = "p") ~ fitted(.))
 
 ```
 
+### Simulation {-}  
+
+```{r, child= "Q1-fecund-prep.Rmd"}
+
+```
 
 # References {-}

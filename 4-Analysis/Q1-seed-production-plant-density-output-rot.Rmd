@@ -1,13 +1,9 @@
 ---
-output:
-    bookdown::word_document2:
-      toc: false
-      fig_caption: yes
-bibliography: WH-pop-dynamics.bib
-csl: apa-no-ampersand.csl 
+title: 'Q1: how low is seed production plant density - rotation'
+output: html_document 
 ---
 
-The data in the model projection was used in this simulation. 100 iterations of simulation were run per each rotation crossed with corn weed management regime.  
+## General pattern: In a corn monoculture, aiming at 945 seeds/plant (sd on natural logarithm scale under 0.86) shall keep the original population of 1000 seeds per meter squared stable.
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -78,7 +74,7 @@ fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 
 
 
-```{r rot-2yr-function, echo=TRUE}
+```{r rot-2yr-function, echo=FALSE}
 # event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
 
 # create a function 
@@ -107,11 +103,17 @@ rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
  # corn phase dynamics   
    after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec 
 # soybean phase dynamics
+   
+   density_in_corn <- em_C %*% prt_C %*%  ow_C %*%  poh_C %*% vec
 
    after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn 
+   
+   density_in_soy <-  em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn
 
-   after_soy
+   density_in_corn
 }
+
+
 
 rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
@@ -136,11 +138,12 @@ rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
 }
 ```
 
-```{r 2yr-conv-sim1, echo = TRUE}
+```{r 2yr-conv-sim1, echo = FALSE}
 ##### with corn under conventional weed management {-}
-t <- 100
+t <- 5
 N_2yr_conv <- list() # blank data frame to save loop output 
 N_2yr_conv[[1]] <- starting_point 
+#loop over the "corn" function for C2-conv for "t" times 
 
 for (i in 2:t) { 
   N_2yr_conv[[i]] = rot_2year_conv(vec = N_2yr_conv[[i-1]],
@@ -173,12 +176,12 @@ N_2yr_conv_df <-  N_2yr_conv %>%
          lambda_annualized = sqrt(lambda_cycle),
           Rotation = "2-year",
          Corn_weed_management = "conventional") %>%
-    na.omit() 
+    na.omit()
 ```
  
 
  
-```{r 2yr-low-sim1, echo=TRUE}
+```{r 2yr-low-sim1, echo=FALSE}
 ##### with corn under low herbicide weed management {-}
 N_2yr_low <- list() # blank dataframe to save loop output 
 
@@ -214,12 +217,14 @@ N_2yr_low_df <-  N_2yr_low %>%
          lambda_annualized = sqrt(lambda_cycle),
           Rotation = "2-year",
          Corn_weed_management = "low") %>%
-    na.omit() 
+    na.omit()
+
+#View(N_2yr_low_df)
 ```
   
 
 
-```{r rot-3yr-function, echo=TRUE}
+```{r rot-3yr-function, echo=FALSE}
 rot_3year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C, 
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S ,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
@@ -276,7 +281,7 @@ rot_3year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
 }
 ```
 
-```{r 3yr-conv-sim1, echo=TRUE}
+```{r 3yr-conv-sim1, echo=FALSE}
 ##### with corn under conventional weed management {-}
 N_3yr_conv <- list() # blank dataframe to save loop output 
 
@@ -322,11 +327,11 @@ N_3yr_conv_df <-  N_3yr_conv %>%
          lambda_annualized = nthroot(lambda_cycle,3),
           Rotation = "3-year",
          Corn_weed_management = "conventional") %>%
-    na.omit() 
+    na.omit()
 ```
  
 
-```{r 3yr-low-sim1, echo=TRUE}
+```{r 3yr-low-sim1, echo=FALSE}
 ##### with corn under low herbicide weed management {-} 
 N_3yr_low <- list() # blank dataframe to save loop output 
 
@@ -378,7 +383,7 @@ N_3yr_low_df <-  N_3yr_low %>%
 
 
 
-```{r rot-4yr-function, echo=TRUE}
+```{r rot-4yr-function, echo=FALSE}
 ### conventional weed management
 rot_4year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C, 
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S ,
@@ -434,7 +439,7 @@ after_alfalfa <- seed_A %*% sv_A %*% em_A %*% prt_A %*%  ow_A %*%  poh_A %*% aft
 }
 ```
 
-```{r 4yr-conv-sim1, echo=TRUE}
+```{r 4yr-conv-sim1, echo=FALSE}
 ##### with corn under conventional weed management {-}
 N_4yr_conv <- list() # blank dataframe to save loop output 
 
@@ -487,12 +492,11 @@ N_4yr_conv_df <-  N_4yr_conv %>%
          lambda_annualized = nthroot(lambda_cycle,4),
          Rotation = "4-year",
          Corn_weed_management = "conventional") %>%
-  na.omit() 
-
+  na.omit()
 ```
  
 
-```{r 4yr-low-sim1, echo=TRUE}
+```{r 4yr-low-sim1, echo=FALSE}
 ##### with corn under low herbicide weed management {-} 
 N_4yr_low <- list() # blank dataframe to save loop output 
 
@@ -545,11 +549,10 @@ N_4yr_low_df <-  N_4yr_low %>%
          lambda_annualized = nthroot(lambda_cycle,4),
          Rotation = "4-year",
          Corn_weed_management = "low") %>%
-  na.omit() 
-
+  na.omit()
 ```
 
-```{r new-fecund, include = FALSE}
+```{r new-fecund, echo=FALSE}
 new_fecund <- read.csv("../2-Data/Clean/mean-fecundity-18-cohort-df.csv")
 
 new_fecund_placeholder <- new_fecund %>%
@@ -606,15 +609,9 @@ sim_fecund_3co <- sim_fecund_warm %>%
   group_by(Crop_ID, Corn_weed_management) %>%
   summarize(total_seed = sum(mean_seed))
 sim_fecund_3co
-
-sim_fecund_sum_rot <- sim_fecund_sum %>%
-  mutate(Rotation = ifelse(Crop_ID %in% c("C2", "S2"), "2-year",
-                           ifelse(Crop_ID %in% c("C3","S3","O3"), "3-year", "4-year"))) %>%
-  group_by(Rotation, Corn_weed_management) %>%
-  summarize(rot_total_seed = sum(total_seed))
 ```
 
-```{r seed-allowance-sim-lambda-plot, echo=FALSE, fig.cap= "Population growth rates over 100 rotational cycles. All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 18 cm soil stratum. The simulation applied weed management on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022b) were used to estimate cohort-based fecundity. In corn and soybean, only the fecundity of cohorts 1 through 3 fecundity were manipulated to find the seed allowance in the corn and soybean environments, the fecundity of cohorts 4 and beyond were kept as they were measured from 2018. Each panel was annotated with the average fecundity allowance for the first three plant cohorts and the whole crop phase. The red horizontal line marks lambda = 1.", fig.height= 8, fig.width=8}
+```{r seed-allowance-sim-plot, echo=FALSE, fig.cap= "Population growth rates over 100 rotational cycles. All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 18 cm soil stratum. The simulation applied weed management on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022b) were used to estimate cohort-based fecundity. In corn and soybean, the fecundity estimated through aboveground mass of cohorts 1 through 3 fecundity were manipulated to find the seed allowance in the corn and soybean environments, but the fecundity estimated through aboveground mass of cohorts 4 and beyond were kept as they were. Each panel was annotated with the average fecundity of cohorts 1 through 3."}
 seed_allowance_sim_df <- rbind(N_2yr_conv_df,
                                 N_2yr_low_df,
                                N_3yr_conv_df,
@@ -623,19 +620,14 @@ seed_allowance_sim_df <- rbind(N_2yr_conv_df,
                                 N_4yr_low_df)
 
 seed_allowance_sim_df$category <- factor(seed_allowance_sim_df$category, levels = c("top", "bottom"))
- # label = c("2-year, conv: 1356 \n C2: 41 (614); S2: 41 (741)" , 
- #           "3-year, low: 10206 \n C3: 627 (889); S3: 627 (785)",
- #           "4-year, conv: 102909 \n 2187 (4821); S4: 2187 (3017)",
- #           "2-year, low: 2171 \n C2: 41 (491); S2: 41 (1680)",
- #           "3-year, conv: 444331 \n C3: 627 (1101); S3: 627 (2531)",
- #           "4-year, low: 67729 \n C4: 951 (2394); S4: 951 (2672)"),
+
 sim_label <- data.frame(
-  label = c("C2: 41 (614) \n S2: 41 (741)" , 
-            "C3: 627 (889) \n S3: 627 (785)",
-            "C4: 2187 (4821) \n S4: 2187 (3017)",
-            "C2: 41 (491) \n S2: 41 (1680)",
-            "C3: 627 (1101) \n S3: 627 (2531)",
-            "C4: 951 (2394) \n S4: 951 (2672)"),
+  label = c("2-year, conv \n C2: 41 (614) \n S2: 41 (741)" , 
+            "3-year, low \n C3: 627 (889) \n S3: 627 (785)",
+            "4-year, conv \n 2187 (4821) \n S4: 2187 (3017)",
+            "2-year, low \n C2: 41 (491) \n S2: 41 (1680)",
+            "3-year, conv \n C3: 627 (1101) S3: 627 (2531)",
+            "4-year, low \n C4: 951 (2394) \n S4: 951 (2672)"),
   Rotation = rep(c("2-year", "3-year", "4-year"), 2),
   Corn_weed_management = rep(c("conventional", "low"), 3),
   category = rep("placeholder", 6)
@@ -645,40 +637,16 @@ seed_allowance_sim_df %>%
    ggplot() +
    aes(x = cycle_no, y = lambda_annualized, group = category) +
  # geom_line(aes(y = lambda_annualized, color =  category)) +
-#  geom_point(aes(y  = lambda_annualized, color =  category, alpha = 0.5)) +
-  geom_point(aes(y  = lambda_annualized, shape =  category)) +
-  scale_shape_manual(values = c(1, 4)) +
+  geom_point(aes(y  = lambda_annualized, color =  category)) +
+#  geom_point(aes(y  = lambda_annualized, shape =  category)) +
   scale_color_brewer(palette = "Set1") +
-#  geom_hline(yintercept = 1, color = "black") +
-  geom_hline(yintercept = 1, color = "red") +
+  geom_hline(yintercept = 1, color = "black") +
+#  geom_hline(yintercept = 1, color = "red") +
   facet_grid(Rotation ~ Corn_weed_management ) + 
   ylab("Annualized population growth rate") +
   xlab("Cycle number") + 
-   ylim(0.4, 2) +
+   ylim(0,2) +
   theme(legend.position = "bottom",
         legend.title = element_blank()) + 
-    geom_text(data = sim_label, aes(label = label), size = 3, x = 50, y = 1.75) 
+    geom_text(data = sim_label, aes(label = label), size = 3, x = 50, y = 1.5) 
 ```
-
-
-```{r seed-allowance-sim-N-plot, echo=FALSE, fig.cap= "Population size at the end of a rotation cycle over 100 rotational cycles (the 2-year rotation ended at the soybean phase, the 3-year rotation ended at the oat phase, and the 4-year rotation ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 18 cm soil stratum. The simulation applied weed management on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022b) were used to estimate cohort-based fecundity. In corn and soybean, only the fecundity of cohorts 1 through 3 fecundity were manipulated to find the seed allowance in the corn and soybean environments, the fecundity of cohorts 4 and beyond were kept as they were measured from 2018. Each panel was annotated with the average fecundity thresholds for the first three waterhemp cohorts and the whole crop phase. The red horizontal line marks lambda = 1.", fig.height= 8, fig.width=8}
-
-seed_allowance_sim_df %>%
-   ggplot() +
-   aes(x = cycle_no, y = log(counts), group = category) +
- # geom_line(aes(y = lambda_annualized, color =  category)) +
-#  geom_point(aes(y  = lambda_annualized, color =  category, alpha = 0.5)) +
-  geom_point(aes(y  = log(counts), shape =  category)) +
-  scale_shape_manual(values = c(1, 4)) +
-  geom_hline(yintercept = log(10000), color = "red") +
-  facet_grid(Rotation ~ Corn_weed_management) + 
-  ylab(expression(paste("ln(Seed density (seeds)",~m^-2,"))"))) +
-  xlab("Simulation iteration") + 
-  theme_bw() +
-  theme(legend.position = "bottom",
-        legend.title = element_blank()) + 
-    geom_text(data = sim_label, aes(label = label), size = 3, x = 30, y = 0) 
-```
-
-
-
