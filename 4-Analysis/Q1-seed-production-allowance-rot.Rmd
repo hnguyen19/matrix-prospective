@@ -1,6 +1,7 @@
 ---
 output:
-    bookdown::word_document2:
+  bookdown::word_document2:
+#  bookdown::html_document2:
       toc: false
       fig_caption: yes
 bibliography: WH-pop-dynamics.bib
@@ -672,7 +673,7 @@ seed_allowance_sim_df %>%
   scale_shape_manual(values = c(1, 4)) +
   geom_hline(yintercept = log(10000), color = "red") +
   facet_grid(Rotation ~ Corn_weed_management) + 
-  ylab(expression(paste("ln(Seed density (seeds)",~m^-2,"))"))) +
+  ylab(expression(paste("ln(Seed density (seeds",~m^-2,"))"))) +
   xlab("Simulation iteration") + 
   theme_bw() +
   theme(legend.position = "bottom",
