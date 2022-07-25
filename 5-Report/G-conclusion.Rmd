@@ -1,0 +1,19 @@
+---
+output:
+    bookdown::word_document2:
+      toc: false
+      fig_caption: yes
+      keep_md: true
+bibliography: G-intro.bib
+csl: apa-no-ampersand.csl 
+---
+
+The goals of my dissertation were to examine weed community compositions in simple versus diverse cropping systems, examine the sex ratios of waterhemp populations and establish the relationship between individual aboveground mass and fecundity of waterhemp in crop environments that differed in crop species phenology and management requirements, and project waterhemp population dynamics under different levels of control efficacy. Overall, crop identity was the most influential factor in the individual, population, and community dynamics.
+
+More diverse and richer weed communities were found in the more diverse cropping systems. Although a lower evenness index of weed community was recorded in the more diverse cropping systems, more of the rarer weed species were found. In addition, the relative shares among the most dominant weed species seemed to be more even in the diverse cropping systems. Higher weed abundance in the more diverse cropping systems, as a result of reduced herbicide active ingredient amount, was not coincident with crop yield decline. All the crop species at our experiment sites yielded comparably between rotations and Boone County's and the State of Iowa's averages.
+
+Among the weed species found at the experiment site, waterhemp dominated the seedbank and aboveground communities in terms of seed density, plant density, and aboveground mass. Waterhemp dominance was slightly lessened, and the population sex ratio was slightly female-biased when the weed was grown with cool-season crops. % Waterhemp's female-biasness observed in the cool-season crops' presence might indicate elevated stress.  
+
+Due to labor constraints, the waterhemp survival rate in each crop environment of the experiment was not reliably measured. Future efforts should be focused on measuring those rates in the cool-season crops for a more realistic population dynamics model. Waterhemp's reproductive potential was reduced in the cool-season crops, and thus, its population growth rates were reduced. However, stabilizing waterhemp population size was heavily dependent on reducing individual plant size. As indicated by the individual plant size distribution, the cool-season crop environments seemed to be effective in flattening the size distribution curve; and the warm-season crop environments seemed to harbor higher risks of selecting for large, highly productive plants. Future research should examine how a waterhemp population's herbicide resistance profile develops over generations in fully-phased cropping systems with both cool-season and warm-season crops.  
+
+
