@@ -4,6 +4,7 @@ output:
     bookdown::word_document2:
       toc: false
       fig_caption: yes
+      keep_md: true
 bibliography: WH-pop-dynamics.bib
 csl: apa-no-ampersand.csl 
 ---
@@ -23,6 +24,12 @@ library(nlme)
 source("functions.R")
 theme_set(theme_bw())
 ```
+
+# Abstract {-}
+
+```{r, child = "../5-Report/Abstract-model.Rmd"}
+```
+
 
 # Introduction {-}  
 
@@ -267,5 +274,7 @@ plot(emerge_cohort_20_gls, resid(., type = "p") ~ fitted(.))
 ```{r, child= "Q1-fecund-prep.Rmd"}
 
 ```
+
+# Acknowledgement {-}
 
 # References {-}

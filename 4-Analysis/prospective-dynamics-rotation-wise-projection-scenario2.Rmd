@@ -59,6 +59,16 @@ scenario2_mean_overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-
 scenario2_mean_fecundity_2018 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 
 
+#see min and max
+# scenario2_mean_fecundity_2018[c("C2_conv", "C3_conv", "C4_conv", "C2_low", "C3_low","C4_low")]
+
+# scenario2_mean_fecundity_2018[c("S2_conv", "S3_conv", "S4_conv", "S2_low", "S3_low","S4_low")]
+
+#scenario2_mean_fecundity_2018[c( "O3_conv", "O4_conv",  "O3_low","O4_low")]
+
+
+scenario2_mean_fecundity_2018[c(  "A4_conv", "A4_low")]
+
 scenario2_projection_by_matrix_id <- tibble::lst(scenario2_mean_overwinter,
                                                  mean_post_harvest_tillage,
                                                  scenario2_mean_fecundity_2018,
@@ -826,7 +836,7 @@ lambda_label <- data.frame(
             "\u03BB(3,low) = 12.10, \n \u03BB(C3,low) = 2.00 \n \u03BB(S3,low) = 4361.91, \n \u03BB(O3,low) = 0.56",
             "\u03BB(4,conv) = 8.24,  \n \u03BB(C4,conv) = 172.81, \n \u03BB(S4,conv) = 80.51, \n \u03BB(O4,conv) = 0.54, \n \u03BB(A4,conv) = 0.70",
             "\u03BB(2,low) = 123.13,  \n \u03BB(C2,low) = 32.48, \n \u03BB(S2,low) = 467.93", 
-                        "\u03BB(3,conv) = 31.15,  \n \u03BB(C3,conv) = 10.77, \n \u03BB(S3,conv) = 13360.77, \n \u03BB(O3,conv) = 0.60", 
+            "\u03BB(3,conv) = 31.15,  \n \u03BB(C3,conv) = 10.77, \n \u03BB(S3,conv) = 13360.77, \n \u03BB(O3,conv) = 0.60", 
             "\u03BB(4,low) = 3.98,  \n \u03BB(C4,low) = 87.14, \n \u03BB(S4,low) = 10.18, \n \u03BB(O4,low) = 0.57, \n \u03BB(A4,low) = 0.54"),
   Rotation = rep(c("2-year", "3-year", "4-year"), 2),
   Corn_weed_management = rep(c("conventional", "low"), 3),
