@@ -9,7 +9,7 @@ bibliography: WH-pop-dynamics.bib
 csl: apa-no-ampersand.csl 
 ---
 
-The data in the model projection was used in this simulation. 100 iterations of simulation were run per each rotation crossed with corn weed management regime.  
+The data in the model projection was used in this simulation. 100 iterations of simulation were run per each rotation crossed with corn weed management regime, with non-manipulated seed production.  
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -94,17 +94,6 @@ fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 
 rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
-  
-
-  seed_C[1,3] <- rlnorm(1, 2.65, 0.89)
-  seed_C[1,4] <- rlnorm(1, 2.65, 0.89)
-  seed_C[1,5] <- rlnorm(1, 2.65, 0.89) 
-
-
-  seed_S[1,3] <- rlnorm(1, 2.65, 0.89)
-  seed_S[1,4] <- rlnorm(1, 2.65, 0.89)
-  seed_S[1,5] <- rlnorm(1, 2.65, 0.89)
-
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
@@ -117,16 +106,7 @@ rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
 
 rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
-  
 
-  seed_C[1,3] <- rlnorm(1, 4.81, 0.56)
-  seed_C[1,4] <- rlnorm(1, 4.81, 0.56)
-  seed_C[1,5] <- rlnorm(1, 4.81, 0.56)
-
-
-  seed_S[1,3] <- rlnorm(1,  4.81, 0.56)
-  seed_S[1,4] <- rlnorm(1,  4.81, 0.56)
-  seed_S[1,5] <- rlnorm(1,  4.81, 0.56)
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C  %*% vec 
@@ -227,14 +207,7 @@ rot_3year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
   
 
-  seed_C[1,3] <- rlnorm(1, 5.34, 0.5)
-  seed_C[1,4] <- rlnorm(1, 5.34, 0.5)
-  seed_C[1,5] <- rlnorm(1, 5.34, 0.5)
 
-
-  seed_S[1,3] <- rlnorm(1, 5.34, 0.5)
-  seed_S[1,4] <- rlnorm(1, 5.34, 0.5)
-  seed_S[1,5] <- rlnorm(1, 5.34, 0.5)
 
 # corn phase dynamics  
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -254,18 +227,6 @@ rot_3year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
   
 
-  seed_C[1,3] <- rlnorm(1, 5.34, 0.5)
-#  seed_C[1,3] <- rlnorm(1, 2.65, 0.89)
-  seed_C[1,4] <- rlnorm(1, 5.34, 0.5)
-#   seed_C[1,4] <- rlnorm(1, 2.65, 0.89)
-  seed_C[1,5] <- rlnorm(1, 5.34, 0.5)
-
-
-  seed_S[1,3] <- rlnorm(1, 5.34, 0.5)
-#  seed_S[1,3] <- rlnorm(1, 2.65, 0.89)
-  seed_S[1,4] <- rlnorm(1, 5.34, 0.5)
-#  seed_S[1,4] <-  rlnorm(1, 2.65, 0.89)
-  seed_S[1,5] <- rlnorm(1, 5.34, 0.5)
 
 # corn phase dynamics  
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -387,14 +348,6 @@ rot_4year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                        poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
   
-  seed_C[1,3] <- rlnorm(1, 7.34, 0.44)
-  seed_C[1,4] <- rlnorm(1, 5.75, 0.46)
-  seed_C[1,5] <- rlnorm(1, 5.75, 0.46)
-
-
-  seed_S[1,3] <- rlnorm(1, 7.34, 0.44)
-  seed_S[1,4] <- rlnorm(1, 5.75, 0.46)
-  seed_S[1,5] <- rlnorm(1, 5.75, 0.46)
 
 # corn phase dynamics  
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -414,14 +367,7 @@ rot_4year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                        poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
   
-  seed_C[1,3] <- rlnorm(1, 5.75, 0.46)
-  seed_C[1,4] <- rlnorm(1, 5.75, 0.46)
-  seed_C[1,5] <- rlnorm(1, 5.75, 0.46)
 
-
-  seed_S[1,3] <- rlnorm(1, 5.75, 0.46)
-  seed_S[1,4] <- rlnorm(1, 5.75, 0.46)
-  seed_S[1,5] <- rlnorm(1, 5.75, 0.46)
 
 # corn phase dynamics  
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -624,7 +570,7 @@ seed_allowance_sim_df <- rbind(N_2yr_conv_df,
                                N_4yr_conv_df,
                                 N_4yr_low_df)
 
-write.csv(seed_allowance_sim_df, "../2-Data/Clean/manipulated-seed-prod-sim.csv")
+write.csv(seed_allowance_sim_df, "../2-Data/Clean/unmanipulated-seed-prod-sim.csv")
 
 seed_allowance_sim_df$category <- factor(seed_allowance_sim_df$category, levels = c("top", "bottom"))
  # label = c("2-year, conv: 1356 \n C2: 41 (614); S2: 41 (741)" , 

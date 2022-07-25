@@ -1,0 +1,11 @@
+---
+title: "Q2-draft"
+author: "Huong Nguyen"
+date: '2022-07-25'
+output: html_document
+---
+
+Assumptions:
+In conventional herbicide treatment: 100% of the RR plants survive, but 1% of the SS plants survive
+In low herbicide treatment: 50% of the RR plants survive and 50% of the SS plants survive
+When no herbicide was applied: 50% of the RR plants survive and 50% of the SS plants survive
