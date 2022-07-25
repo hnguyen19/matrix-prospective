@@ -1,7 +1,39 @@
 ---
-title: 'Q2: how long until total resistance'
-output: html_document
+title: 'Q2: Presumative herbicide resistance profile'
+output: 
+  bookdown::html_document2:
+bibliography: WH-pop-dynamics.bib
+csl: apa-no-ampersand.csl 
 ---
+
+The available models for herbicide resistance profile estimation do not accommodate a population with depth-structured seedbank and cohort-structured plant [], so a generalized equation, similar to equation 7 in @ is used.  
+
+$$
+
+R_e = \frac{R_{seedbank} + R_{fresh \, seeds}}{N_{seedbank} + N_{fresh \, seeds}}
+
+$$
+where,  
+
+$R_e$ is the proportion of resistant seeds at the end of a rotation cycle,  
+$N_{seedbank}$ is the total number of dormant seeds in the soil seedbank,  
+$N_{fresh \, seeds}$ is the total seed production in a rotation cycle,    
+$R_{seedbank}$ is the total number of resistant seeds in the soil seedbank, and  
+$R_{fresh \, seeds}$ is the the number of resistant seeds produced at the end of the rotation cycle.  
+
+
+
+As the projection model only keeps track of plump, viable seeds, it is unnecessary to subtract the non-viable seeds in this equation. As close to 90% of the mature seeds germinated after either 30 C or -20 C postharvest treatment [Figure 3B, ], we feel that it is reasonable to assume 100% viability of the new, plump seeds.  
+
+The simulation started with a population of 10000 seeds in the 0 -  2 cm soil stratum and 0 seeds in the 2 - 20 cm soil stratum, in which 5% of the seeds are resistant to one active ingredient. The following assumptions are made  
+
+- Resistance to the active ingredient of interest is conferred by a single-locus gene with two alleles.
+- All the RS and SS genotypes are killed by herbicide when exposed;
+- New seeds of cohorts 1 through 3: 50% RR and 50% SR, because all the SS and SR in cohorts 1 through 3 are killed, but SS and SR plants are available in cohorts 4 through 6
+- Population sex ratio does not affect gamete sex ratio, meaning the female plants in the female-biased population does not make more female gamete.
+- New seeds of cohorts 4 through 6 are of the same allele frequency as the original seed population : 0.05 RR and 0.95 Sx.  
+
+For simplicity, we assume that the heterozygotic plants (SR) are killed by the active ingredient of interest (the S allele is totally dominant of the R allele). In reality, the survival rate of SR can be higher than SS [Chapter 8, ].
 
 ```{r, include=FALSE}
 
@@ -103,10 +135,7 @@ F is the fecundity of surviving plants
 $\alpha$ is the ratio of resistant versus susceptible plants that survived after a generation of exposure  
 b is the number of years that a seed remains viable in the soil seedbank  
 
-Assumptions:
-In conventional herbicide treatment: 100% of the RR plants survive, but 1% of the SS plants survive
-In low herbicide treatment: 50% of the RR plants survive and 50% of the SS plants survive
-When no herbicide was applied: 50% of the RR plants survive and 50% of the SS plants survive
+
 
 
 ```{r rot-2yr-conv-resistance-functions, echo=FALSE}
@@ -325,6 +354,8 @@ rot_2year_resistance_conv_S(starting_point,
                               sv_S = summer_survival$S2_conv,
                               seed_S = fecundity18$S2_conv)
 ```
+
+
 
    after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn 
 
