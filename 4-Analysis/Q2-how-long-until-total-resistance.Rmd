@@ -6,7 +6,14 @@ bibliography: WH-pop-dynamics.bib
 csl: apa-no-ampersand.csl 
 ---
 
-The available models for herbicide resistance profile estimation do not accommodate a population with depth-structured seedbank and cohort-structured plant [], so a generalized equation, similar to equation 7 in @ is used.  
+```{r, include=FALSE}
+
+set.seed(722)
+```
+ 
+
+The available models for herbicide resistance profile estimation do not accommodate populations with depth-structured seedbanks and cohort-structured plants that are controlled with herbicide mixtures [@gresselModellingEffectivenessHerbicide1990a; @maxwellPredictingEvolutionDynamics1990; @cousensDynamicsWeedPopulations1995]. Since the waterhemp populations in this study might be resistant to multiple herbicide modes of action, a generalized equation, similar to equation 7 in @liuGeneralisedIndividualbasedAlgorithm2017 is used to calculate the proportion of resistant seeds at the end of each rotation cycle.
+
 
 $$
 
@@ -21,37 +28,19 @@ $N_{fresh \, seeds}$ is the total seed production in a rotation cycle,
 $R_{seedbank}$ is the total number of resistant seeds in the soil seedbank, and  
 $R_{fresh \, seeds}$ is the the number of resistant seeds produced at the end of the rotation cycle.  
 
+As the projection model only keeps track of plump, viable seeds, it is unnecessary to subtract the non-viable seeds in this equation. As close to 90% of the mature seeds germinated after either 30 C or -20 C post-harvest treatment [Figure 3B, @bellTimeRequirementPollination2010], we feel that it is reasonable to assume 100% viability of the new, plump seeds.    
 
+The calculation presented here is a heuristic illustration of how resistance is present in the 2-year versus 4-year rotations under conventional corn weed management. We followed a population of 10000 viable seeds in the 0 -  2 cm soil stratum and 0 seeds in the 2 - 20 cm soil stratum. Even though resistance mutation occur at as low as 10$^{-10}$ to 10$^{-6}$ rate for a single, nuclear completely dominant or recessive gene [@jasieniukEvolutionGeneticsHerbicide1996], we assumed that *at model year 0* 5% of the exposed waterhemp populations at our experiment site were resistant to the applied herbicide active ingredients to match with the survival rates observed at the experiment site in 2018. Let R, T, and S denote the waterhemp seeds that its seedling are resistant, tolerant, and susceptible to the applied herbicide active ingredients. The relative fitness to herbicide of the exposed plants are R > T > S [Chapter 8 of @cousensDynamicsWeedPopulations1995]. The following assumptions are made:    
 
-As the projection model only keeps track of plump, viable seeds, it is unnecessary to subtract the non-viable seeds in this equation. As close to 90% of the mature seeds germinated after either 30 C or -20 C postharvest treatment [Figure 3B, ], we feel that it is reasonable to assume 100% viability of the new, plump seeds.  
+- In the corn and soybean phases, all the mature plants are R; in the oat and alfalfa phases (occurred in the 4-year rotation only), R, T, and S plants had the same survival rate.    
 
-The simulation started with a population of 10000 seeds in the 0 -  2 cm soil stratum and 0 seeds in the 2 - 20 cm soil stratum, in which 5% of the seeds are resistant to one active ingredient. The following assumptions are made  
+- In the corn and soybean phases, 50% of the new seeds of plant cohorts 1 through 3 plants  are R and 50% are S and T; but new seeds of cohorts 4 through 6 are 5% R, and 95% T and S combined; in the oat and alfalfa phases (occurred in the 4-year rotation only), all the new seeds in all cohorts are 5% R, and 95% T and S combined.   
 
-- Resistance to the active ingredient of interest is conferred by a single-locus gene with two alleles.
-- All the RS and SS genotypes are killed by herbicide when exposed;
-- New seeds of cohorts 1 through 3: 50% RR and 50% SR, because all the SS and SR in cohorts 1 through 3 are killed, but SS and SR plants are available in cohorts 4 through 6
-- Population sex ratio does not affect gamete sex ratio, meaning the female plants in the female-biased population does not make more female gamete.
-- New seeds of cohorts 4 through 6 are of the same allele frequency as the original seed population : 0.05 RR and 0.95 Sx.  
+- All the seeds were of the same overwinter survival rate, emergence rate, summer survival rate, and vertical movement rate.  
 
-For simplicity, we assume that the heterozygotic plants (SR) are killed by the active ingredient of interest (the S allele is totally dominant of the R allele). In reality, the survival rate of SR can be higher than SS [Chapter 8, ].
-
-```{r, include=FALSE}
-
-set.seed(722)
-```
 
 ```{r, echo=FALSE}
-RR_genotype <- 0.05 
-resistant_freq  <- sqrt(RR_genotype)
 
-SS_genotype <- (1 - resistant_freq)^2 #homozygotic susceptible
-
-SR_genotype <- 1 - RR_genotype - SS_genotype
-
-Sx_genotype <- 1 - RR_genotype  # homo- and heterozygotic susceptible
-
-
-profile_start <- c(resistant_prop, susceptible_prop)
 
 starting_point <-  c(10000, 0, 0, 0, 0, 0, 0, 0) #10000 seeds top soil, 0 seed deep soil,0 plants from cohorts 1 through 6
 ```
@@ -96,47 +85,6 @@ fecundity_scenario1 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 fecundity_scenario2 <- readRDS("../2-Data/Clean/mean-fecundity-19-cohort.RData")
 ```
 
-```{r RR-tally}
-### scalar calculation of allele frequency 
-#begin 
-start_prop_RR <- 0.05  # r^2 in the H-W equation
-start_prop_R <- sqrt(start_prop_RR)
-
-start_prop_S <- 1 - start_prop_R
-start_prop_SS <- start_prop_S^2 # s^2 in the H-W equation
-
-start_prop_SR = 1 - (start_prop_RR + start_prop_SS) #2rs in the H-W equation
-
-
-
-# Assumption: 
-# All the RS and SS genotypes are killed by herbicide when exposed;
-# New seeds of cohorts 1 through 3: 50% RR and 50% SR, because all the SS and SR in cohorts 1 through 3 are killed, but SS and SR plants are available in cohorts 4 through 6
-# Population sex ratio does not affect gamete sex ratio, meaning the female plants in the female-biased population does not make more female gamete.
-# New seeds of cohorts 4 through 6 are of the same allele frequency as the original seed population : 0.05 RR and 0.95 Sx
-
-# A matrix to pick out the RR prop after the starting_point population has completed a generation
-after_corn_RR_prop <- matrix(1, nrow = 8, ncol = 8)
-
-after_corn_RR_prop[1, 3:8] <- c(.5, .5, .5, 0.05, 0.05, 0.05)
-
-after_corn_RR_prop[2, 2] <- 0.05
-```
-
-$$
-R_n = R_0 * (1 - \frac{F\alpha}{b})^n
-$$
-where,  
-
-n is the number of generation that the population is under selection pressure,  
-$R_n$ is the fraction of resistant seeds after n generations,  
-$R_o$ is the initial frequency of resistant seeds,  
-F is the fecundity of surviving plants
-$\alpha$ is the ratio of resistant versus susceptible plants that survived after a generation of exposure  
-b is the number of years that a seed remains viable in the soil seedbank  
-
-
-
 
 ```{r rot-2yr-conv-resistance-functions, echo=FALSE}
 # event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
@@ -155,7 +103,7 @@ b is the number of years that a seed remains viable in the soil seedbank
 rot_2year_resistance_conv_C <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
                                         prt_S, em_S, sv_S, poh_S, ow_S, seed_S){
   
-# corn phase resistance dynamics   
+##### corn phase resistance dynamics  ##### 
 
     gen1_seed_mature_pl <- sv_C %*% em_C %*% prt_C %*% vec 
     
@@ -163,23 +111,23 @@ rot_2year_resistance_conv_C <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, o
   gen1_mature_pl <- gen1_seed_mature_pl[3:8]
   
  # seedbank block
-  gen1_seed_remain_RR <- gen1_seed_mature_pl[1:2] * 0.05
-  gen1_seed_remain_Sx <-  gen1_seed_mature_pl[1:2] -  gen1_seed_remain_RR 
+  gen1_seed_remain_R <- gen1_seed_mature_pl[1:2] * 0.05
+  gen1_seed_remain_Sx <-  gen1_seed_mature_pl[1:2] -  gen1_seed_remain_R 
   
 
   gen1_new_seed <- gen1_mature_pl*seed_C[1,3:8]
-  gen1_new_seed_RR <- gen1_new_seed * c(0.5, 0.5, 0.5, 0.05, 0.05, 0.05)
-  gen1_new_seed_Sx <- gen1_new_seed - gen1_new_seed_RR
+  gen1_new_seed_R <- gen1_new_seed * c(0.5, 0.5, 0.5, 0.05, 0.05, 0.05) 
+  gen1_new_seed_Sx <- gen1_new_seed - gen1_new_seed_R
   
   # tally the number of RR seeds and Sx seeds at the end of generation 1
   # RR seeds
-  gen1_seed_RR_top <- sum(gen1_new_seed_RR) + gen1_seed_remain_RR[1] 
+  gen1_seed_R_top <- sum(gen1_new_seed_R) + gen1_seed_remain_R[1] 
   
-  gen1_seed_RR_bottom <- gen1_seed_remain_RR[2] # new seeds in the top 2cm stratum only
+  gen1_seed_R_bottom <- gen1_seed_remain_R[2] # new seeds in the top 2cm stratum only
   
-  gen1_seed_RR_pre_harvest <- c(gen1_seed_RR_top, gen1_seed_RR_bottom, rep(0,6))
+  gen1_seed_R_pre_harvest <- c(gen1_seed_R_top, gen1_seed_R_bottom, rep(0,6))
   
-  until_gen2_seed_RR <- ow_C %*% poh_C %*%  gen1_seed_RR_pre_harvest 
+  until_gen2_seed_R <- ow_C %*% poh_C %*%  gen1_seed_R_pre_harvest 
   
   #Sx seeds
    gen1_seed_Sx_top <- sum(gen1_new_seed_Sx) + gen1_seed_remain_Sx[1] 
@@ -193,9 +141,9 @@ rot_2year_resistance_conv_C <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, o
   
 #  check the cumulative percentage upto the beginning of the soybean phase
   
-  until_gen2_seed <- until_gen2_seed_RR +  until_gen2_seed_Sx 
+  until_gen2_seed <- until_gen2_seed_R +  until_gen2_seed_Sx 
   
-  until_gen2_prop_RR <- until_gen2_seed_RR[1:2]/until_gen2_seed[1:2]
+  until_gen2_prop_R <- until_gen2_seed_R[1:2]/until_gen2_seed[1:2]
   
    until_gen2_prop_Sx <- until_gen2_seed_Sx[1:2]/until_gen2_seed[1:2]
   
@@ -206,16 +154,16 @@ rot_2year_resistance_conv_C <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, o
    
    #after the first winter, about 50% of the seedbank is RR
    
-   # Soybean dynamics: apply the same chain of matrix multiplication on the RR and Sx vectors
+##### Soybean dynamics #####
    # until_gen2_seed_RR and until_gen2_seed_Sx
    
  
      gen2_seed_mature_pl <- sv_S %*% em_S %*% prt_S %*% until_gen2_seed
    
    #  # seedbank block
-  gen2_seed_remain_RR <- gen2_seed_mature_pl[1:2] * until_gen2_prop_RR #% non-germinated seeds that are RR
+  gen2_seed_remain_R <- gen2_seed_mature_pl[1:2] * until_gen2_prop_R #% non-germinated seeds that are RR
   
-  gen2_seed_remain_Sx <-  gen2_seed_mature_pl[1:2] -  gen2_seed_remain_RR #% non-germinated seeds that are Sx
+  gen2_seed_remain_Sx <-  gen2_seed_mature_pl[1:2] -  gen2_seed_remain_R #% non-germinated seeds that are Sx
   
   # mature plant block
 
@@ -223,18 +171,18 @@ rot_2year_resistance_conv_C <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, o
      
      gen2_new_seed <- gen2_mature_pl*seed_S[1,3:8]
   
-  gen2_new_seed_RR <- gen2_new_seed * c(0.5, 0.5, 0.5, 0.05, 0.05, 0.05)
+  gen2_new_seed_R <- gen2_new_seed * c(0.5, 0.5, 0.5, 0.05, 0.05, 0.05)
   
-  gen2_new_seed_Sx <- gen2_new_seed - gen2_new_seed_RR
+  gen2_new_seed_Sx <- gen2_new_seed - gen2_new_seed_R
   
   # tally the number of RR seeds and Sx seeds at the end of generation 2
   # RR seeds
-  gen2_seed_RR_top <- sum(gen2_new_seed_RR) + gen2_seed_remain_RR[1] 
-  gen2_seed_RR_bottom <- gen2_seed_remain_RR[2] # new seeds in the top 2cm stratum only
+  gen2_seed_R_top <- sum(gen2_new_seed_R) + gen2_seed_remain_R[1] 
+  gen2_seed_R_bottom <- gen2_seed_remain_R[2] # new seeds in the top 2cm stratum only
   
-  gen2_seed_RR_pre_harvest <- c(gen2_seed_RR_top, gen2_seed_RR_bottom, rep(0,6))
+  gen2_seed_R_pre_harvest <- c(gen2_seed_R_top, gen2_seed_R_bottom, rep(0,6))
   
-  end_gen2_seed_RR <- ow_C %*% poh_C %*%  gen2_seed_RR_pre_harvest 
+  until_gen3_seed_R <- ow_S %*% poh_S %*%  gen2_seed_R_pre_harvest 
   
   #Sx seeds
    gen2_seed_Sx_top <- sum(gen2_new_seed_Sx) + gen2_seed_remain_Sx[1] 
@@ -243,32 +191,287 @@ rot_2year_resistance_conv_C <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, o
   gen2_seed_Sx_pre_harvest  <- c( gen2_seed_Sx_top, gen2_seed_Sx_bottom, rep(0, 6))
   
   
-  end_gen2_seed_Sx <- ow_C %*% poh_C %*%  gen2_seed_Sx_pre_harvest 
+  until_gen3_seed_Sx <- ow_S %*% poh_S %*%  gen2_seed_Sx_pre_harvest 
   
-   end_gen2_profile <- c(end_gen2_seed_RR, end_gen2_seed_Sx)
+#   end_gen2_profile <- c(end_gen2_seed_R, end_gen2_seed_Sx)
    
-    end_gen2_total_seed <- end_gen2_seed_RR + end_gen2_seed_Sx 
+    until_gen3_total_seed <-  until_gen3_seed_R +  until_gen3_seed_Sx 
     
-   end_gen2_prop_RR <- end_gen2_seed_RR[1:2]/end_gen2_total_seed[1:2]
+   until_gen3_prop_R <-  until_gen3_seed_R[1:2]/ until_gen3_total_seed[1:2]
     
-   end_gen2_prop_Sx <- end_gen2_seed_Sx[1:2]/end_gen2_total_seed[1:2]
-   
-  end_gen2_seed_RR
-}
+   until_gen3_prop_Sx <-  until_gen3_seed_Sx[1:2]/ until_gen3_total_seed[1:2]
+ 
+##### corn phase resistance dynamics #####     
+    gen3_seed_mature_pl <- sv_C %*% em_C %*% prt_C %*% until_gen3_total_seed
 
+   ## seedbank block
+  gen3_seed_remain_R <- gen3_seed_mature_pl[1:2] * until_gen3_prop_R #% non-germinated seeds that are RR
+  
+  gen3_seed_remain_Sx <-  gen3_seed_mature_pl[1:2] -  gen3_seed_remain_R #% non-germinated seeds that are Sx
+  
+  # mature plant block
+
+    gen3_mature_pl <- gen3_seed_mature_pl[3:8]
+     gen3_new_seed <- gen3_mature_pl*seed_C[1,3:8]
+  gen3_new_seed_R <- gen3_new_seed *  0.05
+  gen3_new_seed_Sx <- gen3_new_seed - gen3_new_seed_R
+  
+  # tally the number of RR seeds and Sx seeds at the end of generation 2
+  # RR seeds
+  gen3_seed_R_top <- sum(gen3_new_seed_R) + gen3_seed_remain_R[1] 
+  gen3_seed_R_bottom <- gen3_seed_remain_R[2] # new seeds in the top 2cm stratum only
+  
+  gen3_seed_R_pre_harvest <- c(gen3_seed_R_top, gen3_seed_R_bottom, rep(0,6))
+  
+  until_gen4_seed_R <- ow_C %*% poh_C %*%  gen3_seed_R_pre_harvest 
+  
+  #Sx seeds
+   gen3_seed_Sx_top <- sum(gen3_new_seed_Sx) + gen3_seed_remain_Sx[1] 
+  
+  gen3_seed_Sx_bottom <- gen3_seed_remain_Sx[2] # new seeds in the top 2cm stratum only
+  gen3_seed_Sx_pre_harvest  <- c( gen3_seed_Sx_top, gen3_seed_Sx_bottom, rep(0, 6))
+  
+  
+  until_gen4_seed_Sx <- ow_C %*% poh_C %*%  gen3_seed_Sx_pre_harvest 
+
+    until_gen4_total_seed <- until_gen4_seed_R + until_gen4_seed_Sx 
+    
+   until_gen4_prop_R <- until_gen4_seed_R[1:2]/until_gen4_total_seed[1:2]
+    
+   until_gen4_prop_Sx <- until_gen4_seed_Sx[1:2]/until_gen4_total_seed[1:2]
+   
+#### soybean phase resistance dynamics ####  
+ gen4_seed_mature_pl <- sv_S %*% em_S %*% prt_S %*% until_gen4_total_seed
+
+   ## seedbank block
+  gen4_seed_remain_R <- gen4_seed_mature_pl[1:2] * until_gen3_prop_R #% non-germinated seeds that are RR
+  
+  gen4_seed_remain_Sx <-  gen4_seed_mature_pl[1:2] -  gen4_seed_remain_R #% non-germinated seeds that are Sx
+  
+  # mature plant block
+
+    gen4_mature_pl <- gen4_seed_mature_pl[3:8]
+     gen4_new_seed <- gen4_mature_pl*seed_S[1,3:8]
+  gen4_new_seed_R <- gen4_new_seed * c(0.5, 0.5, 0.5, 0.05, 0.05, 0.05)
+  gen4_new_seed_Sx <- gen4_new_seed - gen4_new_seed_R
+  
+  # tally the number of RR seeds and Sx seeds at the end of generation 2
+  # RR seeds
+  gen4_seed_R_top <- sum(gen4_new_seed_R) + gen4_seed_remain_R[1] 
+  gen4_seed_R_bottom <- gen4_seed_remain_R[2] # new seeds in the top 2cm stratum only
+  
+  gen4_seed_R_pre_harvest <- c(gen4_seed_R_top, gen4_seed_R_bottom, rep(0,6))
+  
+  end_gen4_seed_R <- ow_S %*% poh_S %*%  gen4_seed_R_pre_harvest 
+  
+  #Sx seeds
+   gen4_seed_Sx_top <- sum(gen4_new_seed_Sx) + gen4_seed_remain_Sx[1] 
+  
+  gen4_seed_Sx_bottom <- gen4_seed_remain_Sx[2] # new seeds in the top 2cm stratum only
+  gen4_seed_Sx_pre_harvest  <- c( gen4_seed_Sx_top, gen4_seed_Sx_bottom, rep(0, 6))
+  
+  
+  end_gen4_seed_Sx <- ow_S %*% poh_S %*%  gen4_seed_Sx_pre_harvest 
+
+  end_gen4_total_seed <- end_gen4_seed_R + end_gen4_seed_Sx 
+    
+   end_gen4_prop_R <- end_gen4_seed_R[1:2]/end_gen4_total_seed[1:2]
+    
+   end_gen4_prop_Sx <- end_gen4_seed_Sx[1:2]/end_gen4_total_seed[1:2]   
+   
+end_gen4_prop_R
+}
 
 ```
 
 
-```{r rot-2yr-resistance-R-sim}
+```{r rot-4yr-conv-resistance-functions, echo=FALSE}
+
+## seeds are dropped before spring tillage or before post-harvest? 
+
+rot_4year_resistance_conv_C <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
+                                        prt_S, em_S, sv_S, poh_S, ow_S, seed_S,
+                                        prt_O, em_O, sv_O, seed_O, poh_O, ow_O,
+                                        prt_A, em_A, sv_A, poh_A, ow_A, seed_A){
+  
+# corn phase resistance dynamics   
+
+    gen1_seed_mature_pl <- sv_C %*% em_C %*% prt_C %*% vec 
+    
+  # mature plant block
+  gen1_mature_pl <- gen1_seed_mature_pl[3:8]
+  
+ # seedbank block
+  gen1_seed_remain_R <- gen1_seed_mature_pl[1:2] * 0.05
+  gen1_seed_remain_Sx <-  gen1_seed_mature_pl[1:2] -  gen1_seed_remain_R 
+  
+
+  gen1_new_seed <- gen1_mature_pl*seed_C[1,3:8]
+  gen1_new_seed_R <- gen1_new_seed * c(0.5, 0.5, 0.5, 0.05, 0.05, 0.05) 
+  gen1_new_seed_Sx <- gen1_new_seed - gen1_new_seed_R
+  
+  # tally the number of RR seeds and Sx seeds at the end of generation 1
+  # R seeds
+  gen1_seed_R_top <- sum(gen1_new_seed_R) + gen1_seed_remain_R[1] 
+  
+  gen1_seed_R_bottom <- gen1_seed_remain_R[2] # new seeds in the top 2cm stratum only
+  
+  gen1_seed_R_pre_harvest <- c(gen1_seed_R_top, gen1_seed_R_bottom, rep(0,6))
+  
+  until_gen2_seed_R <- ow_C %*% poh_C %*%  gen1_seed_R_pre_harvest 
+  
+  #Sx seeds
+   gen1_seed_Sx_top <- sum(gen1_new_seed_Sx) + gen1_seed_remain_Sx[1] 
+  
+  gen1_seed_Sx_bottom <- gen1_seed_remain_Sx[2] # new seeds in the top 2cm stratum only
+  
+  gen1_seed_Sx_pre_harvest  <- c( gen1_seed_Sx_top, gen1_seed_Sx_bottom, rep(0, 6))
+  
+  
+  until_gen2_seed_Sx <- ow_C %*% poh_C %*%  gen1_seed_Sx_pre_harvest 
+  
+#  check the cumulative percentage upto the beginning of the soybean phase
+  
+  until_gen2_total_seed <- until_gen2_seed_R +  until_gen2_seed_Sx 
+  
+  until_gen2_prop_R <- until_gen2_seed_R[1:2]/until_gen2_total_seed[1:2]
+  
+   until_gen2_prop_Sx <- until_gen2_seed_Sx[1:2]/until_gen2_total_seed[1:2]
+
+ # soybean resistance dynamics 
+     gen2_seed_mature_pl <- sv_S %*% em_S %*% prt_S %*% until_gen2_total_seed
+   
+   #  # seedbank block
+  gen2_seed_remain_R <- gen2_seed_mature_pl[1:2] * until_gen2_prop_R #% non-germinated seeds that are R
+  
+  gen2_seed_remain_Sx <-  gen2_seed_mature_pl[1:2] -  gen2_seed_remain_R #% non-germinated seeds that are Sx
+  
+  # mature plant block
+
+    gen2_mature_pl <- gen2_seed_mature_pl[3:8]
+     
+     gen2_new_seed <- gen2_mature_pl*seed_S[1,3:8]
+  
+  gen2_new_seed_R <- gen2_new_seed * c(0.5, 0.5, 0.5, 0.05, 0.05, 0.05)
+  
+  gen2_new_seed_Sx <- gen2_new_seed - gen2_new_seed_R
+  
+  # tally the number of RR seeds and Sx seeds at the end of generation 2
+  # RR seeds
+  gen2_seed_R_top <- sum(gen2_new_seed_R) + gen2_seed_remain_R[1] 
+  gen2_seed_R_bottom <- gen2_seed_remain_R[2] # new seeds in the top 2cm stratum only
+  
+  gen2_seed_R_pre_harvest <- c(gen2_seed_R_top, gen2_seed_R_bottom, rep(0,6))
+  
+  until_gen3_seed_R <- ow_S %*% poh_S %*%  gen2_seed_R_pre_harvest 
+  
+  #Sx seeds
+   gen2_seed_Sx_top <- sum(gen2_new_seed_Sx) + gen2_seed_remain_Sx[1] 
+  
+  gen2_seed_Sx_bottom <- gen2_seed_remain_Sx[2] # new seeds in the top 2cm stratum only
+  gen2_seed_Sx_pre_harvest  <- c( gen2_seed_Sx_top, gen2_seed_Sx_bottom, rep(0, 6))
+  
+## apply post-harvest tillage on the new seedbank (old seedbank + fresh seeds)  
+  until_gen3_seed_Sx <- ow_S %*% poh_S %*%  gen2_seed_Sx_pre_harvest 
+
+    until_gen3_total_seed <- until_gen3_seed_R + until_gen3_seed_Sx 
+    
+   until_gen3_prop_R <- until_gen2_seed_R[1:2]/until_gen3_total_seed[1:2]
+    
+   until_gen3_prop_Sx <- until_gen2_seed_Sx[1:2]/until_gen3_total_seed[1:2]
+   
+##### oat phase resistance dynamics #####
+    gen3_seed_mature_pl <- sv_O %*% em_O %*% prt_O %*% until_gen3_total_seed
+
+   ## seedbank block
+  gen3_seed_remain_R <- gen3_seed_mature_pl[1:2] * until_gen3_prop_R #% non-germinated seeds that are RR
+  
+  gen3_seed_remain_Sx <-  gen3_seed_mature_pl[1:2] -  gen3_seed_remain_R #% non-germinated seeds that are Sx
+  
+  # mature plant block
+
+    gen3_mature_pl <- gen3_seed_mature_pl[3:8]
+     gen3_new_seed <- gen3_mature_pl*seed_O[1,3:8]
+  gen3_new_seed_R <- gen3_new_seed *  0.05
+  gen3_new_seed_Sx <- gen3_new_seed - gen3_new_seed_R
+  
+  # tally the number of RR seeds and Sx seeds at the end of generation 2
+  # RR seeds
+  gen3_seed_R_top <- sum(gen3_new_seed_R) + gen3_seed_remain_R[1] 
+  gen3_seed_R_bottom <- gen3_seed_remain_R[2] # new seeds in the top 2cm stratum only
+  
+  gen3_seed_R_pre_harvest <- c(gen3_seed_R_top, gen3_seed_R_bottom, rep(0,6))
+  
+  until_gen4_seed_R <- ow_O %*% poh_O %*%  gen3_seed_R_pre_harvest 
+  
+  #Sx seeds
+   gen3_seed_Sx_top <- sum(gen3_new_seed_Sx) + gen3_seed_remain_Sx[1] 
+  
+  gen3_seed_Sx_bottom <- gen3_seed_remain_Sx[2] # new seeds in the top 2cm stratum only
+  gen3_seed_Sx_pre_harvest  <- c( gen3_seed_Sx_top, gen3_seed_Sx_bottom, rep(0, 6))
+  
+  
+  until_gen4_seed_Sx <- ow_O %*% poh_O %*%  gen3_seed_Sx_pre_harvest 
+
+    until_gen4_total_seed <- until_gen4_seed_R + until_gen4_seed_Sx 
+    
+   until_gen4_prop_R <- until_gen4_seed_R[1:2]/until_gen4_total_seed[1:2]
+    
+   until_gen4_prop_Sx <- until_gen4_seed_Sx[1:2]/until_gen4_total_seed[1:2]
+   
+#### alfalfa phase resistance dynamics ####  
+ gen4_seed_mature_pl <- sv_A %*% em_A %*% prt_A %*% until_gen4_total_seed
+
+   ## seedbank block
+  gen4_seed_remain_R <- gen4_seed_mature_pl[1:2] * until_gen4_prop_R #% non-germinated seeds that are RR
+  
+  gen4_seed_remain_Sx <-  gen4_seed_mature_pl[1:2] -  gen4_seed_remain_R #% non-germinated seeds that are Sx
+  
+  # mature plant block
+
+    gen4_mature_pl <- gen4_seed_mature_pl[3:8]
+     gen4_new_seed <- gen4_mature_pl*seed_A[1,3:8]
+  gen4_new_seed_R <- gen4_new_seed *  0.05
+  gen4_new_seed_Sx <- gen4_new_seed - gen4_new_seed_R
+  
+  # tally the number of RR seeds and Sx seeds at the end of generation 2
+  # RR seeds
+  gen4_seed_R_top <- sum(gen4_new_seed_R) + gen4_seed_remain_R[1] 
+  gen4_seed_R_bottom <- gen4_seed_remain_R[2] # new seeds in the top 2cm stratum only
+  
+  gen4_seed_R_pre_harvest <- c(gen4_seed_R_top, gen4_seed_R_bottom, rep(0,6))
+  
+  end_gen4_seed_R <- ow_A %*% poh_A %*%  gen4_seed_R_pre_harvest 
+  
+  #Sx seeds
+   gen4_seed_Sx_top <- sum(gen4_new_seed_Sx) + gen4_seed_remain_Sx[1] 
+  
+  gen4_seed_Sx_bottom <- gen4_seed_remain_Sx[2] # new seeds in the top 2cm stratum only
+  gen4_seed_Sx_pre_harvest  <- c( gen4_seed_Sx_top, gen4_seed_Sx_bottom, rep(0, 6))
+  
+  
+  end_gen4_seed_Sx <- ow_A %*% poh_A %*%  gen4_seed_Sx_pre_harvest 
+
+  end_gen4_total_seed <- end_gen4_seed_R + end_gen4_seed_Sx 
+    
+   end_gen4_prop_R <- end_gen4_seed_R[1:2]/end_gen4_total_seed[1:2]
+    
+   end_gen4_prop_Sx <- end_gen4_seed_Sx[1:2]/end_gen4_total_seed[1:2]   
+   
+end_gen4_prop_R
+}
+
+```
+
+
+
+```{r rot-2yr-resistance-R-est}
 ##### with corn under conventional weed management {-}
-t <- 100
-R_2yr_conv <- list() # blank data frame to save loop output 
-R_2yr_conv[[1]] <- starting_point 
+#t <- 100
+#R_2yr_conv <- list() # blank data frame to save loop output 
+#R_2yr_conv[[1]] <- starting_point 
 
-
-for (i in 1:t) { 
-  R_2yr_conv[[i]] =  rot_2year_resistance_conv_C(starting_point,
+rot_2year_resistance_conv_C(starting_point,
                            poh_C = fall_tillage$C2_conv,
                               ow_C = overwinter$C2_conv,
                               prt_C  = spring_tillage$C2_conv,
@@ -282,83 +485,38 @@ for (i in 1:t) {
                               em_S  = emergence$S2_conv,
                               sv_S = summer_survival$S2_conv,
                               seed_S = fecundity_scenario1$S2_conv)
-}
+
 ```
 
 
-    # after corn
-    
-    after_corn  <- seed_C %*% seed_mature_pl # total seeds
-
-# spring_res
-  # seed_mature_pl_RR
-    
-
-    after_corn_RR_mult <-  after_corn_RR_prop * seed_C 
-    
-    after_corn_RR <- (after_corn_RR_prop * seed_C) %*% seed_mature_pl ## RR only
-    
-    after_corn_Sx =  after_corn -  after_corn_RR  # Sx 
-}
-
-
-rot_2year_resistance_conv_S <- function(){
-# soybean dynamics    
-    # All the RR seedlings in soy survived
-    sv_S_RR <- sv_S
-    
-    diag(sv_S_RR)[3:8] <- 1
-    
-    seed_mature_pl_S_RR <- sv_S_RR %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn_RR
-    
-    # All the Sx seedlings in soy died 
-    
-}
-
-
-
-
-
-```{r }
-rot_2year_resistance_conv_S <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
-                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
-  
-# corn phase resistance dynamics   
-    spring_seed_col <- ow_C %*% poh_C %*% vec # 
-    
-# R/S density before pre-planting tillage
-
-#spring_res <-  spring_seed_col * resistant_prop
-
- spring_sus <- spring_seed_col * susceptible_prop
-
- spring_sus 
-
-}
-```
-
-
-```{r rot-2yr-resistance-S-sim}
-rot_2year_resistance_conv_S(starting_point,
+```{r rot-4yr-resistance-R-est}
+rot_4year_resistance_conv_C(starting_point,
                            poh_C = fall_tillage$C2_conv,
                               ow_C = overwinter$C2_conv,
                               prt_C  = spring_tillage$C2_conv,
                               em_C  = emergence$C2_conv,
                               sv_C = summer_survival$C2_conv,
-                              seed_C = fecundity18$C2_conv,
+                              seed_C = fecundity_scenario1$C2_conv,
                             #soybean dynamics   
                               poh_S = fall_tillage$S2_conv,
                               ow_S = overwinter$S2_conv,
                               prt_S  = spring_tillage$S2_conv,
                               em_S  = emergence$S2_conv,
                               sv_S = summer_survival$S2_conv,
-                              seed_S = fecundity18$S2_conv)
+                              seed_S = fecundity_scenario1$S2_conv,
+                             #oat dynamics   
+                              poh_O = fall_tillage$O4_conv,
+                              ow_O = overwinter$O4_conv,
+                              prt_O  = spring_tillage$O4_conv,
+                              em_O  = emergence$O4_conv,
+                              sv_O = summer_survival$O4_conv,
+                              seed_O = fecundity_scenario1$O4_conv,
+                              #alfalfa dynamics   
+                          poh_A = fall_tillage$A4_conv,
+                          ow_A = overwinter$A4_conv,
+                          prt_A  = spring_tillage$A4_conv,
+                          em_A  = emergence$A4_conv,
+                          sv_A = summer_survival$A4_conv,
+                          seed_A = fecundity_scenario1$A4_conv)
 ```
-
-
-
-   after_soy <- seed_S %*% sv_S %*% em_S %*% prt_S %*%  ow_S %*%  poh_S %*% after_corn 
-
-   after_soy
-   
-    after_corn <- seed_C %*% sv_C %*% em_C %*% prt_C %*%  ow_C %*% 
+ 

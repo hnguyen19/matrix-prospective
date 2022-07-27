@@ -9,3 +9,15 @@ Assumptions:
 In conventional herbicide treatment: 100% of the RR plants survive, but 1% of the SS plants survive
 In low herbicide treatment: 50% of the RR plants survive and 50% of the SS plants survive
 When no herbicide was applied: 50% of the RR plants survive and 50% of the SS plants survive
+
+$$
+R_n = R_0 * (1 - \frac{F\alpha}{b})^n
+$$
+where,  
+
+n is the number of generation that the population is under selection pressure,  
+$R_n$ is the fraction of resistant seeds after n generations,  
+$R_o$ is the initial frequency of resistant seeds,  
+F is the fecundity of surviving plants
+$\alpha$ is the ratio of resistant versus susceptible plants that survived after a generation of exposure  
+b is the number of years that a seed remains viable in the soil seedbank  
