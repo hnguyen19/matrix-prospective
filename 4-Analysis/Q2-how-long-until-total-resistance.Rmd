@@ -1,7 +1,10 @@
 ---
-title: 'Q2: Presumative herbicide resistance profile'
-output: 
-  bookdown::html_document2:
+output:
+  bookdown::word_document2:
+ # bookdown::html_document2:
+      toc: false
+      fig_caption: yes
+      keep_md: true
 bibliography: WH-pop-dynamics.bib
 csl: apa-no-ampersand.csl 
 ---
@@ -16,9 +19,7 @@ The available models for herbicide resistance profile estimation do not accommod
 
 
 $$
-
 R_e = \frac{R_{seedbank} + R_{fresh \, seeds}}{N_{seedbank} + N_{fresh \, seeds}}
-
 $$
 where,  
 

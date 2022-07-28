@@ -532,7 +532,7 @@ N_4yr_low_df <-  N_4yr_low %>%
   unlist(recursive = FALSE) %>%
   data.frame() %>%
   dplyr::rename(counts = ".") %>%
-  dplyr::mutate(category = rep(c("top", "bottom", "cohort_1", "cohort_2", "cohort_4", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
+  dplyr::mutate(category = rep(c("top", "bottom", "cohort_1", "cohort_2", "cohort_3", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
   filter(category %in% c("top", "bottom")) %>%
   unnest(cols = everything() ) %>%
   mutate(cycle_no = rep(1:t, each = 2)) %>%
