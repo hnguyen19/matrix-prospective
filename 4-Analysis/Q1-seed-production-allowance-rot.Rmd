@@ -81,7 +81,7 @@ fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 
 
 ```{r rot-2yr-function, echo=TRUE}
-# event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
+# event sequence: seed dropped - field cultivator - emerge - survive - new seed - chisel - overwinter 
 
 # create a function 
 # vec: starting seed column
@@ -108,6 +108,8 @@ rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
+
+   
 # soybean phase dynamics
 
    after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S  %*% after_corn 

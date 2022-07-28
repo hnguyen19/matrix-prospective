@@ -23,7 +23,7 @@ seed_column_round <- readRDS("../2-Data/Raw/seed-column-2019-list-poisson.RData"
 ## To track possible errors, the seed columns are multiplied by each matrix step-by-step
 ```
 
-The seed column before post-harvest tillage was transitioned from post-harvest tillage through spring tillage with the general form of $A_{t+1} = A_tn_t$ by @caswellMatrixPopulationModels2001.  
+The seed column before post-harvest tillage was transitioned from post-harvest tillage through spring tillage with the general form of $A_{h+1} = A_hN_h$ by @caswellMatrixPopulationModels2001.  
 
 ```{r post-harvest-tillage, include=FALSE}
 ## Raw data from 'FLOW-literature-based-matrices'
@@ -77,12 +77,12 @@ mean_after_spring_tillage_pop_scenario1_df <- mean_after_spring_tillage_pop_scen
 ## 2020 Emergence density, non-integers, from AMATA-demography/female-emergence chunk emerge-20-emm-df
 
 #New, in dataframe format: 
-emerge_20_mean_df <- readRDS("../2-Data/Raw/six-cohort-female-emerge-df-2020-raw.RData")
+female_emerge_20_mean_df <- readRDS("../2-Data/Raw/six-cohort-female-emerge-df-2020-raw.RData")
 
 # Old: emerge_20 <- readRDS("../2-Data/Raw/six-cohort-female-emerge-list-2020-raw.RData")
 
 ## Turn the emerge_20_mean_df to wide format 
-emerge_20_mean_wide <- emerge_20_mean_df %>%
+female_emerge_20_mean_wide <- female_emerge_20_mean_df %>%
   pivot_wider(names_from = Cohort, values_from = response)
 ```
 
@@ -94,7 +94,7 @@ emerge_20_mean_wide <- emerge_20_mean_df %>%
 
 ## New: Emergence proportion of the twice-shuffled seed columns in a df merged with the mean_after_spring_tillage_pop_scenario1_df piece
 ## Theoretically, the covariance of top and bottom seeds props are non-zeros, but this particular matrix only concerns the relationships of the top stratum and 6 seedling cohorts. 
-emerge_prop_20 <- emerge_20_mean_wide %>% 
+female_emerge_prop_20 <- female_emerge_20_mean_wide %>% 
   left_join(mean_after_spring_tillage_pop_scenario1_df, by = "matrix_id") %>%
   mutate(cohort1_mean_prop = `1`/top_stratum_female_density,
          cohort2_mean_prop = `2`/top_stratum_female_density,
@@ -135,7 +135,7 @@ emerge_prop_20 <- emerge_20_mean_wide %>%
          cohort5_6_covar = -cohort5_mean_prop*cohort6_mean_prop/top_stratum_female_density)
 
 ### Mean matrix list 
-mean_emerge_prop_20 <- emerge_prop_20 %>%
+mean_female_emerge_prop_20 <- female_emerge_prop_20 %>%
   select(matrix_id, cohort1_mean_prop:cohort6_mean_prop) %>%
   pivot_longer(!matrix_id, names_to = "Cohort", values_to = "mean_emerge_prop")
 
@@ -199,4 +199,11 @@ var_covar_emerge_prop_20_list <-  purrr::map2(var_emerge_prop_matrix_list,
 
 ### write the emergence proportion var-covar matrix
 # saveRDS(var_covar_emerge_prop_20_list , file="../2-Data/Clean/var-emergence-prop-scenario1.RData")
+```
+
+
+```{r emerge-prop-tab, echo=FALSE}
+#merge whole-column seed density with top stratum density
+
+# table of arithmetic means
 ```
