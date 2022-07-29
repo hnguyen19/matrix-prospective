@@ -100,8 +100,36 @@ female_emerge_20_mean_wide <- female_emerge_20_mean_df %>%
 ```
 
 
-Our empirically measured seedling emergence proportions with respect to the top 0 - 2 cm were deemed too low as compared with the literature (23% of 1 cm deep seedbank in Illinois, @schutteCommonWaterhempAmaranthus2014 or 1% to 5% of a 5 cm deep seedbank in Iowa, @buhlerEmergencePersistenceSeed2001), except for the C4 under low herbicide weed management and A4 that followed both corn weed management regimes. Seedling emergence proportions in the environments that were deemed too low were therefore adjusted to the equivalence 10% emergence from the 0 - 2 cm soil stratum. 
-*did pre emergence herbicides affect emergence rate?*
+**include in the matrix assembly section**
+
+5% of the waterhemp seeds in a soil seedbank of 5 cm deep that was undisturbed mechanically in the first burial year and unexposed to herbicides throughout the experiment, emerged a year after seed burial [@buhlerEmergencePersistenceSeed2001]. Annually, 23.5% +/- 16.6% sd of waterhemp seeds that were not treated with herbicides and undisturbed mechanically emerged from the top 1 cm soil layer [@schutteCommonWaterhempAmaranthus2014]. 
+
+
+Mesotrione applied at 75 g/ha rate was 76% and 96% efficacious against *A retroflexus* L grown in corn that were susceptible and resistant to atrazine, respectively [@sutton2002activity]. On average, the Thiencarbazone-methyl + isoxaflutole mixture was 93.5% efficacious and mesotrione was 70.75% efficacious against *A. palmeri* grown in corn [@janak2016weed]. 
+
+*add allelopathy effects of oat, red clover, and alfalfa on Amaranthus*
+
+We combined the findings on other *Amaranthus* species from @sutton2002activity; @janak2016weed for herbicide efficacy and from @buhlerEmergencePersistenceSeed2001 and @schutteCommonWaterhempAmaranthus2014 for herbicide-unexposed germinants' emergence and set a uniform germination rate in all the crop identity crossed with corn weed management at 20%. The remaining seedbank density in the 0 - 2 cm soil stratum is calculated using the following equation: 
+
+$$
+N_{B_{e,11}} = (1 - G)*N_{B_{st,11}} = (1 - (E + D)) * N_{B_{st,11}}
+$$
+where,  
+$N_{B_{e,11}}$ is the remaining seedbank density after seed germination
+$N_{B_{st,11}}$ is the seed density in the top 0 - 2 cm soil stratum upon completion of pre-planting tillage
+$G$ is the proportion of germinated seeds 
+$E$ is the proportion of germinated seeds that successfully emerge as seedlings 
+$D$ is the proportion of germinated seeds that were killed by weed control measures
+
+$1 - G = 0.8$ is filled in the [1,1] position of the seedling recruitment matrix ($B_e[1,1]$).  
+
+
+The resistance profile of waterhemp at our experiment site was undetermined, but the raw estimation of seedling emergence with respect to the top 0 - 2 cm soil seedbank density seems unrealistically low (Table \@ref(tab:emerge-prop-tab). The cohort-specific emergence rates ($e_1$ through $e_6$) were adjusted from the raw data ($\frac{p_k}{N_{B_{st,11}}}$ with $k = \{1,...,6\}$) to reflect 3% emergence success rate (equivalent to $E = 0.006 * N_{B_{st,11}}$) in crop environments that received herbicides (C2, S2, C3, S3, C4, and S4) and 50% emergence success rate (equivalent to $E = 0.1 * N_{B_{st,11}}$).  
+
+
+
+
+
 ```{r emerge-prop-tab, echo=FALSE}
 #Reality check of emergence proportion
 # merge whole-column seed density with top stratum density
