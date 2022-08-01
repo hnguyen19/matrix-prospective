@@ -29,7 +29,7 @@ source("functions.R")
 mean_spring_tillage <-  readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
 
 ## Emergence 
-scenario2_mean_emergence <- readRDS("../2-Data/Clean/mean-emergence-prop.RData")
+scenario2_mean_emergence <- readRDS("../2-Data/Clean/adjusted-mean-emergence-prop.RData")
 
 ## Seed survival and plant survival 
 #### seed survival 
@@ -798,7 +798,7 @@ scenario2_phase_lambda <-  scenario2_phase_projection_trimmed %>%
 # View(scenario2_phase_lambda )
 ```
 
-```{r scenario2-phase-wise-lambda-plot, echo=FALSE, fig.width= 8, fig.height= 12, fig.cap= "Scenario 1: Changes of natural-logarithm of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). Seed densities were natural-logarithm transformed because of scales. The model started at year 0 with 1000 and 0 seeds per squared meter in the top (0 - 2 cm) and bottom (2 - 20 cm) strata, respectively. The red horizontal line shows the number of seeds at the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
+```{r scenario2-phase-wise-lambda-plot, echo=FALSE, fig.width= 12, fig.height= 12, fig.cap= "Scenario 1: Changes of natural-logarithm of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). Seed densities were natural-logarithm transformed because of scales. The model started at year 0 with 1000 and 0 seeds per squared meter in the top (0 - 2 cm) and bottom (2 - 20 cm) strata, respectively. The red horizontal line shows the number of seeds at the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
 #The annualized population growth rates are followed by their variances in brackets. The models years are followed by the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa.
 
 #scenario2_phase_seed_vectors$Sequence <- c(rep("start-C-S-C-S-C-S-C-S-C-S-C-S",2),
@@ -832,12 +832,12 @@ scenario2_phase_seed_vectors_long <- scenario2_phase_seed_vectors %>%
 # View(scenario2_annualized_lambda_and_var )
 # https://stackoverflow.com/questions/72426613/individual-text-box-with-greek-letter-on-each-facet-grid-panel/72426740#72426740
 lambda_label <- data.frame(
-  label = c("\u03BB(2,conv) = 74.78, \n \u03BB(C2,conv) = 6.56, \n \u03BB(S2,conv) = 863.69",
-            "\u03BB(3,low) = 12.10, \n \u03BB(C3,low) = 2.00 \n \u03BB(S3,low) = 4361.91, \n \u03BB(O3,low) = 0.56",
-            "\u03BB(4,conv) = 8.24,  \n \u03BB(C4,conv) = 172.81, \n \u03BB(S4,conv) = 80.51, \n \u03BB(O4,conv) = 0.54, \n \u03BB(A4,conv) = 0.70",
-            "\u03BB(2,low) = 123.13,  \n \u03BB(C2,low) = 32.48, \n \u03BB(S2,low) = 467.93", 
-            "\u03BB(3,conv) = 31.15,  \n \u03BB(C3,conv) = 10.77, \n \u03BB(S3,conv) = 13360.77, \n \u03BB(O3,conv) = 0.60", 
-            "\u03BB(4,low) = 3.98,  \n \u03BB(C4,low) = 87.14, \n \u03BB(S4,low) = 10.18, \n \u03BB(O4,low) = 0.57, \n \u03BB(A4,low) = 0.54"),
+  label = c("\u03BB(2,conv) = 59.4, \n \u03BB(C2,conv) = 26.0, \n \u03BB(S2,conv) = 135.9",
+            "\u03BB(3,low) = 28.5, \n \u03BB(C3,low) = 11.4 \n \u03BB(S3,low) = 1864.9, \n \u03BB(O3,low) = 1.5",
+            "\u03BB(4,conv) = 14.7,  \n \u03BB(C4,conv) = 29.7, \n \u03BB(S4,conv) = 773.7, \n \u03BB(O4,conv) = 6.6, \n \u03BB(A4,conv) = 0.6",
+            "\u03BB(2,low) = 333.3,  \n \u03BB(C2,low) = 587.8, \n \u03BB(S2,low) = 189.0", 
+            "\u03BB(3,conv) = 48.4,  \n \u03BB(C3,conv) = 14.59, \n \u03BB(S3,conv) = 3575.0, \n \u03BB(O3,conv) = 2.6", 
+            "\u03BB(4,low) = 10.5,  \n \u03BB(C4,low) = 87.3, \n \u03BB(S4,low) = 92.1, \n \u03BB(O4,low) = 12.8, \n \u03BB(A4,low) = 0.53"),
   Rotation = rep(c("2-year", "3-year", "4-year"), 2),
   Corn_weed_management = rep(c("conventional", "low"), 3),
   Stratum = rep("placeholder", 6) #need this placeholder for the geom_text in the code chain below to run
@@ -858,17 +858,18 @@ scenario2_phase_seed_vectors_long  %>%
   geom_hline(aes(yintercept = log(1001), color = "baseline")) +
   facet_wrap(Rotation ~ Corn_weed_management,  ncol = 2, labeller = label_wrap_gen(multi_line=FALSE)) + 
   scale_x_continuous(breaks = scales::pretty_breaks(n = 13)) + # don't need this with as.factor(Year)
+  ylim(0,85)+
   labs(x = "Crop species abbreviation and model year",
        y = expression(paste("ln(Seed density (seeds+1)",~m^-2,"))"))) +
   theme(legend.position = "bottom", legend.title = element_blank(),
         legend.key = element_rect(fill = "transparent", colour = "transparent"),
         panel.background=element_rect(fill="transparent",colour=NA),
       plot.background=element_rect(fill="transparent",colour=NA)) +
-  geom_text(data = lambda_label, aes(label = label), x = 6, y = 40, size = 3) + 
+  geom_text(data = lambda_label, aes(label = label), x = 5, y = 60, size = 3.5) + 
         geom_text(aes(x = Year, 
-                  y = 62,  #leave space between bar and label
+                  y = 82,  #leave space between bar and label
                   label = Sequence), 
-              size = 2.5) +
+              size = 3) +
   guides(colour = "none") 
 # one layered panel name <https://stackoverflow.com/questions/45699411/facet-label-merging-into-a-single-row-ggplot2>
 # none of facet_nested_wrap, or lemon::'s is working
