@@ -225,6 +225,46 @@ sb_emm_24bin_grand_mean_df %>%
   rename(m = "ln_Seed", s = "sd_ln_Seed", `Aboveground mass` = "Biomass", M = "Seed") %>%
   flextable() %>%
   colformat_double(big.mark=",", digits = 2, na_str = "N/A") %>%
-  set_caption("Mean on original scale (M) and mean (m) and standard deviation (s) on natural logarithm scale estimation from a set of mean aboveground mass values. m and s were used to assign the mean and standard deviation values in the rlnorm function in the simulation.")
+  set_caption("Mean on original scale (M) and mean (m) and standard deviation (s) on natural logarithm scale estimation from a set of 24 mean aboveground mass values. m and s were used to assign the mean and standard deviation values in the rlnorm function in the simulation.")
+
+```
+
+
+```{r 36-bin, echo=FALSE}
+
+fecundity18_sb_ln_whole_36bin <- fecundity18_sb %>% 
+  mutate(ln_Biomass = log(Biomass + 0.005),
+         ln_Seed = log(Seed + 1)) %>%
+  mutate(quantile_Biomass = ntile(ln_Biomass , 36),
+         quantile_Seed = ntile(ln_Seed, 36)) %>%
+  group_by(quantile_Biomass) %>% 
+  summarize(quant_n = n(),
+            grand_mean_Biomass = mean(Biomass))
+
+
+sb_emm_36bin_grand_mean <- emmeans(allcrops.biom.seed.gls , ~  Biomass,
+        at = list(Biomass = fecundity18_sb_ln_whole_36bin$grand_mean_Biomass))
+
+sb_emm_36bin_grand_mean_raw <- emmeans(allcrops.biom.seed.gls , ~  Biomass,
+        at = list(Biomass = fecundity18_sb_ln_whole_36bin$grand_mean_Biomass), type = "response")
+
+
+sb_emm_36bin_grand_mean_df <-  sb_emm_36bin_grand_mean %>% 
+  as.data.frame() %>%
+  rename(ln_Seed = "emmean",
+         SE_ln_Seed = "SE") %>%
+  mutate(var_ln_Seed = SE_ln_Seed^2,
+        Seed = exp(ln_Seed + var_ln_Seed/2) - 1,
+         quant_n = fecundity18_sb_ln_whole_36bin$quant_n, # number of obs in each bin in the original data
+         sd_ln_Seed = SE_ln_Seed*sqrt(quant_n))
+
+#View(sb_emm_24bin_grand_mean_df %>% select(Biomass, raw_Seed, ln_Seed, sd_ln_Seed))
+
+sb_emm_36bin_grand_mean_df %>% 
+  select(Biomass, Seed, ln_Seed, SE_ln_Seed, sd_ln_Seed) %>%
+  rename(m = "ln_Seed", s = "sd_ln_Seed", `Aboveground mass` = "Biomass", M = "Seed") %>%
+  flextable() %>%
+  colformat_double(big.mark=",", digits = 2, na_str = "N/A") %>%
+  set_caption("Mean on original scale (M) and mean (m) and standard deviation (s) on natural logarithm scale estimation from a set of 36 mean aboveground mass values. m and s were used to assign the mean and standard deviation values in the rlnorm function in the simulation.")
 
 ```

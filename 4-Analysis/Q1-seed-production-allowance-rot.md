@@ -1,7 +1,7 @@
 ---
 output:
-  bookdown::word_document2:
- # bookdown::html_document2:
+ # bookdown::word_document2:
+  bookdown::html_document2:
       toc: false
       fig_caption: yes
       keep_md: true
@@ -38,7 +38,7 @@ The data in the model projection was used in this simulation. 100 iterations of 
 
 
 ```r
-# event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
+# event sequence: seed dropped - field cultivator - emerge - survive - new seed - chisel - overwinter 
 
 # create a function 
 # vec: starting seed column
@@ -53,18 +53,20 @@ rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
   
 
-  seed_C[1,3] <- rlnorm(1, 2.66, 0.89) #13.58 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 3.44, 0.18)  # 30.84 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 3.44, 0.18) 
+  seed_C[1,3] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
+  seed_C[1,4] <- rlnorm(1, 5.34, 0.5) # 208.18 seeds/plant
+  seed_C[1,5] <- rlnorm(1, 5.34, 0.5) 
 
 
-  seed_S[1,3] <- rlnorm(1, 3.44, 0.18)
-  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1, 3.44, 0.18)
+  seed_S[1,3] <- rlnorm(1, 5.55, 0.48) 
+  seed_S[1,4] <- rlnorm(1, 5.55, 0.48) 
+  seed_S[1,5] <- rlnorm(1, 5.75, 0.46) #316.83
 
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
+
+   
 # soybean phase dynamics
 
    after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S  %*% after_corn 
@@ -76,13 +78,13 @@ rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
   
 
-  seed_C[1,3] <- rlnorm(1, 4.81, 0.56) # 122.33 seeds/plant
-  seed_C[1,4] <- rlnorm(1,  5.05, 0.53) # 155.93 seeds/plant
-  seed_C[1,5] <- rlnorm(1,  5.34, 0.5) # 208.18 seeds/plant
+  seed_C[1,3] <- rlnorm(1, 3.85, 0.7) # 46.55 seeds/plant
+  seed_C[1,4] <- rlnorm(1, 3.44, 0.76) # 30.84 seeds/plant
+  seed_C[1,5] <- rlnorm(1, 3.85, 0.7)
 
-  seed_S[1,3] <- rlnorm(1, 4.81, 0.56)
-  seed_S[1,4] <- rlnorm(1, 5.05, 0.53)
-  seed_S[1,5] <- rlnorm(1, 5.34, 0.5)
+  seed_S[1,3] <- rlnorm(1, 3.85, 0.7)
+  seed_S[1,4] <- rlnorm(1, 3.85, 0.7)
+  seed_S[1,5] <- rlnorm(1, 4.22, 0.65) #67.56 seeds/plant
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
@@ -186,14 +188,19 @@ rot_3year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
   
 
-  seed_C[1,3] <- rlnorm(1, 5.55, 0.48) # 257.03 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 5.34, 0.5) # 208.18 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 5.34, 0.5)
+  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,5] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,6] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,7] <- rlnorm(1, 2.66, 0.89)
+ # seed_C[1,8] <- rlnorm(1, 2.66, 0.89)
 
-
-  seed_S[1,3] <- rlnorm(1, 5.55, 0.48)
-  seed_S[1,4] <- rlnorm(1, 5.34, 0.5)
-  seed_S[1,5] <- rlnorm(1, 5.34, 0.5)
+  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,5] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,6] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,7] <- rlnorm(1, 2.66, 0.89)
+ # seed_S[1,8] <- rlnorm(1, 2.66, 0.89)
 
 # corn phase dynamics  
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -213,14 +220,14 @@ rot_3year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
   
 
-  seed_C[1,3] <- rlnorm(1, 5.75, 0.46) #316.83 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 5.55, 0.48)
+  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,5] <- rlnorm(1, 5.05, 0.53)
 
 
-  seed_S[1,3] <- rlnorm(1, 5.75, 0.46)
-  seed_S[1,4] <- rlnorm(1, 5.55, 0.48)
-  seed_S[1,5] <- rlnorm(1, 5.55, 0.48)
+  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,5] <- rlnorm(1, 6.94, 0.43)
 
 # corn phase dynamics  
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -345,14 +352,16 @@ rot_4year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                        poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
   
-  seed_C[1,3] <- rlnorm(1, 6, 0.45) #403.27 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 6, 0.45)
-  seed_C[1,5] <- rlnorm(1, 6, 0.45)
+  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
+ #fecundity was much lower after cohort 3, so focus on supressing plant size in soybean
 
 
-  seed_S[1,3] <- rlnorm(1, 6, 0.45)
-  seed_S[1,4] <- rlnorm(1, 6, 0.45)
-  seed_S[1,5] <- rlnorm(1, 6, 0.45)
+  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,6] <- rlnorm(1,  7.34, 0.44)
 
 # corn phase dynamics  
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -371,14 +380,20 @@ rot_4year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                        poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
   
-  seed_C[1,3] <- rlnorm(1, 5.75, 0.46) #316.83 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 6, 0.45)
-  seed_C[1,5] <- rlnorm(1, 6.63, 0.43) #757.22 seeds/plant
+  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,6] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,7] <- rlnorm(1,  2.66, 0.89)
+ # seed_C[1,8] <- rlnorm(1,  2.66, 0.89)
 
 
-  seed_S[1,3] <- rlnorm(1, 5.75, 0.46)
-  seed_S[1,4] <- rlnorm(1, 6, 0.45)
-  seed_S[1,5] <- rlnorm(1, 6.63, 0.43)
+  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,6] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,7] <- rlnorm(1,  2.66, 0.89)
+ # seed_S[1,8] <- rlnorm(1,  2.66, 0.89)
 
 # corn phase dynamics  
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -496,7 +511,7 @@ N_4yr_low_df <-  N_4yr_low %>%
   unlist(recursive = FALSE) %>%
   data.frame() %>%
   dplyr::rename(counts = ".") %>%
-  dplyr::mutate(category = rep(c("top", "bottom", "cohort_1", "cohort_2", "cohort_4", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
+  dplyr::mutate(category = rep(c("top", "bottom", "cohort_1", "cohort_2", "cohort_3", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
   filter(category %in% c("top", "bottom")) %>%
   unnest(cols = everything() ) %>%
   mutate(cycle_no = rep(1:t, each = 2)) %>%
@@ -510,15 +525,25 @@ N_4yr_low_df <-  N_4yr_low %>%
 
 
 
+```
+## Warning: Removed 10 rows containing missing values (geom_point).
+```
+
+<div class="figure">
+<img src="Q1-seed-production-allowance-rot_files/figure-html/seed-allowance-sim-lambda-plot-1.png" alt="Population growth rates over 100 rotational cycles. All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 18 cm soil stratum. The simulation applied weed management on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022b) were used to estimate cohort-based fecundity. In corn and soybean, only the fecundity of cohorts 1 through 3 fecundity were manipulated to find the seed thresholds in the corn and soybean environments, the fecundity of cohorts 4 and beyond were kept as they were measured from 2018. Each panel was annotated with the average fecundity threshold (seeds/m2) for the first three plant cohorts and the whole crop phase. The red horizontal line marks lambda = 1."  />
+<p class="caption">(\#fig:seed-allowance-sim-lambda-plot)Population growth rates over 100 rotational cycles. All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 18 cm soil stratum. The simulation applied weed management on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022b) were used to estimate cohort-based fecundity. In corn and soybean, only the fecundity of cohorts 1 through 3 fecundity were manipulated to find the seed thresholds in the corn and soybean environments, the fecundity of cohorts 4 and beyond were kept as they were measured from 2018. Each panel was annotated with the average fecundity threshold (seeds/m2) for the first three plant cohorts and the whole crop phase. The red horizontal line marks lambda = 1.</p>
+</div>
+
+
 
 ```
-## Warning: Removed 1 rows containing missing values (geom_point).
+## Warning: Removed 8 rows containing missing values (geom_point).
 ```
 
-![Figure 1: Population growth rates over 100 rotational cycles. All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 18 cm soil stratum. The simulation applied weed management on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022b) were used to estimate cohort-based fecundity. In corn and soybean, only the fecundity of cohorts 1 through 3 fecundity were manipulated to find the seed thresholds in the corn and soybean environments, the fecundity of cohorts 4 and beyond were kept as they were measured from 2018. Each panel was annotated with the average fecundity threshold (seeds/m2) for the first three plant cohorts and the whole crop phase. The red horizontal line marks lambda = 1.](Q1-seed-production-allowance-rot_files/figure-docx/seed-allowance-sim-lambda-plot-1.png)
-
-
-![Figure 2: Population size at the end of a rotation cycle over 100 rotational cycles (the 2-year rotation ended at the soybean phase, the 3-year rotation ended at the oat phase, and the 4-year rotation ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 18 cm soil stratum. The simulation applied weed management on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022b) were used to estimate cohort-based fecundity. In corn and soybean, only the fecundity of cohorts 1 through 3 fecundity were manipulated to find the seed allowance in the corn and soybean environments, the fecundity of cohorts 4 and beyond were kept as they were measured from 2018. Each panel was annotated with the average fecundity thresholds for the first three waterhemp cohorts and the whole crop phase. The red horizontal line marks lambda = 1.](Q1-seed-production-allowance-rot_files/figure-docx/seed-allowance-sim-N-plot-1.png)
+<div class="figure">
+<img src="Q1-seed-production-allowance-rot_files/figure-html/seed-allowance-sim-N-plot-1.png" alt="Population size at the end of a rotation cycle over 100 rotational cycles (the 2-year rotation ended at the soybean phase, the 3-year rotation ended at the oat phase, and the 4-year rotation ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 18 cm soil stratum. The simulation applied weed management on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022b) were used to estimate cohort-based fecundity. In corn and soybean, only the fecundity of cohorts 1 through 3 fecundity were manipulated to find the seed allowance in the corn and soybean environments, the fecundity of cohorts 4 and beyond were kept as they were measured from 2018. Each panel was annotated with the average fecundity thresholds for the first three waterhemp cohorts and the whole crop phase. The red horizontal line marks lambda = 1."  />
+<p class="caption">(\#fig:seed-allowance-sim-N-plot)Population size at the end of a rotation cycle over 100 rotational cycles (the 2-year rotation ended at the soybean phase, the 3-year rotation ended at the oat phase, and the 4-year rotation ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 18 cm soil stratum. The simulation applied weed management on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022b) were used to estimate cohort-based fecundity. In corn and soybean, only the fecundity of cohorts 1 through 3 fecundity were manipulated to find the seed allowance in the corn and soybean environments, the fecundity of cohorts 4 and beyond were kept as they were measured from 2018. Each panel was annotated with the average fecundity thresholds for the first three waterhemp cohorts and the whole crop phase. The red horizontal line marks lambda = 1.</p>
+</div>
 
 
 

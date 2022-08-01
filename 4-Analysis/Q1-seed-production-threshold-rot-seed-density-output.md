@@ -8,78 +8,34 @@ output:
 bibliography: WH-pop-dynamics.bib
 csl: apa-no-ampersand.csl 
 ---
-Wrong calculation: mature density was squared here, which caused very high tolerable seed production
-
-```{r setup, include=FALSE, message=FALSE, warning=FALSE}
-library(tidyverse)
-library(data.table)
-library(readr)
-library(magrittr) # for %<>%
-library(nlme) # for gls
-library(emmeans) # for joint_tests
-library(patchwork)
-library(pracma) #for nthroot
-set.seed(722)
-```
-
-
-```{r, echo=FALSE}
-starting_point <-  c(10000, 0, 0, 0, 0, 0, 0, 0) #10000 seeds top soil, 0 seed deep soil,0 plants from cohorts 1 through 6
-```
-
-```{r tillage-sim, echo=FALSE}
-fall_tillage <-readRDS("../2-Data/Clean/mean-post-harvest-tillage.RData")
-
-spring_tillage <-readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
-```
+Goal: output the total seed production in each crop phase 
 
 
 
-```{r overwinter-sim, echo=FALSE}
-overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData")
-```
 
 
 
-```{r emerge-sim, echo=FALSE}
-emergence <-readRDS("../2-Data/Clean/mean-emergence-prop.RData")
-```
 
 
 
-```{r survive-sim, echo=FALSE}
-summer_seed_survival <- readRDS("../2-Data/Clean/mean-summer-seed-survival-Sosnoskie.RData")
-
-#### plant survival: literature data - named as scenario2, because scenario1 is the point-estimates from the experiment 
-#female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
-
-female_survival <- readRDS("../2-Data/Clean/mean-summer-seedling-survival-Hartzler.RData")
-
-#### combine seed and plant survivals into one matrix with element-wise multiplication: this is not computing, but arranging using 1's as placeholders 
-summer_survival <- purrr::map2(summer_seed_survival, female_survival, `*`)
-```
 
 
 
-```{r fecund-sim, echo=FALSE}
-# First step: use a cumulative fecundity of all cohorts as `
-#new_seeds_total`=  mature_plant_total * fecundity_sim
-# change fecundity_sim  to get lambda as close to 1 as possible 
-
-# Focus next: manipulate cohorts 1 and 2 in corn and soybean fecundity only because 1) these cohorts are more likely exposed to control measures and 2) they have higher survival rates than cohorts 3+ 
-
-# cohort 3+ fecundity: estimated fecundity as in population projection 
-
-# Final goal: flatten the fecundity distribution curve in corn and soybean to see seed production "allowance" in cohorts 1 and 2
-
-### find good pairs of mean and sd for rlnorm in Q1-fecund-prep
-
-fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
-```
 
 
 
-```{r rot-2yr-function, echo=TRUE}
+
+
+
+
+
+
+
+
+
+
+
+```r
 # event sequence: seed dropped - chisel - overwinter - field cultivator - emerge - survive - new seed
 
 # create a function 
@@ -95,33 +51,34 @@ rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
   
 
-  seed_C[1,3] <- rlnorm(1, 2.66, 0.89) #13.58 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 3.44, 0.18)  # 30.84 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 3.44, 0.18) 
+  seed_C[1,3] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
+  seed_C[1,4] <- rlnorm(1, 5.34, 0.5) # 208.18 seeds/plant
+  seed_C[1,5] <- rlnorm(1, 5.34, 0.5) 
 
 
-  seed_S[1,3] <- rlnorm(1, 3.44, 0.18)
-  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1, 3.44, 0.18)
+  seed_S[1,3] <- rlnorm(1, 5.55, 0.48) 
+  seed_S[1,4] <- rlnorm(1, 5.55, 0.48) 
+  seed_S[1,5] <- rlnorm(1, 5.75, 0.46) #316.83
 
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
-
-    mature_pl_corn <-  sv_C %*% em_C %*% prt_C %*% vec 
    
-   seed_dens_corn <-  mature_pl_corn[3:8] * sv_C[1, 3:8] 
+   pl_dens_corn <-  sv_C %*% em_C %*% prt_C %*% vec 
+   seed_dens_corn <- seed_C[1,3:8] * pl_dens_corn[3:8]
 # soybean phase dynamics
 
-  mature_pl_soy <-  sv_S %*% em_S %*% prt_S  %*% after_corn 
+  pl_dens_soy  <-  sv_S %*% em_S %*% prt_S  %*% after_corn 
    
-   seed_dens_soy <- mature_pl_soy*seed_S[1,3:8] 
+   seed_dens_soy <- seed_S[1,3:8] * pl_dens_soy[3:8] 
 
 # seed at harvest
- l <-  list(sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
+ l <-  list(pl_dens_corn[3:8], pl_dens_soy[3:8], 
+             sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
             sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
             sum(seed_dens_corn, seed_dens_soy))
- names(l) <- c("corn_first3", "corn_total",
+ names(l) <- c("plant density in corn", "plant density in soybean",
+               "corn_first3", "corn_total",
                "soybean_first3", "soybean_total", "rotation_total")
  l
 }
@@ -130,39 +87,41 @@ rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
   
 
-  seed_C[1,3] <- rlnorm(1, 4.81, 0.56) # 122.33 seeds/plant
-  seed_C[1,4] <- rlnorm(1,  5.05, 0.53) # 155.93 seeds/plant
-  seed_C[1,5] <- rlnorm(1,  5.34, 0.5) # 208.18 seeds/plant
+  seed_C[1,3] <- rlnorm(1, 3.85, 0.7) # 46.55 seeds/plant
+  seed_C[1,4] <- rlnorm(1, 3.44, 0.76) # 30.84 seeds/plant
+  seed_C[1,5] <- rlnorm(1, 3.85, 0.7)
 
-  seed_S[1,3] <- rlnorm(1, 4.81, 0.56)
-  seed_S[1,4] <- rlnorm(1, 5.05, 0.53)
-  seed_S[1,5] <- rlnorm(1, 5.34, 0.5)
+  seed_S[1,3] <- rlnorm(1, 3.85, 0.7)
+  seed_S[1,4] <- rlnorm(1, 3.85, 0.7)
+  seed_S[1,5] <- rlnorm(1, 4.22, 0.65) #67.56 seeds/plant
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
    
-    mature_pl_corn <-  sv_C %*% em_C %*% prt_C %*% vec 
-   seed_dens_corn <- seed_C[1,3:8] * mature_pl_corn[3:8]
+   pl_dens_corn <-  sv_C %*% em_C %*% prt_C %*% vec 
+   seed_dens_corn <- seed_C[1,3:8] * pl_dens_corn[3:8]
 # soybean phase dynamics
 
-  mature_pl_soy  <-  sv_S %*% em_S %*% prt_S  %*% after_corn 
+  pl_dens_soy  <-  sv_S %*% em_S %*% prt_S  %*% after_corn 
    
-   seed_dens_soy <- seed_S[1,3:8] * mature_pl_soy[3:8] 
+   seed_dens_soy <- seed_S[1,3:8] * pl_dens_soy[3:8] 
 
 # seed at harvest
- l <-  list(sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
+ l <-  list(pl_dens_corn[3:8], pl_dens_soy[3:8], 
+             sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
             sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
             sum(seed_dens_corn, seed_dens_soy))
- names(l) <- c("corn_first3", "corn_total",
+ names(l) <- c("plant density in corn", "plant density in soybean",
+               "corn_first3", "corn_total",
                "soybean_first3", "soybean_total", "rotation_total")
  l
 }
 ```
 
-```{r 2yr-conv-sim1, echo = TRUE}
-##### with corn under conventional weed management {-}
 
-m_dens_2yr_conv <- rot_2year_conv(vec = starting_point ,
+```r
+##### with corn under conventional weed management {-}
+rot_2year_conv(vec = starting_point ,
                               poh_C = fall_tillage$C2_conv,
                               ow_C = overwinter$C2_conv,
                               prt_C  = spring_tillage$C2_conv,
@@ -177,16 +136,38 @@ m_dens_2yr_conv <- rot_2year_conv(vec = starting_point ,
                               em_S  = emergence$S2_conv,
                               sv_S = summer_survival$S2_conv,
                               seed_S = fecundity18$S2_conv)
+```
 
-
-m_dens_2yr_conv 
+```
+## $`plant density in corn`
+## [1] 0.9909086521 6.3079932836 0.0094328264 0.0007860689 0.0007860689
+## [6] 0.0001965172
+## 
+## $`plant density in soybean`
+## [1] 73.27376232 18.52714740  1.63211141  0.61303794  0.01288935  0.01689272
+## 
+## $corn_first3
+## [1] 1463.188
+## 
+## $corn_total
+## [1] 1469.915
+## 
+## $soybean_first3
+## [1] 39842.35
+## 
+## $soybean_total
+## [1] 51593.03
+## 
+## $rotation_total
+## [1] 53062.95
 ```
 
 
  
 
  
-```{r 2yr-low-sim1, echo=TRUE}
+
+```r
 ##### with corn under low herbicide weed management {-}
 rot_2year_low(vec = starting_point ,
                              poh_C = fall_tillage$C2_low,
@@ -203,25 +184,54 @@ rot_2year_low(vec = starting_point ,
                              em_S  = emergence$S2_low,
                              sv_S = summer_survival$S2_low,
                              seed_S = fecundity18$S2_low)
+```
 
+```
+## $`plant density in corn`
+## [1]  7.42427387 21.29697007  2.00331317  0.12069921  0.09627072  0.02291930
+## 
+## $`plant density in soybean`
+## [1] 3.048677e+01 7.190798e+00 4.800203e-01 4.638054e-02 2.538704e-04
+## [6] 2.538704e-04
+## 
+## $corn_first3
+## [1] 1402.044
+## 
+## $corn_total
+## [1] 1485.537
+## 
+## $soybean_first3
+## [1] 1069.216
+## 
+## $soybean_total
+## [1] 2077.833
+## 
+## $rotation_total
+## [1] 3563.37
 ```
   
 
 
-```{r rot-3yr-function, echo=TRUE}
+
+```r
 rot_3year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C, 
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S ,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
   
 
-  seed_C[1,3] <- rlnorm(1, 5.55, 0.48) # 257.03 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 5.34, 0.5) # 208.18 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 5.34, 0.5)
+  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,5] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,6] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,7] <- rlnorm(1, 2.66, 0.89)
+ # seed_C[1,8] <- rlnorm(1, 2.66, 0.89)
 
-
-  seed_S[1,3] <- rlnorm(1, 5.55, 0.48)
-  seed_S[1,4] <- rlnorm(1, 5.34, 0.5)
-  seed_S[1,5] <- rlnorm(1, 5.34, 0.5)
+  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,5] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,6] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,7] <- rlnorm(1, 2.66, 0.89)
+ # seed_S[1,8] <- rlnorm(1, 2.66, 0.89)
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
@@ -243,11 +253,13 @@ after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S %*%  after_c
    seed_dens_oat <- seed_O[1,3:8] * pl_dens_oat[3:8] 
    
    # seed at harvest
-  l <-  list(sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
+  l <-  list( pl_dens_corn[3:8],  pl_dens_soy[3:8], pl_dens_oat[3:8],
+             sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
              sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
              sum(seed_dens_oat), 
              sum(seed_dens_corn, seed_dens_soy, seed_dens_oat))
- names(l) <- c("corn_first3", "corn_total",
+ names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", 
+               "corn_first3", "corn_total",
                "soybean_first3", "soybean_total", 
                "oat_total", "rotation_total")
  l
@@ -261,14 +273,15 @@ rot_3year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
   
 
-  seed_C[1,3] <- rlnorm(1, 5.75, 0.46) #316.83 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 5.55, 0.48)
+
+  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
+  seed_C[1,5] <- rlnorm(1, 5.05, 0.53)
 
 
-  seed_S[1,3] <- rlnorm(1, 5.75, 0.46)
-  seed_S[1,4] <- rlnorm(1, 5.55, 0.48)
-  seed_S[1,5] <- rlnorm(1, 5.55, 0.48)
+  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
+  seed_S[1,5] <- rlnorm(1, 6.94, 0.43)
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
@@ -290,18 +303,21 @@ after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S %*%  after_c
    seed_dens_oat <- seed_O[1,3:8] * pl_dens_oat[3:8] 
    
    # seed at harvest
-  l <-  list(sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
+  l <-  list( pl_dens_corn[3:8], pl_dens_soy[3:8], pl_dens_oat[3:8],
+             sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
              sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
              sum(seed_dens_oat), 
              sum(seed_dens_corn, seed_dens_soy, seed_dens_oat))
- names(l) <- c("corn_first3", "corn_total",
+ names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", 
+               "corn_first3", "corn_total",
                "soybean_first3", "soybean_total", 
                "oat_total", "rotation_total")
  l
 }
 ```
 
-```{r 3yr-conv-sim1, echo=TRUE}
+
+```r
 rot_3year_conv(vec = starting_point,
                               poh_C = fall_tillage$C3_conv,
                               ow_C = overwinter$C3_conv,
@@ -325,11 +341,42 @@ rot_3year_conv(vec = starting_point,
                               em_O  = emergence$O3_conv,
                               sv_O = summer_survival$O3_conv,
                               seed_O = fecundity18$O3_conv)
+```
 
+```
+## $`plant density in corn`
+## [1] 3.622802e+00 1.838942e+01 2.042593e-02 2.851070e-02 1.702161e-03
+## [6] 4.255402e-04
+## 
+## $`plant density in soybean`
+## [1] 42.299352137  8.441006491  0.649018551  0.055382685  0.004344372
+## [6]  0.009533387
+## 
+## $`plant density in oat`
+## [1] 0.079226274 0.145080531 0.464202894 0.295405458 0.034902791 0.007350662
+## 
+## $corn_first3
+## [1] 862.3538
+## 
+## $corn_total
+## [1] 862.915
+## 
+## $soybean_first3
+## [1] 671.4894
+## 
+## $soybean_total
+## [1] 1278.345
+## 
+## $oat_total
+## [1] 655.3636
+## 
+## $rotation_total
+## [1] 2796.624
 ```
  
 
-```{r 3yr-low-sim1, echo=TRUE}
+
+```r
 ##### with corn under low herbicide weed management {-} 
  rot_3year_low(vec = starting_point,
                              poh_C = fall_tillage$C3_conv,
@@ -354,28 +401,60 @@ rot_3year_conv(vec = starting_point,
                              em_O  = emergence$O3_low,
                              sv_O = summer_survival$O3_low,
                              seed_O = fecundity18$O3_low)
+```
 
+```
+## $`plant density in corn`
+## [1] 21.77758473 54.16090090  5.13011444  0.66891402  0.21914216  0.05476482
+## 
+## $`plant density in soybean`
+## [1] 42.042820107  8.253527497  0.594994190  0.002569026  0.002308562
+## [6]  0.007486994
+## 
+## $`plant density in oat`
+## [1] 0.11001119 0.19253972 0.63536318 0.42382630 0.14026389 0.04761262
+## 
+## $corn_first3
+## [1] 4374.84
+## 
+## $corn_total
+## [1] 4481.75
+## 
+## $soybean_first3
+## [1] 1047.061
+## 
+## $soybean_total
+## [1] 1234.4
+## 
+## $oat_total
+## [1] 428.2556
+## 
+## $rotation_total
+## [1] 6144.406
 ```
 
 
 
 
-```{r rot-4yr-function, echo=TRUE}
+
+```r
 ### conventional weed management
 rot_4year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C, 
                            poh_S, ow_S, prt_S, em_S, sv_S, seed_S ,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                        poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
   
-  seed_C[1,3] <- rlnorm(1, 6, 0.45) #403.27 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 6, 0.45)
-  seed_C[1,5] <- rlnorm(1, 6, 0.45)
+  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
+ #fecundity was much lower after cohort 3, so focus on supressing plant size in soybean
 
 
-  seed_S[1,3] <- rlnorm(1, 6, 0.45)
-  seed_S[1,4] <- rlnorm(1, 6, 0.45)
-  seed_S[1,5] <- rlnorm(1, 6, 0.45)
-
+  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,6] <- rlnorm(1,  7.34, 0.44)
+  
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
    
@@ -401,13 +480,15 @@ after_alfalfa <-   ow_A %*%  poh_A %*% seed_A %*% sv_A %*% em_A %*% prt_A %*% af
    
    seed_dens_alfalfa <- seed_A[1,3:8] * pl_dens_alfalfa[3:8] 
       # seed at harvest
-  l <-  list(sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
-             sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
+  l <-  list( pl_dens_corn[3:8], pl_dens_soy[3:8], pl_dens_oat[3:8], pl_dens_alfalfa[3:8],
+             sum(seed_dens_corn[1:3]), seed_dens_corn[4], sum(seed_dens_corn),
+             sum(seed_dens_soy[1:3]), seed_dens_soy[4], sum(seed_dens_soy),
              sum(seed_dens_oat), sum(seed_dens_alfalfa),
              sum(seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa))
              
- names(l) <- c("corn_first3", "corn_total",
-               "soybean_first3", "soybean_total", 
+ names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", "plant density in alfalfa",
+   "corn_first3", "corn_4", "corn_total",
+               "soybean_first3", "soybean_4",  "soybean_total", 
                 "oat_total", "alfalfa_total",
                "rotation_total")
  l
@@ -420,14 +501,20 @@ rot_4year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
                            poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                        poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
   
-  seed_C[1,3] <- rlnorm(1, 5.75, 0.46) #316.83 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 6, 0.45)
-  seed_C[1,5] <- rlnorm(1, 6.63, 0.43) #757.22 seeds/plant
+  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,6] <- rlnorm(1,  2.66, 0.89)
+  seed_C[1,7] <- rlnorm(1,  2.66, 0.89)
+ # seed_C[1,8] <- rlnorm(1,  2.66, 0.89)
 
 
-  seed_S[1,3] <- rlnorm(1, 5.75, 0.46)
-  seed_S[1,4] <- rlnorm(1, 6, 0.45)
-  seed_S[1,5] <- rlnorm(1, 6.63, 0.43)
+  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,6] <- rlnorm(1,  2.66, 0.89)
+  seed_S[1,7] <- rlnorm(1,  2.66, 0.89)
+ # seed_S[1,8] <- rlnorm(1,  2.66, 0.89)
 
  # corn phase dynamics   
    after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
@@ -454,20 +541,23 @@ after_alfalfa <-   ow_A %*%  poh_A %*% seed_A %*% sv_A %*% em_A %*% prt_A %*% af
    
    seed_dens_alfalfa <- seed_A[1,3:8] * pl_dens_alfalfa[3:8] 
       # seed at harvest
-  l <-  list(sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
-             sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
+  l <-  list( pl_dens_corn[3:8], pl_dens_soy[3:8], pl_dens_oat[3:8], pl_dens_alfalfa[3:8],
+             sum(seed_dens_corn[1:3]),  sum(seed_dens_corn),
+             sum(seed_dens_soy[1:3]), seed_dens_soy[4], seed_dens_soy[5], sum(seed_dens_soy),
              sum(seed_dens_oat), sum(seed_dens_alfalfa),
              sum(seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa))
              
- names(l) <- c("corn_first3", "corn_total",
-               "soybean_first3", "soybean_total", 
+ names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", "plant density in alfalfa",
+   "corn_first3",  "corn_total",
+               "soybean_first3", "soybean_4", "soybean_5", "soybean_total", 
                 "oat_total", "alfalfa_total",
                "rotation_total")
  l
 }
 ```
 
-```{r 4yr-conv-sim1, echo=TRUE}
+
+```r
 ##### with corn under conventional weed management {-}
  rot_4year_conv(vec = starting_point,
                               poh_C = fall_tillage$C4_conv,
@@ -500,12 +590,54 @@ after_alfalfa <-   ow_A %*%  poh_A %*% seed_A %*% sv_A %*% em_A %*% prt_A %*% af
                           em_A  = emergence$A4_conv,
                           sv_A = summer_survival$A4_conv,
                           seed_A = fecundity18$A4_conv)
+```
 
-
+```
+## $`plant density in corn`
+## [1] 2.820161e+01 1.508272e+02 1.664582e-01 1.387152e-02 1.387152e-02
+## [6] 3.467879e-03
+## 
+## $`plant density in soybean`
+## [1] 1.9224968003 0.3889087811 0.0029872016 0.0201451862 0.0007748149
+## [6] 0.0007748149
+## 
+## $`plant density in oat`
+## [1] 0.016851651 0.047616432 0.161063340 0.092335335 0.057268473 0.005521709
+## 
+## $`plant density in alfalfa`
+## [1]  5.9159586 13.3041727  0.1129969 10.0826801  2.4348098  0.6697810
+## 
+## $corn_first3
+## [1] 5263.141
+## 
+## $corn_4
+## [1] 10.01523
+## 
+## $corn_total
+## [1] 5281.046
+## 
+## $soybean_first3
+## [1] 241.6609
+## 
+## $soybean_4
+## [1] 25.93936
+## 
+## $soybean_total
+## [1] 286.4521
+## 
+## $oat_total
+## [1] 196.0222
+## 
+## $alfalfa_total
+## [1] 3058.039
+## 
+## $rotation_total
+## [1] 8821.56
 ```
  
 
-```{r 4yr-low-sim1, echo=TRUE}
+
+```r
 ##### with corn under low herbicide weed management {-} 
 rot_4year_low(vec = starting_point,
                               poh_C = fall_tillage$C4_low,
@@ -538,6 +670,46 @@ rot_4year_low(vec = starting_point,
                               em_A  = emergence$A4_low,
                               sv_A = summer_survival$A4_low,
                               seed_A = fecundity18$A4_low)
+```
 
+```
+## $`plant density in corn`
+## [1] 149.6677626 395.4636340  29.2113672   1.8984729   1.5752202   0.3809348
+## 
+## $`plant density in soybean`
+## [1] 1.771563343 0.560449649 0.080767156 0.038959500 0.001498442 0.001901062
+## 
+## $`plant density in oat`
+## [1] 0.01923120 0.04690691 0.16524914 0.10342207 0.08816269 0.04161179
+## 
+## $`plant density in alfalfa`
+## [1]  6.7717813 15.1083556  0.2239443 11.4733483  3.2295596  1.2379696
+## 
+## $corn_first3
+## [1] 7360.635
+## 
+## $corn_total
+## [1] 7424.27
+## 
+## $soybean_first3
+## [1] 89.20542
+## 
+## $soybean_4
+## [1] 0.3543871
+## 
+## $soybean_5
+## [1] 0.03554655
+## 
+## $soybean_total
+## [1] 98.48007
+## 
+## $oat_total
+## [1] 430.1841
+## 
+## $alfalfa_total
+## [1] 230.7934
+## 
+## $rotation_total
+## [1] 8183.728
 ```
 

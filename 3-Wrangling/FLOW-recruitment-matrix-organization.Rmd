@@ -107,7 +107,6 @@ female_emerge_20_mean_wide <- female_emerge_20_mean_df %>%
 
 Mesotrione applied at 75 g/ha rate was 76% and 96% efficacious against *A retroflexus* L grown in corn that were susceptible and resistant to atrazine, respectively [@sutton2002activity]. On average, the Thiencarbazone-methyl + isoxaflutole mixture was 93.5% efficacious and mesotrione was 70.75% efficacious against *A. palmeri* grown in corn [@janak2016weed]. 
 
-*add allelopathy effects of oat, red clover, and alfalfa on Amaranthus*
 
 We combined the findings on other *Amaranthus* species from @sutton2002activity; @janak2016weed for herbicide efficacy and from @buhlerEmergencePersistenceSeed2001 and @schutteCommonWaterhempAmaranthus2014 for herbicide-unexposed germinants' emergence and set a uniform germination rate in all the crop identity crossed with corn weed management at 20%. The remaining seedbank density in the 0 - 2 cm soil stratum is calculated using the following equation: 
 
