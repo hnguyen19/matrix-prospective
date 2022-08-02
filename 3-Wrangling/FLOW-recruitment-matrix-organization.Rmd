@@ -105,7 +105,7 @@ female_emerge_20_mean_wide <- female_emerge_20_mean_df %>%
 5% of the waterhemp seeds in a soil seedbank of 5 cm deep that was undisturbed mechanically in the first burial year and unexposed to herbicides throughout the experiment, emerged a year after seed burial [@buhlerEmergencePersistenceSeed2001]. Annually, 23.5% +/- 16.6% sd of waterhemp seeds that were not treated with herbicides and undisturbed mechanically emerged from the top 1 cm soil layer [@schutteCommonWaterhempAmaranthus2014]. 
 
 
-Mesotrione applied at 75 g/ha rate was 76% and 96% efficacious against *A retroflexus* L grown in corn that were susceptible and resistant to atrazine, respectively [@sutton2002activity]. On average, the Thiencarbazone-methyl + isoxaflutole mixture was 93.5% efficacious and mesotrione was 70.75% efficacious against *A. palmeri* grown in corn [@janak2016weed]. 
+Mesotrione applied at 75 g ha$^-1$ rate was 76% and 96% efficacious against *A retroflexus* L grown in corn that were susceptible and resistant to atrazine, respectively [@sutton2002activity]. On average, the Thiencarbazone-methyl + isoxaflutole mixture was 93.5% efficacious and mesotrione was 70.75% efficacious against *A. palmeri* grown in corn [@janak2016weed]. 
 
 
 We combined the findings on other *Amaranthus* species from @sutton2002activity; @janak2016weed for herbicide efficacy and from @buhlerEmergencePersistenceSeed2001 and @schutteCommonWaterhempAmaranthus2014 for herbicide-unexposed germinants' emergence and set a uniform germination rate in all the crop identity crossed with corn weed management at 20%. The remaining seedbank density in the 0 - 2 cm soil stratum is calculated using the following equation: 
@@ -210,9 +210,9 @@ flextable() %>%
                adjusted_total_emerged_prop_wrt_top = "top 0 - 2 cm",
                 adjusted_total_emerged_prop_wrt_whole = "whole seedbank")) %>%
   add_header_row(top = TRUE, values = c(" ", " ", 
-                                        "Estimated total emergence proportion with respect to",
+                                        "Estimated total emergence proportion from",
                                         " ",
-                                        "Adjusted total emergence proportion with respect to"), 
+                                        "Adjusted total emergence proportion from"), 
                  colwidths = c(1, 1, 2, 1,  2)) %>%
    autofit() 
 
