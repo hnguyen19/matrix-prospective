@@ -787,7 +787,7 @@ scenario1_phase_lambda <-  scenario1_phase_projection_trimmed %>%
 # View(scenario1_phase_lambda )
 ```
 
-```{r scenario1-phase-wise-lambda-plot, echo=FALSE, fig.width = 12, fig.height= 12, fig.cap= "Scenario 1: Changes of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). The model started at year 0 with 1000 and 0 seeds per squared meter in the top (0-2 cm) and bottom (2-20 cm) strata, respectively. The red horizontal line shows the number of seeds in the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
+```{r scenario1-phase-wise-lambda-plot, echo=FALSE, fig.width = 7, fig.height= 7, fig.cap= "Scenario 1: Changes of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). The model started at year 0 with 1000 and 0 seeds per squared meter in the top (0-2 cm) and bottom (2-20 cm) strata, respectively. The red horizontal line shows the number of seeds in the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
 
 scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
   mutate(Stratum = rep(c("0-2 cm", "2-20 cm"),6),
@@ -848,12 +848,15 @@ scenario1_phase_seed_vectors_long  %>%
       plot.background=element_rect(fill="transparent",colour=NA)) +
   #annotate("text", label = paste("\u03BB =", c("0.567 (1663.3)", "0.537 (1876.0)", "0.544 (46598.7)", "0.542 (46996.3)", "0.701 (268.9)", "0.968 (141.3)")) , size = 3, x = 8, y = 10000) +
   ylim(0,16) +
-  geom_text(data = lambda_label, aes(label = label), size = 3.5, x = 4, y = 13) +
+    theme_bw() +
+ # guides(shape=guide_legend(title = "soil stratum")) +
+  theme(legend.position = "top") +
+  geom_text(data = lambda_label, aes(label = label), size = 2.5, x = 4, y = 13) +
       geom_text(aes(x = Year, 
                   y = 16,  #leave space between bar and label
                   label = Sequence), 
-              size = 3) +
-  guides(colour = "none") 
+              size = 2) +
+  guides(colour = "none")
 # one layered panel name <https://stackoverflow.com/questions/45699411/facet-label-merging-into-a-single-row-ggplot2>
 # none of facet_nested_wrap, or lemon::'s is working
 ```
