@@ -260,3 +260,6 @@ female_emerge_prop_20_adjusted_list <- lapply(split(female_emerge_prop_20_adjust
 
 ```
 
+```{r}
+female_emerge_prop_20_adjusted_list
+```
