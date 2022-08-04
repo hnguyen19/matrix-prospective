@@ -73,14 +73,16 @@ rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
    seed_dens_soy <- seed_S[1,3:8] * pl_dens_soy[3:8] 
 
 # seed at harvest
- l <-  list(pl_dens_corn[3:8], pl_dens_soy[3:8], 
-             sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
-            sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
-            sum(seed_dens_corn, seed_dens_soy))
- names(l) <- c("plant density in corn", "plant density in soybean",
-               "corn_first3", "corn_total",
-               "soybean_first3", "soybean_total", "rotation_total")
- l
+   
+   list(seed_dens_corn, seed_dens_soy)
+# l <-  list(pl_dens_corn[3:8], pl_dens_soy[3:8], 
+#             sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
+#            sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
+#            sum(seed_dens_corn, seed_dens_soy))
+# names(l) <- c("plant density in corn", "plant density in soybean",
+#               "corn_first3", "corn_total",
+#               "soybean_first3", "soybean_total", "rotation_total")
+# l
 }
 
 rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
@@ -107,14 +109,15 @@ rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
    seed_dens_soy <- seed_S[1,3:8] * pl_dens_soy[3:8] 
 
 # seed at harvest
- l <-  list(pl_dens_corn[3:8], pl_dens_soy[3:8], 
-             sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
-            sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
-            sum(seed_dens_corn, seed_dens_soy))
- names(l) <- c("plant density in corn", "plant density in soybean",
-               "corn_first3", "corn_total",
-               "soybean_first3", "soybean_total", "rotation_total")
- l
+   list(seed_dens_corn, seed_dens_soy)
+# l <-  list(pl_dens_corn[3:8], pl_dens_soy[3:8], 
+#             sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
+#            sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
+#            sum(seed_dens_corn, seed_dens_soy))
+# names(l) <- c("plant density in corn", "plant density in soybean",
+#               "corn_first3", "corn_total",
+#               "soybean_first3", "soybean_total", "rotation_total")
+# l
 }
 ```
 
@@ -139,27 +142,12 @@ rot_2year_conv(vec = starting_point ,
 ```
 
 ```
-## $`plant density in corn`
-## [1] 0.9909086521 6.3079932836 0.0094328264 0.0007860689 0.0007860689
-## [6] 0.0001965172
+## [[1]]
+## [1] 492.89638390 967.21162472   3.07962884   4.95113334   1.72316776
+## [6]   0.05345268
 ## 
-## $`plant density in soybean`
-## [1] 73.27376232 18.52714740  1.63211141  0.61303794  0.01288935  0.01689272
-## 
-## $corn_first3
-## [1] 1463.188
-## 
-## $corn_total
-## [1] 1469.915
-## 
-## $soybean_first3
-## [1] 39842.35
-## 
-## $soybean_total
-## [1] 51593.03
-## 
-## $rotation_total
-## [1] 53062.95
+## [[2]]
+## [1] 33306.21558  5931.72197   604.41483 11637.23103    83.77937    29.66737
 ```
 
 
@@ -187,27 +175,12 @@ rot_2year_low(vec = starting_point ,
 ```
 
 ```
-## $`plant density in corn`
-## [1]  7.42427387 21.29697007  2.00331317  0.12069921  0.09627072  0.02291930
+## [[1]]
+## [1] 253.6610125 700.6963785 447.6864435  61.1140324  21.5806858   0.7983557
 ## 
-## $`plant density in soybean`
-## [1] 3.048677e+01 7.190798e+00 4.800203e-01 4.638054e-02 2.538704e-04
-## [6] 2.538704e-04
-## 
-## $corn_first3
-## [1] 1402.044
-## 
-## $corn_total
-## [1] 1485.537
-## 
-## $soybean_first3
-## [1] 1069.216
-## 
-## $soybean_total
-## [1] 2077.833
-## 
-## $rotation_total
-## [1] 3563.37
+## [[2]]
+## [1]  790.8589571  195.4211770   82.9355282 1006.8984353    1.3642151
+## [6]    0.3548262
 ```
   
 
@@ -253,16 +226,18 @@ after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S %*%  after_c
    seed_dens_oat <- seed_O[1,3:8] * pl_dens_oat[3:8] 
    
    # seed at harvest
-  l <-  list( pl_dens_corn[3:8],  pl_dens_soy[3:8], pl_dens_oat[3:8],
-             sum(seed_dens_corn[1:3]), seed_dens_corn[4], seed_dens_corn[5], sum(seed_dens_corn),
-             sum(seed_dens_soy[1:3]), seed_dens_soy[4], seed_dens_soy[5], sum(seed_dens_soy),
-             sum(seed_dens_oat), 
-             sum(seed_dens_corn, seed_dens_soy, seed_dens_oat))
- names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", 
-               "corn_first3", "corn_4", "corn_5", "corn_total",
-               "soybean_first3", "soybean_4", "soybean_5" ,"soybean_total", 
-               "oat_total", "rotation_total")
- l
+   
+  list(seed_dens_corn, seed_dens_soy, seed_dens_oat) 
+#  l <-  list( pl_dens_corn[3:8],  pl_dens_soy[3:8], pl_dens_oat[3:8],
+#             sum(seed_dens_corn[1:3]), seed_dens_corn[4], seed_dens_corn[5], sum(seed_dens_corn),
+#             sum(seed_dens_soy[1:3]), seed_dens_soy[4], seed_dens_soy[5], sum(seed_dens_soy),
+#             sum(seed_dens_oat), 
+#             sum(seed_dens_corn, seed_dens_soy, seed_dens_oat))
+# names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", 
+#               "corn_first3", "corn_4", "corn_5", "corn_total",
+#               "soybean_first3", "soybean_4", "soybean_5" ,"soybean_total", 
+#               "oat_total", "rotation_total")
+# l
 }
 
 ### low herbicide weed management
@@ -303,16 +278,17 @@ after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S %*%  after_c
    seed_dens_oat <- seed_O[1,3:8] * pl_dens_oat[3:8] 
    
    # seed at harvest
-  l <-  list( pl_dens_corn[3:8], pl_dens_soy[3:8], pl_dens_oat[3:8],
-             sum(seed_dens_corn[1:3]), sum(seed_dens_corn),
-             sum(seed_dens_soy[1:3]), sum(seed_dens_soy),
-             sum(seed_dens_oat), 
-             sum(seed_dens_corn, seed_dens_soy, seed_dens_oat))
- names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", 
-               "corn_first3", "corn_total",
-               "soybean_first3", "soybean_total", 
-               "oat_total", "rotation_total")
- l
+  list(seed_dens_corn, seed_dens_soy, seed_dens_oat) 
+#  l <-  list( pl_dens_corn[3:8],  pl_dens_soy[3:8], pl_dens_oat[3:8],
+#             sum(seed_dens_corn[1:3]), seed_dens_corn[4], seed_dens_corn[5], sum(seed_dens_corn),
+#             sum(seed_dens_soy[1:3]), seed_dens_soy[4], seed_dens_soy[5], sum(seed_dens_soy),
+#             sum(seed_dens_oat), 
+#             sum(seed_dens_corn, seed_dens_soy, seed_dens_oat))
+# names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", 
+#               "corn_first3", "corn_4", "corn_5", "corn_total",
+#               "soybean_first3", "soybean_4", "soybean_5" ,"soybean_total", 
+#               "oat_total", "rotation_total")
+# l
 }
 ```
 
@@ -344,46 +320,16 @@ rot_3year_conv(vec = starting_point,
 ```
 
 ```
-## $`plant density in corn`
-## [1] 3.622802e+00 1.838942e+01 2.042593e-02 2.851070e-02 1.702161e-03
-## [6] 4.255402e-04
+## [[1]]
+## [1] 7.257569e+01 7.896607e+02 1.174527e-01 5.203554e-01 8.858695e-03
+## [6] 3.202190e-02
 ## 
-## $`plant density in soybean`
-## [1] 42.299352137  8.441006491  0.649018551  0.055382685  0.004344372
-## [6]  0.009533387
+## [[2]]
+## [1] 531.11959801 119.56709602  20.80271097   0.36275504   0.02292054
+## [6] 606.47023889
 ## 
-## $`plant density in oat`
-## [1] 0.079226274 0.145080531 0.464202894 0.295405458 0.034902791 0.007350662
-## 
-## $corn_first3
-## [1] 862.3538
-## 
-## $corn_4
-## [1] 0.5203554
-## 
-## $corn_5
-## [1] 0.008858695
-## 
-## $corn_total
-## [1] 862.915
-## 
-## $soybean_first3
-## [1] 671.4894
-## 
-## $soybean_4
-## [1] 0.362755
-## 
-## $soybean_5
-## [1] 0.02292054
-## 
-## $soybean_total
-## [1] 1278.345
-## 
-## $oat_total
-## [1] 655.3636
-## 
-## $rotation_total
-## [1] 2796.624
+## [[3]]
+## [1] 265.6985135 123.2096410 197.1701791  64.3983898   4.3017690   0.5851127
 ```
  
 
@@ -416,33 +362,14 @@ rot_3year_conv(vec = starting_point,
 ```
 
 ```
-## $`plant density in corn`
-## [1] 21.77758473 54.16090090  5.13011444  0.66891402  0.21914216  0.05476482
+## [[1]]
+## [1]  244.521178 3759.015789  371.303457   96.323619    7.779547    2.806697
 ## 
-## $`plant density in soybean`
-## [1] 42.042820107  8.253527497  0.594994190  0.002569026  0.002308562
-## [6]  0.007486994
+## [[2]]
+## [1] 193.60019 144.46615 708.99512  80.66199  64.58587  42.09105
 ## 
-## $`plant density in oat`
-## [1] 0.11001119 0.19253972 0.63536318 0.42382630 0.14026389 0.04761262
-## 
-## $corn_first3
-## [1] 4374.84
-## 
-## $corn_total
-## [1] 4481.75
-## 
-## $soybean_first3
-## [1] 1047.061
-## 
-## $soybean_total
-## [1] 1234.4
-## 
-## $oat_total
-## [1] 428.2556
-## 
-## $rotation_total
-## [1] 6144.406
+## [[3]]
+## [1]  72.387366  45.554899 195.564787  87.138687  22.610538   4.999325
 ```
 
 
@@ -492,18 +419,20 @@ after_alfalfa <-   ow_A %*%  poh_A %*% seed_A %*% sv_A %*% em_A %*% prt_A %*% af
    
    seed_dens_alfalfa <- seed_A[1,3:8] * pl_dens_alfalfa[3:8] 
       # seed at harvest
-  l <-  list( pl_dens_corn[3:8], pl_dens_soy[3:8], pl_dens_oat[3:8], pl_dens_alfalfa[3:8],
-             sum(seed_dens_corn[1:3]), seed_dens_corn[4], sum(seed_dens_corn),
-             sum(seed_dens_soy[1:3]), seed_dens_soy[4], sum(seed_dens_soy),
-             sum(seed_dens_oat), sum(seed_dens_alfalfa),
-             sum(seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa))
+   list(seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa)
+   
+#  l <-  list( pl_dens_corn[3:8], pl_dens_soy[3:8], pl_dens_oat[3:8], pl_dens_alfalfa[3:8],
+#             sum(seed_dens_corn[1:3]), seed_dens_corn[4], sum(seed_dens_corn),
+#             sum(seed_dens_soy[1:3]), seed_dens_soy[4], sum(seed_dens_soy),
+#             sum(seed_dens_oat), sum(seed_dens_alfalfa),
+#             sum(seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa))
              
- names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", "plant density in alfalfa",
-   "corn_first3", "corn_4", "corn_total",
-               "soybean_first3", "soybean_4",  "soybean_total", 
-                "oat_total", "alfalfa_total",
-               "rotation_total")
- l
+# names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", "plant density in alfalfa",
+#   "corn_first3", "corn_4", "corn_total",
+#               "soybean_first3", "soybean_4",  "soybean_total", 
+#                "oat_total", "alfalfa_total",
+#               "rotation_total")
+# l
 
 }
 
@@ -553,19 +482,20 @@ after_alfalfa <-   ow_A %*%  poh_A %*% seed_A %*% sv_A %*% em_A %*% prt_A %*% af
    
    seed_dens_alfalfa <- seed_A[1,3:8] * pl_dens_alfalfa[3:8] 
       # seed at harvest
-  l <-  list( pl_dens_corn[3:8], pl_dens_soy[3:8], pl_dens_oat[3:8], pl_dens_alfalfa[3:8],
-             sum(seed_dens_corn[1:3]), seed_dens_corn[4], seed_dens_corn[5], sum(seed_dens_corn),
-             sum(seed_dens_soy[1:3]), seed_dens_soy[4], seed_dens_soy[5], sum(seed_dens_soy),
-             sum(seed_dens_oat), sum(seed_dens_alfalfa),
-             sum(seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa))
+   list(seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa)
+   
+#  l <-  list( pl_dens_corn[3:8], pl_dens_soy[3:8], pl_dens_oat[3:8], pl_dens_alfalfa[3:8],
+#             sum(seed_dens_corn[1:3]), seed_dens_corn[4], sum(seed_dens_corn),
+#             sum(seed_dens_soy[1:3]), seed_dens_soy[4], sum(seed_dens_soy),
+#             sum(seed_dens_oat), sum(seed_dens_alfalfa),
+#             sum(seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa))
              
- names(l) <- c("plant density in corn", "plant density in soybean",
-               "plant density in oat", "plant density in alfalfa",
-               "corn_first3", "corn_4", "corn_5", "corn_total",
-               "soybean_first3", "soybean_4", "soybean_5", "soybean_total", 
-                "oat_total", "alfalfa_total",
-               "rotation_total")
- l
+# names(l) <- c("plant density in corn", "plant density in soybean", "plant density in oat", "plant density in alfalfa",
+#   "corn_first3", "corn_4", "corn_total",
+#               "soybean_first3", "soybean_4",  "soybean_total", 
+#                "oat_total", "alfalfa_total",
+#               "rotation_total")
+# l
 }
 ```
 
@@ -606,46 +536,18 @@ after_alfalfa <-   ow_A %*%  poh_A %*% seed_A %*% sv_A %*% em_A %*% prt_A %*% af
 ```
 
 ```
-## $`plant density in corn`
-## [1] 2.820161e+01 1.508272e+02 1.664582e-01 1.387152e-02 1.387152e-02
-## [6] 3.467879e-03
+## [[1]]
+## [1]  234.010819 5027.561563    1.568298   10.015235    6.945006    0.945575
 ## 
-## $`plant density in soybean`
-## [1] 1.9224968003 0.3889087811 0.0029872016 0.0201451862 0.0007748149
-## [6] 0.0007748149
+## [[2]]
+## [1] 239.0542344   2.4952351   0.1114405  25.9393581   4.1854207  14.6664058
 ## 
-## $`plant density in oat`
-## [1] 0.016851651 0.047616432 0.161063340 0.092335335 0.057268473 0.005521709
+## [[3]]
+## [1] 62.2930634 48.6163767 43.0039118 20.9601210 20.7884556  0.3602915
 ## 
-## $`plant density in alfalfa`
-## [1]  5.9159586 13.3041727  0.1129969 10.0826801  2.4348098  0.6697810
-## 
-## $corn_first3
-## [1] 5263.141
-## 
-## $corn_4
-## [1] 10.01523
-## 
-## $corn_total
-## [1] 5281.046
-## 
-## $soybean_first3
-## [1] 241.6609
-## 
-## $soybean_4
-## [1] 25.93936
-## 
-## $soybean_total
-## [1] 286.4521
-## 
-## $oat_total
-## [1] 196.0222
-## 
-## $alfalfa_total
-## [1] 3058.039
-## 
-## $rotation_total
-## [1] 8821.56
+## [[4]]
+## [1] 2723.3129386  195.1278666    0.1129969  133.5955117    3.0435122
+## [6]    2.8465693
 ```
  
 
@@ -686,49 +588,16 @@ rot_4year_low(vec = starting_point,
 ```
 
 ```
-## $`plant density in corn`
-## [1] 149.6677626 395.4636340  29.2113672   1.8984729   1.5752202   0.3809348
+## [[1]]
+## [1] 1646.437865 5566.572331  147.624913    5.115332   51.377529    7.142528
 ## 
-## $`plant density in soybean`
-## [1] 1.771563343 0.560449649 0.080767156 0.038959500 0.001498442 0.001901062
+## [[2]]
+## [1] 70.90251839 17.71018712  0.59271588  0.35438713  0.03554655  8.88471827
 ## 
-## $`plant density in oat`
-## [1] 0.01923120 0.04690691 0.16524914 0.10342207 0.08816269 0.04161179
+## [[3]]
+## [1]  64.646749  98.947523 147.319612  74.722445  38.108325   6.439424
 ## 
-## $`plant density in alfalfa`
-## [1]  6.7717813 15.1083556  0.2239443 11.4733483  3.2295596  1.2379696
-## 
-## $corn_first3
-## [1] 7360.635
-## 
-## $corn_4
-## [1] 5.115332
-## 
-## $corn_5
-## [1] 51.37753
-## 
-## $corn_total
-## [1] 7424.27
-## 
-## $soybean_first3
-## [1] 89.20542
-## 
-## $soybean_4
-## [1] 0.3543871
-## 
-## $soybean_5
-## [1] 0.03554655
-## 
-## $soybean_total
-## [1] 98.48007
-## 
-## $oat_total
-## [1] 430.1841
-## 
-## $alfalfa_total
-## [1] 230.7934
-## 
-## $rotation_total
-## [1] 8183.728
+## [[4]]
+## [1]  72.232333 124.643934   2.071485  28.683371   1.614780   1.547462
 ```
 

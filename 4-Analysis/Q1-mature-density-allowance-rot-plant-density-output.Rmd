@@ -1,7 +1,7 @@
 ---
 output:
- # bookdown::word_document2:
-  bookdown::html_document2:
+  bookdown::word_document2:
+ # bookdown::html_document2:
       toc: false
       fig_caption: yes
       keep_md: true
@@ -121,14 +121,16 @@ rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
   
   seed_dens_soy <- seed_S[1,3:8] * pl_dens_soy[3:8] 
   
+  list(pl_dens_corn, pl_dens_soy )
+  
   # seed at harvest
-  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
-             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
-             seed_dens_corn, seed_dens_soy)
-  names(l) <- c("corn_first3", "corn_total",
-                "soybean_first3", "soybean_total", 
-                "seed production in corn", "seed production in soybean")
-  l
+#  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
+#             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
+#             seed_dens_corn, seed_dens_soy)
+#  names(l) <- c("corn_first3", "corn_total",
+#                "soybean_first3", "soybean_total", 
+#                "seed production in corn", "seed production in soybean")
+#  l
 }
 
 rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
@@ -158,14 +160,16 @@ rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
   
   seed_dens_soy <- seed_S[1,3:8] * pl_dens_soy[3:8] 
   
+  
+    list(pl_dens_corn , pl_dens_soy )
   # seed at harvest
-  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
-             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
-             seed_dens_corn, seed_dens_soy)
-  names(l) <- c("corn_first3", "corn_total",
-                "soybean_first3", "soybean_total", 
-                "seed production in corn", "seed production in soybean")
-  l
+#  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
+#             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
+#             seed_dens_corn, seed_dens_soy)
+#  names(l) <- c("corn_first3", "corn_total",
+#                "soybean_first3", "soybean_total", 
+#                "seed production in corn", "seed production in soybean")
+#  l
 
 }
 ```
@@ -264,16 +268,18 @@ rot_3year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
   
   seed_dens_oat <- seed_O[1,3:8] * pl_dens_oat[3:8] 
   
+   list(pl_dens_corn , pl_dens_soy, pl_dens_oat)
+  
   # seed at harvest
-  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
-             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
-             sum(pl_dens_oat[6:8]), sum(pl_dens_oat[3:8]),
-             seed_dens_corn, seed_dens_soy, seed_dens_oat)
-  names(l) <- c("corn_first3", "corn_total",
-                "soybean_first3", "soybean_total", 
-                "oat_last3", "oat_total",
-                "seed production in corn", "seed production in soybean", "seed production in oat")
-  l
+#  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
+#             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
+#             sum(pl_dens_oat[6:8]), sum(pl_dens_oat[3:8]),
+#             seed_dens_corn, seed_dens_soy, seed_dens_oat)
+#  names(l) <- c("corn_first3", "corn_total",
+#                "soybean_first3", "soybean_total", 
+#                "oat_last3", "oat_total",
+#                "seed production in corn", "seed production in soybean", "seed production in oat")
+#  l
 }
 
 ### low herbicide weed management
@@ -318,16 +324,17 @@ rot_3year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
   
   seed_dens_oat <- seed_O[1,3:8] * pl_dens_oat[3:8] 
   
+     list(pl_dens_corn , pl_dens_soy, pl_dens_oat) 
   # seed at harvest
-  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
-             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
-             sum(pl_dens_oat[6:8]), sum(pl_dens_oat[3:8]),
-             seed_dens_corn, seed_dens_soy, seed_dens_oat)
-  names(l) <- c("corn_first3", "corn_total",
-                "soybean_first3", "soybean_total", 
-                "oat_last3", "oat_total",
-                "seed production in corn", "seed production in soybean", "seed production in oat")
-  l
+#  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
+#             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
+#             sum(pl_dens_oat[6:8]), sum(pl_dens_oat[3:8]),
+#             seed_dens_corn, seed_dens_soy, seed_dens_oat)
+#  names(l) <- c("corn_first3", "corn_total",
+#                "soybean_first3", "soybean_total", 
+#                "oat_last3", "oat_total",
+#                "seed production in corn", "seed production in soybean", "seed production in oat")
+#  l
 }
 ```
 
@@ -436,18 +443,21 @@ rot_4year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
   
   pl_dens_alfalfa <-  sv_A %*% em_A %*% prt_A %*% after_oat 
   
-  seed_dens_alfalfa <- seed_A[1,3:8] * pl_dens_alfalfa[3:8] 
+  seed_dens_alfalfa <- seed_A[1,3:8] * pl_dens_alfalfa[3:8]
+  
+     list(pl_dens_corn , pl_dens_soy, pl_dens_oat, pl_dens_alfalfa)
+  
   # seed at harvest
-  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
-             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
-             sum(pl_dens_oat[3:8]), sum(pl_dens_alfalfa[3:8]),
-             seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa)
-  names(l) <- c("corn_first3", "corn_total",
-                "soybean_first3", "soybean_total", 
-                 "oat_total", "alfalfa_total",
-                "seed production in corn", "seed production in soybean",
-                "seed production in oat", "seed production in alfalfa")
-  l
+#  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
+#             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
+#             sum(pl_dens_oat[3:8]), sum(pl_dens_alfalfa[3:8]),
+#             seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa)
+#  names(l) <- c("corn_first3", "corn_total",
+#                "soybean_first3", "soybean_total", 
+#                 "oat_total", "alfalfa_total",
+#                "seed production in corn", "seed production in soybean",
+#                "seed production in oat", "seed production in alfalfa")
+#  l
   
 }
 
@@ -493,17 +503,20 @@ rot_4year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C,
   pl_dens_alfalfa <-  sv_A %*% em_A %*% prt_A %*% after_oat 
   
   seed_dens_alfalfa <- seed_A[1,3:8] * pl_dens_alfalfa[3:8] 
+
+  list(pl_dens_corn , pl_dens_soy, pl_dens_oat, pl_dens_alfalfa)
+  
   # seed at harvest
-  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
-             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
-             sum(pl_dens_oat[3:8]), sum(pl_dens_alfalfa[3:8]),
-             seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa)
-  names(l) <- c("corn_first3", "corn_total",
-                "soybean_first3", "soybean_total", 
-                 "oat_total", "alfalfa_total",
-                "seed production in corn", "seed production in soybean",
-                "seed production in oat", "seed production in alfalfa")
-  l
+#  l <-  list(sum(pl_dens_corn[3:5]), sum(pl_dens_corn[3:8]),
+#             sum(pl_dens_soy[3:5]), sum(pl_dens_soy[3:8]),
+#             sum(pl_dens_oat[3:8]), sum(pl_dens_alfalfa[3:8]),
+#             seed_dens_corn, seed_dens_soy, seed_dens_oat, seed_dens_alfalfa)
+#  names(l) <- c("corn_first3", "corn_total",
+#                "soybean_first3", "soybean_total", 
+#                 "oat_total", "alfalfa_total",
+#                "seed production in corn", "seed production in soybean",
+#                "seed production in oat", "seed production in alfalfa")
+#  l
 }
 ```
 
