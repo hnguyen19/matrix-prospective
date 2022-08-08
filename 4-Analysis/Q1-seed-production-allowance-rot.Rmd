@@ -80,7 +80,7 @@ fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 
 
 
-```{r rot-2yr-function-a, echo=TRUE}
+```{r rot-2yr-function-seebank-output, echo=TRUE}
 # event sequence: seed dropped - field cultivator - emerge - survive - new seed - chisel - overwinter 
 
 # create a function 
@@ -92,8 +92,8 @@ fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 # sv: seed survival rate and seedling to maturity success rate
 # seed: fecundity
 
-rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
-                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
+rot_2year_conv <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C, 
+                           prt_S, em_S, sv_S, seed_S, poh_S, ow_S){
   
 
   seed_C[1,3] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
@@ -141,6 +141,8 @@ rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
 
 ```{r 2yr-conv-sim-a, echo = TRUE}
 ##### with corn under conventional weed management {-}
+
+### Output: seedbank at top and bottom strata at the end of each crop phase
 t <- 100
 N_2yr_conv <- list() # blank data frame to save loop output 
 N_2yr_conv[[1]] <- starting_point 
@@ -166,20 +168,144 @@ for (i in 2:t) {
 N_2yr_conv_df <-  N_2yr_conv %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
-    dplyr::rename(counts = ".") %>%
-  dplyr::mutate(category = rep(c("top", "bottom", "cohort_1", "cohort_2", "cohort_3", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
-    filter(category %in% c("top", "bottom")) %>%
-    unnest(cols = everything() ) %>%
-    mutate(cycle_no = rep(1:t, each = 2)) %>%
-  group_by(category) %>%
-  mutate(lambda_cycle = counts/lag(counts),
+    dplyr::rename(seedbank_counts = ".") %>%
+  dplyr::mutate(stratum = rep(c("top", "bottom", "cohort_1", "cohort_2", "cohort_3", "cohort_4", "cohort_5", "cohort_6"),t)) %>%
+    filter(stratum %in% c("top", "bottom")) %>%
+    unnest(cols = everything()) %>%
+    mutate(cycle_no = as.character(rep(1:t, each = 2))) %>%
+  group_by(stratum) %>%
+  mutate(lambda_cycle = seedbank_counts/lag(seedbank_counts),
          lambda_annualized = sqrt(lambda_cycle),
           Rotation = "2-year",
-         Corn_weed_management = "conventional") %>%
-    na.omit() 
+         Corn_weed_management = "conventional") #%>% na.omit() to keep the starting population
+```
+
+```{r 2yr-conv-seed-production-per-capita}
+### Output: seed production, after manipulation by cohort x crop phase x iteration
+
+rot_2year_conv_seed_production_per_cap <- function(seed_C, seed_S){
+  
+
+  seed_C[1,3] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
+  seed_C[1,4] <- rlnorm(1, 5.34, 0.5) # 208.18 seeds/plant
+  seed_C[1,5] <- rlnorm(1, 5.34, 0.5) 
+
+
+  seed_S[1,3] <- rlnorm(1, 5.55, 0.48) 
+  seed_S[1,4] <- rlnorm(1, 5.55, 0.48) 
+  seed_S[1,5] <- rlnorm(1, 5.75, 0.46) #316.83
+  
+  
+  seed_production_count_corn <- seed_C[1,3:8] 
+
+  seed_production_count_soy <- seed_S[1,3:8]  
+
+# seed at harvest
+   
+  l <- list(seed_production_count_corn, seed_production_count_soy)
+
+  names(l) <- c("C2", "S2")
+  
+  l 
+  
+}
+
+N_2yr_conv_seed_production_per_capita <- list() # blank data frame to save loop output 
+
+
+for (i in 1:t) { 
+  N_2yr_conv_seed_production_per_capita[[i]] = rot_2year_conv_seed_production_per_cap(seed_C = fecundity18$C2_conv, seed_S = fecundity18$S2_conv)
+}
+
+N_2yr_conv_seed_production_per_capita_df <- N_2yr_conv_seed_production_per_capita  %>% 
+  unlist(recursive = TRUE) %>% # make a long table
+  data.frame() %>% #corn was listed before soybean in the customized f.
+  dplyr::rename(seed_per_capita = ".") %>%
+  dplyr::mutate(cohort = rep(c("1", "2", "3", "4", "5", "6"), t*2)) %>%
+   mutate(cycle_no = as.character(rep(1:t, each = 12))) %>%
+   mutate(Crop_ID = rep(c(rep("C2", 6), rep("S2", 6)), t))
+```
+
+
+```{r 2yr-conv-plant-density-fixed}
+### Output: Mature plant densities until seed production (B_h = sv_C or sv_S)
+### 1 iteration only because no randomization at any matrix
+
+rot_2year_conv_plant_density_fixed <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
+                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
+  
+
+  seed_C[1,3] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
+  seed_C[1,4] <- rlnorm(1, 5.34, 0.5) # 208.18 seeds/plant
+  seed_C[1,5] <- rlnorm(1, 5.34, 0.5) 
+
+
+  seed_S[1,3] <- rlnorm(1, 5.55, 0.48) 
+  seed_S[1,4] <- rlnorm(1, 5.55, 0.48) 
+  seed_S[1,5] <- rlnorm(1, 5.75, 0.46) #316.83 seeds/plant
+
+
+ # corn phase dynamics   
+   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
+   
+   pl_dens_corn <-  sv_C %*% em_C %*% prt_C %*% vec 
+
+# soybean phase dynamics
+
+  pl_dens_soy  <-  sv_S %*% em_S %*% prt_S  %*% after_corn 
+
+   
+  l <- list(pl_dens_corn[3:8], pl_dens_soy[3:8])
+
+ names(l) <- c("C2", "S2")
+ 
+ l
+}
+
+
+N_2yr_conv_mature_plant_density_fixed <- rot_2year_conv_plant_density_fixed(vec = starting_point ,
+                              poh_C = fall_tillage$C2_conv,
+                              ow_C = overwinter$C2_conv,
+                              prt_C  = spring_tillage$C2_conv,
+                              em_C  = emergence$C2_conv,
+                              sv_C = summer_survival$C2_conv,
+                              seed_C = fecundity18$C2_conv,
+                              
+                              #soybean dynamics   
+                              poh_S = fall_tillage$S2_conv,
+                              ow_S = overwinter$S2_conv,
+                              prt_S  = spring_tillage$S2_conv,
+                              em_S  = emergence$S2_conv,
+                              sv_S = summer_survival$S2_conv,
+                              seed_S = fecundity18$S2_conv)
+
+N_2yr_conv_mature_plant_density_fixed_df <- N_2yr_conv_mature_plant_density_fixed  %>% 
+  unlist(recursive = TRUE) %>% # make a long table
+  data.frame() %>% #corn was listed before soybean in the customized f.
+  dplyr::rename(plant_counts = ".")  %>%
+  dplyr::mutate(cohort = rep(c("1", "2", "3", "4", "5", "6"),2)) %>%
+   mutate(Crop_ID = c(rep("C2", 6), rep("S2", 6)))
+
+```
+
+
+
+```{r 2yr-conv-sim-a-all-output}
+# total stratified seedbank density and lambdas in N_2yr_conv_df
+# manipulated seed production in N_2yr_conv_seed_production_per_capita_df
+# fixed mature plant density in N_2yr_conv_mature_plant_density_fixed_df 
+
+N_2yr_conv_all_df <- N_2yr_conv_seed_production_per_capita_df %>% 
+  left_join(N_2yr_conv_df, by = "cycle_no") %>%
+  left_join(N_2yr_conv_mature_plant_density_fixed_df, by = c("Crop_ID", "cohort")) %>%
+  mutate(seed_production = seed_per_capita*plant_counts)
+
+
+# View(N_2yr_conv_all_df )
 ```
  
-
+```{r 2yr-conv-sim-plot}
+```
  
 ```{r 2yr-low-sim-a, echo=TRUE}
 ##### with corn under low herbicide weed management {-}
@@ -630,7 +756,7 @@ seed_allowance_sim_df %>%
 
 
 
-```{r seed-allowance-sim-N-plot-no-ann, echo=FALSE, fig.cap= "Population size at the end of a rotation cycle over 100 rotational cycles (the 2-year rotation ended at the soybean phase, the 3-year rotation ended at the oat phase, and the 4-year rotation ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 20 cm soil stratum. The simulation applied improved weed control efficacy on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022a) were used to estimate cohort-based fecundity. It was expected that no waterhemp cohorts in any crop environments but only the cohorts 1 through 3 in corn and soybean were manipulated to find the seed production thresholds. However, additional control efficacy was needed in some crop phases outside of the expected group to reduce seed production potentials. The crop phases marked with an asterisk (*) are where control measures extended beyond waterhemp cohort 3 would be neccessary. The crop phases marked with an inverted comma (') are where no additional control was applied. Each panel was annotated with the average fecundity thresholds for the first three waterhemp cohorts in corn and soybean followed by the whole crop phase.  The red horizontal line marks lambda = 1.", fig.height = 6, fig.width = 6}
+```{r seed-allowance-sim-N-plot-no-ann, echo=FALSE, fig.cap= "Population size at the end of a rotation cycle over 100 rotational cycles (the 2-year rotation ended at the soybean phase, the 3-year rotation ended at the oat phase, and the 4-year rotation ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 20 cm soil stratum. The simulation applied improved weed control efficacy on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022a) were used to estimate cohort-based fecundity. It was expected that no waterhemp cohorts in any crop environments but only the cohorts 1 through 3 in corn and soybean were manipulated to find the seed production thresholds. However, additional control efficacy was needed in some crop phases outside of the expected group to reduce seed production potentials. The red horizontal line marks lambda = 1.", fig.height = 6, fig.width = 6}
 
 seed_allowance_sim_df %>%
    ggplot() +
@@ -648,4 +774,7 @@ seed_allowance_sim_df %>%
   guides(shape=guide_legend(title = "soil stratum")) +
   theme(legend.position = "top") 
 ```
-
+```{r}
+head(seed_allowance_sim_df) %>%
+  flextable::flextable()
+```
