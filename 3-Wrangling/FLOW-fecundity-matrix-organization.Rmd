@@ -288,7 +288,7 @@ female_19_est_individual_fecundity <-  female_19_est %>%
          var_Weight = var(Weight), #pooled variance of biomass, need cohort-based, CropID x corn weed mgt var later
     Seed_log = a*log(Weight + 0.005) + b,
     var_Seed_log = (a^2)*var_Weight + var_b, #pooled variance of log of number of seeds
-    Seed = exp(Seed_log),
+    Seed = exp(Seed_log + var_Seed_log/2),
     var_Seed = exp(var_Seed_log))  %>% # pooled variance of number of seeds
   select(Crop_ID, Corn_weed_management, Cohort,
         a,  var_a, var_b, Weight, Seed, var_Weight, var_Seed) # keep relevant columns only 
