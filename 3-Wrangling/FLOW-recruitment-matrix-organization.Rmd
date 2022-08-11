@@ -28,7 +28,7 @@ seed_column_round <- readRDS("../2-Data/Raw/seed-column-2019-list-poisson.RData"
 ## To track possible errors, the seed columns are multiplied by each matrix step-by-step
 ```
 
-The seed column before post-harvest tillage was transitioned from post-harvest tillage through spring tillage with the general form of $A_{h+1} = A_hN_h$ by @caswellMatrixPopulationModels2001.  
+The seed column before post-harvest tillage was transitioned from post-harvest tillage through spring tillage with the general form of $A_{h+1} = A_h N_h$ by @caswellMatrixPopulationModels2001.  
 
 ```{r post-harvest-tillage, include=FALSE}
 ## Raw data from 'FLOW-literature-based-matrices'
@@ -105,10 +105,20 @@ female_emerge_20_mean_wide <- female_emerge_20_mean_df %>%
 5% of the waterhemp seeds in a soil seedbank of 5 cm deep that was undisturbed mechanically in the first burial year and unexposed to herbicides throughout the experiment, emerged a year after seed burial [@buhlerEmergencePersistenceSeed2001]. Annually, 23.5% +/- 16.6% sd of waterhemp seeds that were not treated with herbicides and undisturbed mechanically emerged from the top 1 cm soil layer [@schutteCommonWaterhempAmaranthus2014]. 
 
 
-Mesotrione applied at 75 g ha$^-1$ rate was 76% and 96% efficacious against *A retroflexus* L grown in corn that were susceptible and resistant to atrazine, respectively [@sutton2002activity]. On average, the Thiencarbazone-methyl + isoxaflutole mixture was 93.5% efficacious and mesotrione was 70.75% efficacious against *A. palmeri* grown in corn [@janak2016weed]. 
+Mesotrione applied at 75 g ha$^-1$ rate was 76% and 96% efficacious against *A retroflexus* L grown in corn that were susceptible and resistant to atrazine, respectively [@sutton2002activity]. On average, the Thiencarbazone-methyl + isoxaflutole mixture was 93.5% efficacious and mesotrione was 70.75% efficacious against *A. palmeri* grown in corn [@janakWeedControlCorn2016]. 
 
 
-We combined the findings on other *Amaranthus* species from @sutton2002activity; @janak2016weed for herbicide efficacy and from @buhlerEmergencePersistenceSeed2001 and @schutteCommonWaterhempAmaranthus2014 for herbicide-unexposed germinants' emergence and set a uniform germination rate in all the crop identity crossed with corn weed management at 20%. The remaining seedbank density in the 0 - 2 cm soil stratum is calculated using the following equation: 
+We combined the findings on other *Amaranthus* species from @sutton2002activity; @janakWeedControlCorn2016 for herbicide efficacy and from @buhlerEmergencePersistenceSeed2001 and @schutteCommonWaterhempAmaranthus2014 for herbicide-unexposed germinants to assign emergence rates based on the crop-specific weed management (Table \@ref(tab:general-emerge-assign)).
+
+
+
+
+
+The resistance profile of waterhemp at our experiment site was undetermined, but the raw estimation of seedling emergence proportion with respect to the top 0 - 2 cm soil seedbank density seems unrealistically low (Table \@ref(tab:emerge-prop-tab). The cohort-specific emergence rates ($e_1$ through $e_6$) were adjusted from the raw data ($\frac{p_k}{N_{B_{st,11}}}$ with $k = \{1,...,6\}$) to reflect 5% emergence success rate (equivalent to $E = 0.01 * N_{B_{st,11}}$) in crop environments that received pre-emergence herbicides (C2, C3 and C4 under conventional weed management and all the S2, S3, and S4 [Table 1, @nguyenWeedCommunityComposition2022]), 100% emergence success rate (equivalent to $E = 1 * N_{B_{st,11}}$) in the crop environments that received post-emergence herbicides (C2, C3 and C4 under low herbicide weed management, [Table 1, @nguyenWeedCommunityComposition2022]) and 50% emergence success rate (equivalent to $E = 0.1 * N_{B_{st,11}}$).  
+
+
+
+and set a uniform germination rate in all the crop identity crossed with corn weed management at 20%. The remaining seedbank density in the 0 - 2 cm soil stratum is calculated using the following equation: 
 
 $$
 N_{B_{e,11}} = (1 - G)*N_{B_{st,11}} = (1 - (E + D)) * N_{B_{st,11}}
@@ -121,12 +131,6 @@ $E$ is the proportion of germinated seeds that successfully emerge as seedlings
 $D$ is the proportion of germinated seeds that were killed by weed control measures
 
 $1 - G = 0.8$ is filled in the [1,1] position of the seedling recruitment matrix ($B_e[1,1]$).  
-
-
-The resistance profile of waterhemp at our experiment site was undetermined, but the raw estimation of seedling emergence proportion with respect to the top 0 - 2 cm soil seedbank density seems unrealistically low (Table \@ref(tab:emerge-prop-tab). The cohort-specific emergence rates ($e_1$ through $e_6$) were adjusted from the raw data ($\frac{p_k}{N_{B_{st,11}}}$ with $k = \{1,...,6\}$) to reflect 5% emergence success rate (equivalent to $E = 0.01 * N_{B_{st,11}}$) in crop environments that received pre-emergence herbicides (C2, C3 and C4 under conventional weed management and all the S2, S3, and S4 [Table 1, @nguyenWeedCommunityComposition2022]), 100% emergence success rate (equivalent to $E = 1 * N_{B_{st,11}}$) in the crop environments that received post-emergence herbicides (C2, C3 and C4 under low herbicide weed management, [Table 1, @nguyenWeedCommunityComposition2022]) and 50% emergence success rate (equivalent to $E = 0.1 * N_{B_{st,11}}$).  
-
-
-
 
 
 ```{r emerge-prop-tab, echo=FALSE}
@@ -148,32 +152,59 @@ female_emerge_prop_20 <- female_emerge_20_mean_wide %>%
          cohort4_mean_prop_wrt_whole = `4`/whole_seedbank_female_density,
          cohort5_mean_prop_wrt_whole = `5`/whole_seedbank_female_density,
          cohort6_mean_prop_wrt_whole = `6`/whole_seedbank_female_density) %>%
-  mutate(total_emerged_prop_wrt_top = cohort1_mean_prop_wrt_top + 
-           cohort2_mean_prop_wrt_top + 
-           cohort3_mean_prop_wrt_top + 
-           cohort4_mean_prop_wrt_top + 
-           cohort5_mean_prop_wrt_top +
-           cohort6_mean_prop_wrt_top,
-         total_emerged_prop_wrt_whole = cohort1_mean_prop_wrt_whole + 
-           cohort2_mean_prop_wrt_whole + 
-           cohort3_mean_prop_wrt_whole + 
-           cohort4_mean_prop_wrt_whole + 
-           cohort5_mean_prop_wrt_whole +
-           cohort6_mean_prop_wrt_whole) %>% # estimated emergence rate  
-  mutate(assumed_germination_rate = 0.2,
-         assumed_successful_emergence_rate = ifelse(Crop_ID %in% c("O4", "O3", "A4"), 0.5, "NA")) 
+  mutate(assumed_total_germination_rate = 0.2,
+         assumed_total_successful_emergence_rate = ifelse(Crop_ID %in% c("O4", "O3", "A4"), 0.5, "NA")) 
 
-female_emerge_prop_20$assumed_successful_emergence_rate[c(3, 5, 7, 13:18)] <- 0.05
-female_emerge_prop_20$assumed_successful_emergence_rate[c(4,6,8)] <- 1
+female_emerge_prop_20$assumed_total_successful_emergence_rate[c(3, 5, 7, 13:18)] <- 0.05
+female_emerge_prop_20$assumed_total_successful_emergence_rate[c(4,6,8)] <- 1
 
-female_emerge_prop_20$assumed_successful_emergence_rate <- as.numeric( female_emerge_prop_20$assumed_successful_emergence_rate)
+female_emerge_prop_20$assumed_total_successful_emergence_rate <- as.numeric( female_emerge_prop_20$assumed_total_successful_emergence_rate)
 
 # View(female_emerge_prop_20)
 # table of arithmetic means
 
 
 ### arrange rows by rotation 
+```
 
+
+```{r general-emerge-assign}
+
+female_emerge_prop_20_total <- female_emerge_prop_20 %>%
+  select(Crop_ID, Corn_weed_management, `1`:`6`,
+         top_stratum_female_density, 
+         assumed_total_germination_rate,
+         assumed_total_successful_emergence_rate) %>%
+  mutate(total_emerge_from_top_estimated = `1` + `2` + `3` + `4` + `5`+ `6`,
+         total_emerge_from_top_estimated_prop = total_emerge_from_top_estimated/top_stratum_female_density,
+         total_emerge_from_top_assigned =
+           assumed_total_germination_rate*assumed_total_successful_emergence_rate) %>%
+  mutate(cohort_1_share = `1`/total_emerge_from_top_estimated,
+         cohort_2_share = `2`/total_emerge_from_top_estimated,
+         cohort_3_share = `3`/total_emerge_from_top_estimated,
+         cohort_4_share = `4`/total_emerge_from_top_estimated,
+         cohort_5_share = `5`/total_emerge_from_top_estimated,
+         cohort_6_share = `6`/total_emerge_from_top_estimated) %>%
+  mutate(phase_order = ifelse(str_detect(Crop_ID, "C"), 1,
+                              ifelse(str_detect(Crop_ID, "S"), 2,
+                                     ifelse(str_detect(Crop_ID, "O"), 3, 4)))) %>%
+  mutate(Rot = substr(Crop_ID,2,2))%>%
+  arrange(Rot, phase_order, Corn_weed_management) 
+
+
+
+
+female_emerge_prop_20_total %>%
+  select(Crop_ID, Corn_weed_management, 
+         total_emerge_from_top_estimated,
+         total_emerge_from_top_assigned) %>%
+  flextable()
+  
+```
+
+
+
+```{r}
 female_emerge_prop_20_adjusted <- female_emerge_prop_20 %>% 
   mutate(assumed_successful_emergence_rate_from_seed = assumed_successful_emergence_rate*assumed_germination_rate,
          adjuster_ = assumed_successful_emergence_rate_from_seed / total_emerged_prop_wrt_top) %>%
@@ -218,48 +249,8 @@ flextable() %>%
 
 ```
 
-```{r recruitment-matrix-adjusted} 
-# Multiply the raw with the adjuster
-female_emerge_prop_20_adjusted_df <- female_emerge_prop_20_adjusted  %>%
-  select(matrix_id, adjuster_,
-         cohort1_mean_prop_wrt_top : cohort6_mean_prop_wrt_top,
-         cohort1_mean_prop_wrt_whole : cohort6_mean_prop_wrt_whole) %>%
-  mutate(adjusted_cohort1_mean_prop_wrt_top = adjuster_*cohort1_mean_prop_wrt_top,
-         adjusted_cohort2_mean_prop_wrt_top = adjuster_*cohort2_mean_prop_wrt_top,
-         adjusted_cohort3_mean_prop_wrt_top = adjuster_*cohort3_mean_prop_wrt_top,
-         adjusted_cohort4_mean_prop_wrt_top = adjuster_*cohort4_mean_prop_wrt_top,
-         adjusted_cohort5_mean_prop_wrt_top = adjuster_*cohort5_mean_prop_wrt_top,
-         adjusted_cohort6_mean_prop_wrt_top = adjuster_*cohort6_mean_prop_wrt_top,
-         adjusted_cohort1_mean_prop_wrt_whole = adjuster_*cohort1_mean_prop_wrt_whole,
-         adjusted_cohort2_mean_prop_wrt_whole = adjuster_*cohort2_mean_prop_wrt_whole,
-         adjusted_cohort3_mean_prop_wrt_whole = adjuster_*cohort3_mean_prop_wrt_whole,
-         adjusted_cohort4_mean_prop_wrt_whole = adjuster_*cohort4_mean_prop_wrt_whole,
-         adjusted_cohort5_mean_prop_wrt_whole = adjuster_*cohort5_mean_prop_wrt_whole,
-         adjusted_cohort6_mean_prop_wrt_whole = adjuster_*cohort6_mean_prop_wrt_whole,
-         top_mean_remain_prop = 1 - (adjusted_cohort1_mean_prop_wrt_top +
-                                     adjusted_cohort2_mean_prop_wrt_top + 
-                                     adjusted_cohort3_mean_prop_wrt_top +
-                                     adjusted_cohort4_mean_prop_wrt_top + 
-                                     adjusted_cohort5_mean_prop_wrt_top + 
-                                     adjusted_cohort6_mean_prop_wrt_top))
-
-
-### Mean matrix list 
-female_emerge_prop_20_adjusted_df_long <- female_emerge_prop_20_adjusted_df %>%
-  select(matrix_id, adjusted_cohort1_mean_prop_wrt_top:adjusted_cohort6_mean_prop_wrt_top) %>%
-  pivot_longer(!matrix_id, names_to = "Cohort", values_to = "adjusted_mean_emerge_prop")
 
 
 
-female_emerge_prop_20_adjusted_list <- lapply(split(female_emerge_prop_20_adjusted_df_long, female_emerge_prop_20_adjusted_df_long$matrix_id),
-       function(x) rbind(cbind(matrix(c(0.8, 0,0,1), nrow = 2, byrow = TRUE), matrix(0,nrow = 2, ncol = 6)),
-       cbind(matrix(x$adjusted_mean_emerge_prop, nrow = 6, ncol = 1),matrix(0,nrow =6, ncol=7))))
 
-### Save adjusted emergence list  
-# saveRDS(female_emerge_prop_20_adjusted_list, file="../2-Data/Clean/adjusted-mean-emergence-prop.RData")
 
-```
-
-```{r}
-female_emerge_prop_20_adjusted_list
-```
