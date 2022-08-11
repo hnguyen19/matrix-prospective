@@ -256,6 +256,7 @@ female_19_est <- left_join(fecundity_eq, female_19_blank_crops,
                            by = c("Corn_weed_management", "Crop_ID")) #now 1617 entries, 
 
 
+#Check records:
  table(female_19_est$Cohort, 
        female_19_est$Crop_ID,
        female_19_est$Corn_weed_management) # missing cohorts 5 and 6 in O3 low; and cohorts 3 in C4 conv
@@ -303,28 +304,8 @@ female_19_est_individual_fecundity <-  female_19_est %>%
 # plants from the same CropID x corn weed management share the same slope and intercept
 # the combination of slope x intercept id is the same as Crop ID x corn weed management id
 female_19_est_cohort_summ <- female_19_est_individual_fecundity %>% 
-#  group_by(Corn_weed_management, Crop_ID) %>% # pool all plants from the same CropID x Corn weed mgt
-#  mutate(quantile_Weight = ntile(Weight , 6), #out because recreating weight-based cohort poses discrepancy
-#         quantile_Seed = ntile(Seed, 6))  %>%
     group_by(Cohort, Corn_weed_management, Crop_ID) %>%
-  mutate(count_cohort = n(),
-         var_Weight_cohort =  ifelse(count_cohort>1, var(Weight), 0),  
-         var_Seed_log_cohort = (a^2)*var_Weight_cohort + var_b) 
-
-#  var_Weight_cohort = ifelse(count_cohort>1, var(Weight), 0) calculate within-cohort variance; if the group 
-# has only one sample, fill it with 0
-# The practice above make consistent variance value filling with R assigning var(4 identical numbers) = 0
-# Example: female_19_est_cohort_summ %>%
-#     filter(Crop_ID == "C3") %>%
-#     group_by(Cohort, Corn_weed_management) %>%
-#     select(Weight) %>%mutate(v_Weight = var(Weight))
-
-
-female_19_est_cohort_sorted <- female_19_est_cohort_summ %>%
-   group_by(Cohort, Corn_weed_management, Crop_ID) %>%
-  summarize(mean_Seed_cohort = mean(Seed),
-            var_Seed_log_cohort = mean(var_Seed_log_cohort),
-            var_Seed_cohort = exp(var_Seed_log_cohort)) %>% 
+  summarize(mean_Seed_cohort = mean(Seed)) %>% 
   mutate(matrix_id = paste(Crop_ID, Corn_weed_management, sep = "_")) %>%
   arrange(matrix_id, desc(mean_Seed_cohort)) 
 
@@ -340,16 +321,6 @@ female_19_est_cohort_sorted$matrix_id),
        matrix(rep(0,48), nrow = 6, byrow = TRUE))) 
 
 ## Save the 2019 fecundity matrices as a list 
- saveRDS(mean_fecundity_19_list, file="../2-Data/Clean/mean-fecundity-19-cohort.RData")
-
-
-## 2019 cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
-# because this var matrix is a 6x6, the last two columns and the last two rows are zeros 
-var_fecundity_19_list <- lapply(split(female_19_est_cohort_sorted, female_19_est_cohort_sorted$matrix_id),
-      function(x) rbind(matrix(0,nrow = 2, ncol =8),
-                        cbind(matrix(0,nrow = 6, ncol = 2),
-                              diag(x$var_Seed_cohort,6))))
-
-# saveRDS(var_fecundity_19_list, file="../2-Data/Clean/var-fecundity-19-cohort.RData")
+# saveRDS(mean_fecundity_19_list, file="../2-Data/Clean/mean-fecundity-19-cohort.RData")
 
 ```
