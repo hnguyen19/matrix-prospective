@@ -10,7 +10,7 @@ library(emmeans)
 library(here)
 library(nlme)
 library(data.table)
-library(moments) #for skewness and kurtosis
+
 ```
 
 ```{r fecund-18, include=FALSE}
@@ -274,14 +274,8 @@ female_19_est_NA <- female_19_est[!complete.cases(female_19_est),]
 ```{r amata-fecundity-cohort-19}
 # Seed = a * log(Weight) + b
 # a = log(Biomass + 0.005)_estimate /// b = (Intercept)_estimate
-# log is actually ln
+# log is  ln
 
-# Y = aX + b with E(X) = m
-# https://www.quora.com/Whats-the-mean-and-the-variance-of-Y-aX-b-2-where-X-is-a-random-variable-with-E-X-m 
-# m1 = mean(Weight)
-# m2 = Var(Weight)
-# m3 = 
-# m4 = 
 
 ##### estimate individual fecundity from weight #####
 ## How to deal with NAs in corn and zeros in soybean's consequences on var(seed):
@@ -294,12 +288,12 @@ female_19_est_individual_fecundity <-  female_19_est %>%
   mutate(var_a = SE_a^2,
          var_b = SE_b^2,
          var_Weight = var(Weight), #m2_ pooled variance of biomass, need cohort-based, CropID x corn weed mgt var later
-    Seed_log = a*log(Weight + 0.005) + b,
-    var_Seed_log = (a^2)*var_Weight + var_b, #pooled variance of log of number of seeds
-    Seed = exp(Seed_log + var_Seed_log/2),
-    var_Seed = exp(var_Seed_log))  %>% # pooled variance of number of seeds
+    Seed_log = a*log(Weight + 0.005) + b, # return ln(seed +1)
+    var_Seed_log = var(Seed_log), #pooled variance of log of number of seeds
+    Seed = exp(Seed_log + var_Seed_log/2) - `1, #subtract 1 to get raw seed
+    var_Seed = (exp(var_Seed_log) -1)*exp(Seed*2 + var_Seed_log))  %>% # pooled variance of number of seeds
   select(Crop_ID, Corn_weed_management, Cohort,
-        a,  var_a, var_b, Weight, Seed, var_Weight, var_Seed) # keep relevant columns only 
+        a, var_a, var_b, Weight, Seed, var_Weight, var_Seed) # keep relevant columns only 
 
 
 # female_19_est_individual_fecundity[!complete.cases(female_19_est_individual_fecundity),] #no NAs here.
@@ -346,13 +340,15 @@ female_19_est_cohort_sorted$matrix_id),
        matrix(rep(0,48), nrow = 6, byrow = TRUE))) 
 
 ## Save the 2019 fecundity matrices as a list 
-# saveRDS(mean_fecundity_19_list, file="../2-Data/Clean/mean-fecundity-19-cohort.RData")
+ saveRDS(mean_fecundity_19_list, file="../2-Data/Clean/mean-fecundity-19-cohort.RData")
 
 
 ## 2019 cohort-based variances of fecundity are saved as a diagonal matrix, independent of the seedbank
 # because this var matrix is a 6x6, the last two columns and the last two rows are zeros 
 var_fecundity_19_list <- lapply(split(female_19_est_cohort_sorted, female_19_est_cohort_sorted$matrix_id),
-      function(x) rbind(matrix(0,nrow = 2, ncol =8), cbind(matrix(0,nrow = 6, ncol = 2), diag(x$var_Seed_cohort,6))))
+      function(x) rbind(matrix(0,nrow = 2, ncol =8),
+                        cbind(matrix(0,nrow = 6, ncol = 2),
+                              diag(x$var_Seed_cohort,6))))
 
 # saveRDS(var_fecundity_19_list, file="../2-Data/Clean/var-fecundity-19-cohort.RData")
 
