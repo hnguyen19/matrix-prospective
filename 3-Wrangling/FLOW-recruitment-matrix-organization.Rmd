@@ -191,7 +191,7 @@ female_emerge_prop_20_total <- female_emerge_prop_20 %>%
   mutate(Rot = substr(Crop_ID,2,2))%>%
   arrange(Rot, phase_order, Corn_weed_management) 
 
-
+# add crop-specific weed management or herbicide
 
 
 female_emerge_prop_20_total %>%
