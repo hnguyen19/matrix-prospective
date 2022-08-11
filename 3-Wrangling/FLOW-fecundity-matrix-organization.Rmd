@@ -10,6 +10,7 @@ library(emmeans)
 library(here)
 library(nlme)
 library(data.table)
+library(moments) #for skewness and kurtosis
 ```
 
 ```{r fecund-18, include=FALSE}
@@ -275,6 +276,13 @@ female_19_est_NA <- female_19_est[!complete.cases(female_19_est),]
 # a = log(Biomass + 0.005)_estimate /// b = (Intercept)_estimate
 # log is actually ln
 
+# Y = aX + b with E(X) = m
+# https://www.quora.com/Whats-the-mean-and-the-variance-of-Y-aX-b-2-where-X-is-a-random-variable-with-E-X-m 
+# m1 = mean(Weight)
+# m2 = Var(Weight)
+# m3 = 
+# m4 = 
+
 ##### estimate individual fecundity from weight #####
 ## How to deal with NAs in corn and zeros in soybean's consequences on var(seed):
 # Assume var(constant) = 0 regardless of the number of reps
@@ -285,7 +293,7 @@ female_19_est_individual_fecundity <-  female_19_est %>%
          SE_b = `(Intercept)_std.error`)  %>%
   mutate(var_a = SE_a^2,
          var_b = SE_b^2,
-         var_Weight = var(Weight), #pooled variance of biomass, need cohort-based, CropID x corn weed mgt var later
+         var_Weight = var(Weight), #m2_ pooled variance of biomass, need cohort-based, CropID x corn weed mgt var later
     Seed_log = a*log(Weight + 0.005) + b,
     var_Seed_log = (a^2)*var_Weight + var_b, #pooled variance of log of number of seeds
     Seed = exp(Seed_log + var_Seed_log/2),
