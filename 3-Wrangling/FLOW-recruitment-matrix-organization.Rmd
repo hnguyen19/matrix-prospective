@@ -3,6 +3,7 @@ output:
     bookdown::word_document2:
       toc: false
       fig_caption: yes
+      keep_md: true
 #    reference_docx: style_template.docx
 bibliography: WH-pop-dynamics.bib
 ---
@@ -101,14 +102,13 @@ female_emerge_20_mean_wide <- female_emerge_20_mean_df %>%
 
 
 **include in the matrix assembly section**
-
-5% of the waterhemp seeds in a soil seedbank of 5 cm deep that was undisturbed mechanically in the first burial year and unexposed to herbicides throughout the experiment, emerged a year after seed burial [@buhlerEmergencePersistenceSeed2001]. Annually, 23.5% +/- 16.6% sd of waterhemp seeds that were not treated with herbicides and undisturbed mechanically emerged from the top 1 cm soil layer [@schutteCommonWaterhempAmaranthus2014]. Mesotrione applied at 75 g ha$^-1$ rate was 76% and 96% efficacious against *A retroflexus* L grown in corn that were susceptible and resistant to atrazine, respectively [@suttonActivityMesotrioneResistant2002]. On average, the Thiencarbazone-methyl + isoxaflutole mixture was 93.5% efficacious and mesotrione was 70.75% efficacious against *A. palmeri* grown in corn [@janakWeedControlCorn2016]. 
-
-
-The resistance profile of waterhemp at our experiment site was undetermined, but the raw estimation of seedling emergence proportion with respect to the top 0 - 2 cm soil seedbank density seems unrealistically low (Table \@ref(tab:general-emerge-assign). We combined the findings on other *Amaranthus* species from @suttonActivityMesotrioneResistant2002; @janakWeedControlCorn2016 for herbicide efficacy and from @buhlerEmergencePersistenceSeed2001 and @schutteCommonWaterhempAmaranthus2014 for herbicide-unexposed germinants to assign emergence rates based on the crop-specific weed management (Table \@ref(tab:general-emerge-assign)).
+In a soil seedbank of 5 cm deep that was undisturbed mechanically in the first burial year and unexposed to herbicides throughout the experiment, 
+5% of the waterhemp seedlings emerged a year after seed burial [@buhlerEmergencePersistenceSeed2001]. Annually, 23.5% +/- 16.6% sd of waterhemp seeds that were not treated with herbicides and undisturbed mechanically emerged from the top 1 cm soil layer [@schutteCommonWaterhempAmaranthus2014]. Mesotrione applied at 75 g ha$^-1$ rate was 76% and 96% efficacious against *A retroflexus* L grown in corn that were susceptible and resistant to atrazine, respectively [@suttonActivityMesotrioneResistant2002]. The Thiencarbazone-methyl + isoxaflutole mixture was 93.5% efficacious and mesotrione was 70.75% efficacious against *A. palmeri* grown in corn [@janakWeedControlCorn2016]. Waterhemp control in soybean treated with pre-emergence, post-emergence, or sequential pre- and post-emergence herbicides [Jhala, Hay, ...] was studied but no information on seedling emergence as a proportion of the seedbank is available. 
 
 
-With a uniform germination rate in all the crop identity crossed with corn weed management at 20%, the remaining seedbank density in the 0 - 2 cm soil stratum is calculated using the following equation: 
+The resistance profile of waterhemp at our experiment site was undetermined, but the raw estimation of seedling emergence proportion with respect to the top 0 - 2 cm soil seedbank density seems unrealistically low (Table \@ref(tab:general-emerge-assign). We combined the findings on other *Amaranthus* species from @suttonActivityMesotrioneResistant2002; @janakWeedControlCorn2016 for herbicide efficacy and from @buhlerEmergencePersistenceSeed2001 and @schutteCommonWaterhempAmaranthus2014 for herbicide-unexposed germinants to assign emergence rates based on the crop-specific weed management (Table \@ref(tab:general-emerge-assign)). 
+
+The same emergence successful rate was assumed the same in corn and soybean for the lack of available data in the soybean crop environment. The emergence successful rates in the oat/red clover intercrop, oat/alfalfa intercrop, and alfalfa sole crop were set at 50% of all germinated seeds to reflect a weaker potency of allelochemicals versus pre-emergence herbicides. With a uniform germination rate at 20% in all the crop identity crossed with corn weed management, the remaining seedbank density in the 0 - 2 cm soil stratum is calculated using the following equation: 
 
 $$
 N_{B_{e,11}} = (1 - G)*N_{B_{st,11}} = (1 - (E + D)) * N_{B_{st,11}}
@@ -120,7 +120,7 @@ $G$ is the proportion of germinated seeds
 $E$ is the proportion of germinated seeds that successfully emerge as seedlings 
 $D$ is the proportion of germinated seeds that were killed by weed control measures
 
-$1 - G = 0.8$ is filled in the [1,1] position of the seedling recruitment matrix ($B_e[1,1]$). The cohort-specific emergence rates ($e_1$ through $e_6$) were adjusted from the raw data ($\frac{p_k}{N_{B_{st,11}}}$ with $k = \{1,...,6\}$) to reflect 5% emergence success rate (equivalent to $E = 0.01 * N_{B_{st,11}}$) in crop environments that received pre-emergence herbicides (C2, C3 and C4 under conventional weed management and all the S2, S3, and S4 [Table 1, @nguyenWeedCommunityComposition2022]), 100% emergence success rate (equivalent to $E = 1 * N_{B_{st,11}}$) in the crop environments that received post-emergence herbicides (C2, C3 and C4 under low herbicide weed management, [Table 1, @nguyenWeedCommunityComposition2022]) and 50% emergence success rate (equivalent to $E = 0.1 * N_{B_{st,11}}$).  
+$1 - G = 0.8$ is filled in the [1,1] position of the seedling recruitment matrix ($B_e[1,1]$). The cohort-specific emergence rates ($e_1$ through $e_6$) were adjusted from the raw data ($\frac{p_k}{N_{B_{st,11}}}$ with $k = \{1,...,6\}$) to reflect 5% emergence success rate (equivalent to $E = 0.01 * N_{B_{st,11}}$) in crop environments that received pre-emergence herbicides (C2, C3 and C4 under conventional weed management and all the S2, S3, and S4 [Table 1, @nguyenWeedCommunityComposition2022]), 100% emergence success rate (equivalent to $E = 1 * N_{B_{st,11}}$) in the crop environments that received post-emergence herbicides (C2, C3 and C4 under low herbicide weed management, [Table 1, @nguyenWeedCommunityComposition2022]) and 50% emergence success rate (equivalent to $E = 0.1 * N_{B_{st,11}}$).   
 
 
 
@@ -155,12 +155,10 @@ female_emerge_prop_20$assumed_total_successful_emergence_rate <- as.numeric( fem
 # View(female_emerge_prop_20)
 # table of arithmetic means
 
-
-### arrange rows by rotation 
 ```
 
 
-```{r general-emerge-assign, echo=FALSE}
+```{r general-emerge-assign, echo=FALSE, warning=FALSE, message=FALSE}
 
 female_emerge_prop_20_total <- female_emerge_prop_20 %>%
   select(Crop_ID, Corn_weed_management, `1`:`6`,
@@ -193,11 +191,11 @@ female_emerge_prop_20_total %>%
          total_emerge_from_top_assigned, cohort_1_share:cohort_6_share) %>%
   mutate_at(vars(total_emerge_from_top_estimated_prop, cohort_1_share:cohort_6_share), funs(round(., 5))) %>%
   flextable() %>%
-    set_caption("Estimated seedling emergence proportion with respect to the top 0 - 2 cm soil stratum using 2019 stratified soil seedbank densities and 2020 seedling emergence densities and adjusted seedling emergence proportions for use in the modelling excercises.") %>%
+    set_caption("Estimated seedling emergence proportion with respect to the top 0 - 2 cm soil stratum using stratified soil seedbank densities sampled in 2019 and  seedling emergence densities sampled in 2020; and adjusted seedling emergence proportions for use in the modelling excercises. The seedbank densities in 2019 were vertically redistributed with two passes of tillage: post-harvest (fall 2019) and pre-planting (spring 2020). Between the two passes of tillage, overwinter seed survial rates were calculated using the equations provided in Figures 1 and 3 of Sosnoskie et al., 2013.") %>%
   set_header_labels(values = list(Crop_ID = "Crop ID",
                 Corn_weed_management = "Corn weed management",
-               total_emerge_from_top_estimated_prop = "0 - 2 cm",
-               total_emerge_from_top_assigned = "0 - 2 cm",
+               total_emerge_from_top_estimated_prop = "0 - 2 cm soil stratum",
+               total_emerge_from_top_assigned = "0 - 2 cm soil stratum",
                cohort_1_share = "cohort 1",
                cohort_2_share = "cohort 2",
                cohort_3_share = "cohort 2",
@@ -208,7 +206,7 @@ female_emerge_prop_20_total %>%
                                         "Estimated total emergence proportion from",
                                         "Assigned total emergence proportion from",
                                         "Adjusted total emergence proportion of"), 
-                 colwidths = c(1, 1,  1, 1, 7)) %>%
+                 colwidths = c(1, 1,  1, 1, 6)) %>%
    autofit() 
 
   
