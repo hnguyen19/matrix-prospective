@@ -29,7 +29,7 @@ source("functions.R")
 mean_spring_tillage <-  readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
 
 ## Emergence 
-scenario2_mean_emergence <- readRDS("../2-Data/Clean/adjusted-mean-emergence-prop.RData")
+scenario2_mean_emergence <- readRDS("../2-Data/Clean/mean-emergence-prop-adjusted.RData")
 
 ## Seed survival and plant survival 
 #### seed survival 

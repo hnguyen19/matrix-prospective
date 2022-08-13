@@ -35,7 +35,7 @@ spring_tillage <-readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
 ```
 
 ```{r emerge-sim-a, echo=FALSE}
-emergence <-readRDS("../2-Data/Clean/adjusted-mean-emergence-prop.RData")
+emergence <-readRDS("../2-Data/Clean/mean-emergence-prop-adjusted.RData")
 ```
 
 ```{r survive-sim-a, echo=FALSE}
