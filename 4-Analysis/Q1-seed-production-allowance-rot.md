@@ -1,7 +1,7 @@
 ---
 output:
-  bookdown::word_document2:
- # bookdown::html_document2:
+ # bookdown::word_document2:
+  bookdown::html_document2:
       toc: false
       fig_caption: yes
       keep_md: true
@@ -779,7 +779,10 @@ N_4yr_low_all_df <- N_4yr_low_seed_production_per_capita_df %>%
 
 
 
-![Figure 1: Cohort-based seed production threshold on natural logarithm scale for waterhemp population stabilization over 100 rotational cycles (the 2-year rotation cycled over two years and ended at the soybean phase, the 3-year rotation cycled over three years and ended at the oat phase, and the 4-year rotation cycled over four years and ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 20 cm soil stratum. It was expected that no waterhemp cohorts in any crop environments but only the cohorts 1 through 3 in corn and soybean were manipulated to find the seed production thresholds. However, additional control efficacy was needed in some crop phases outside of the expected group to reduce seed production potentials. The dots colored blue are where control measures extended beyond waterhemp cohort 3 would be neccessary. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022a) were used to estimate per-capita seed production in each cohort. The black horizontal line marks lambda = 1.](Q1-seed-production-allowance-rot_files/figure-docx/seed-production-threshold-sim-plot-manipulated-1.png)
+<div class="figure">
+<img src="Q1-seed-production-allowance-rot_files/figure-html/seed-production-threshold-sim-plot-manipulated-1.png" alt="Cohort-based seed production threshold on natural logarithm scale for waterhemp population stabilization over 100 rotational cycles (the 2-year rotation cycled over two years and ended at the soybean phase, the 3-year rotation cycled over three years and ended at the oat phase, and the 4-year rotation cycled over four years and ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 20 cm soil stratum. It was expected that no waterhemp cohorts in any crop environments but only the cohorts 1 through 3 in corn and soybean were manipulated to find the seed production thresholds. However, additional control efficacy was needed in some crop phases outside of the expected group to reduce seed production potentials. The dots colored blue are where control measures extended beyond waterhemp cohort 3 would be necessary. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022a) were used to estimate per-capita seed production in each cohort. The black horizontal line marks lambda = 1."  />
+<p class="caption">(\#fig:seed-production-threshold-sim-plot-manipulated)Cohort-based seed production threshold on natural logarithm scale for waterhemp population stabilization over 100 rotational cycles (the 2-year rotation cycled over two years and ended at the soybean phase, the 3-year rotation cycled over three years and ended at the oat phase, and the 4-year rotation cycled over four years and ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 20 cm soil stratum. It was expected that no waterhemp cohorts in any crop environments but only the cohorts 1 through 3 in corn and soybean were manipulated to find the seed production thresholds. However, additional control efficacy was needed in some crop phases outside of the expected group to reduce seed production potentials. The dots colored blue are where control measures extended beyond waterhemp cohort 3 would be necessary. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022a) were used to estimate per-capita seed production in each cohort. The black horizontal line marks lambda = 1.</p>
+</div>
    
 
 

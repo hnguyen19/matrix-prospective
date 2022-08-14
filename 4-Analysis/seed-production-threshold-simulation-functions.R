@@ -206,7 +206,7 @@ rot_3year_low_lambda <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,
   
   seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
   seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1, 5.05, 0.53)
+  seed_C[1,5] <- rlnorm(1, 4.22, 0.65)
   
   
   seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
@@ -275,7 +275,7 @@ rot_3year_low_plant_density_fixed <- function(vec, prt_C, em_C, sv_C,  seed_C, p
   
   seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
   seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1, 5.05, 0.53)
+  seed_C[1,5] <- rlnorm(1, 4.22, 0.65)
   
   
   seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
@@ -314,8 +314,8 @@ rot_3year_conv_seed_production_per_cap <- function(seed_C, seed_S, seed_O){
   seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
   seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
   seed_C[1,5] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,6] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,7] <- rlnorm(1, 2.66, 0.89)
+#   seed_C[1,6] <- rlnorm(1, 2.66, 0.89) cohort 6 original seed production is already lower
+#   seed_C[1,7] <- rlnorm(1, 2.66, 0.89) cohort 6 original seed production is already lower
 #   seed_C[1,8] <- rlnorm(1, 2.66, 0.89) cohort 6 original seed production is already lower
   
   seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
@@ -349,7 +349,7 @@ rot_3year_low_seed_production_per_cap <- function(seed_C, seed_S, seed_O){
   
   seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
   seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1, 5.05, 0.53)
+  seed_C[1,5] <- rlnorm(1, 4.22, 0.65)
   
   
   seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
