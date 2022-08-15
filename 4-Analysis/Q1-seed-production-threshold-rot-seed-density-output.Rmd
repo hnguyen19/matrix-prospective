@@ -573,3 +573,19 @@ rot_4year_low(vec = starting_point,
 
 ```
 
+```{r seed-allowance-sim-N-plot, echo=FALSE, fig.cap= "Population size at the end of a rotation cycle over 100 rotational cycles (the 2-year rotation ended at the soybean phase, the 3-year rotation ended at the oat phase, and the 4-year rotation ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seed in the bottom 2 - 20 cm soil stratum. The simulation applied improved weed control efficacy on cohorts 1 through 3 in corn and soybean only. The relationships of aboveground mass and fecundity in Nguyen and Liebman (2022a) were used to estimate cohort-based fecundity. It was expected that no waterhemp cohorts in any crop environments but only the cohorts 1 through 3 in corn and soybean were manipulated to find the seed production thresholds. However, additional control efficacy was needed in some crop phases outside of the expected group to reduce seed production potentials. The crop phases marked with an asterisk (*) are where control measures extended beyond waterhemp cohort 3 would be neccessary. The crop phases marked with an inverted comma (') are where no additional control was applied. Each panel was annotated with the average fecundity thresholds for the first three waterhemp cohorts in corn and soybean followed by the whole crop phase.  The red horizontal line marks lambda = 1.", fig.height = 6, fig.width = 6}
+
+seed_allowance_sim_df %>%
+   ggplot() +
+   aes(x = cycle_no, y = log(total_seedbank_counts), group = Crop_ID) +
+  geom_point(aes(y  = log(total_seedbank_counts), shape =  Crop_ID)) +
+ # scale_shape_manual(values = c(1, 4)) +
+  geom_hline(yintercept = log(10000), color = "red") +
+  facet_grid(Rotation ~ Corn_weed_management) + 
+  ylab(expression(paste("ln(Seed density (seeds",~m^-2,"))"))) +
+  xlab("Simulation iteration") + 
+ # ylim(0, 15) +
+  theme_bw() +
+  guides(shape=guide_legend(title = "soil stratum")) +
+  theme(legend.position = "top") 
+```
