@@ -28,6 +28,7 @@ set.seed(722)
 
 ```{r, echo=FALSE}
 starting_point <-  c(10000, 0, 0, 0, 0, 0, 0, 0) #10000 seeds top soil, 0 seed deep soil,0 plants from cohorts 1 through 6
+t = 10
 ```
 
 ```{r tillage-sim-b, echo=FALSE}
@@ -71,7 +72,8 @@ fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 
 
 
-```{r rot-2yr-function-b, echo=TRUE}
+
+```{r 2yr-lambda-sim-b, echo = TRUE}
 # event sequence: seed dropped - field cultivator - emerge - survive - new seed - chisel - overwinter 
 
 # create a function 
@@ -83,73 +85,12 @@ fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 # sv: seed survival rate and seedling to maturity success rate
 # seed: fecundity
 
-rot_2year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
-                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
-  
-
-  sv_C[3,3] <- .006 #99.4 % efficacy wrt plant density
-  sv_C[4,4] <- .006
-  sv_C[5,5] <- .006
- # sv_C[6,6] <- .01
-#  sv_C[7,7] <- .01
-
-
-
-  sv_S[3,3] <- .006
-  sv_S[4,4] <- .006
-  sv_S[5,5] <- .006
-#  sv_S[6,6] <- .01
-#  sv_S[7,7] <- .01
-
-
- # corn phase dynamics   
-   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
-
-   
-# soybean phase dynamics
-
-   after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S  %*% after_corn 
-
-   after_soy
-}
-
-rot_2year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
-                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S){
-  
-
-
-  sv_C[3,3] <- .001 #99.9 % efficacy
-  sv_C[4,4] <- .002
-  sv_C[5,5] <- .003 # 99.8% efficacy
- # sv_C[6,6] <- .01
-#  sv_C[7,7] <- .01
-
-
-
-  sv_S[3,3] <- .001
-  sv_S[4,4] <-  .002
-  sv_S[5,5] <-  .003
-#  sv_S[6,6] <- .01
-#  sv_S[7,7] <- .01
-
- # corn phase dynamics   
-   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
-# soybean phase dynamics
-
-   after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S  %*% after_corn 
-
-   after_soy
-}
-```
-
-```{r 2yr-conv-sim-b, echo = TRUE}
 ##### with corn under conventional weed management {-}
-t <- 100
-N_2yr_conv <- list() # blank data frame to save loop output 
-N_2yr_conv[[1]] <- starting_point 
+N_2yr_conv_lambda <- list() # blank data frame to save loop output 
+N_2yr_conv_lambda[[1]] <- starting_point 
 
 for (i in 2:t) { 
-  N_2yr_conv[[i]] = rot_2year_conv(vec = N_2yr_conv[[i-1]],
+  N_2yr_conv_lambda[[i]] = rot_2year_conv_lambda(vec = N_2yr_conv_lambda[[i-1]],
                               poh_C = fall_tillage$C2_conv,
                               ow_C = overwinter$C2_conv,
                               prt_C  = spring_tillage$C2_conv,
@@ -166,7 +107,7 @@ for (i in 2:t) {
                               seed_S = fecundity18$S2_conv)
 }
 
-N_2yr_conv_df <-  N_2yr_conv %>% 
+rot_2year_conv_lambda_df <-  rot_2year_conv_lambda %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
     dplyr::rename(counts = ".") %>%
@@ -180,17 +121,13 @@ N_2yr_conv_df <-  N_2yr_conv %>%
           Rotation = "2-year",
          Corn_weed_management = "conventional") %>%
     na.omit() 
-```
- 
 
- 
-```{r 2yr-low-sim-b, echo=TRUE}
 ##### with corn under low herbicide weed management {-}
-N_2yr_low <- list() # blank dataframe to save loop output 
+N_2yr_low_lambda <- list() # blank dataframe to save loop output 
 
-N_2yr_low[[1]] <- starting_point 
+N_2yr_low_lambda[[1]] <- starting_point 
 for (i in 2:t) { 
-  N_2yr_low[[i]] = rot_2year_low(vec = N_2yr_low[[i-1]],
+  N_2yr_low_lambda[[i]] = rot_2year_conv_lambda(vec = N_2yr_low_lambda[[i-1]],
                              poh_C = fall_tillage$C2_low,
                              ow_C = overwinter$C2_low,
                              prt_C  = spring_tillage$C2_low,
@@ -207,7 +144,7 @@ for (i in 2:t) {
                              seed_S = fecundity18$S2_low)
 }
 
-N_2yr_low_df <-  N_2yr_low %>% 
+N_2yr_low_lambda_df <-  N_2yr_low_lambda %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
     dplyr::rename(counts = ".") %>%
@@ -225,91 +162,15 @@ N_2yr_low_df <-  N_2yr_low %>%
   
 
 
-```{r rot-3yr-function-b, echo=TRUE}
-rot_3year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C, 
-                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S ,
-                           poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
-  
-
-
-  sv_C[3,3] <- .0001
-  sv_C[4,4] <- .0001
-  sv_C[5,5] <- .0001
-  sv_C[6,6] <- .0001
-  sv_C[7,7] <- .0001
-  sv_C[8,8] <- .0001
-
-
-
-  sv_S[3,3] <- .0001
-  sv_S[4,4] <- .0001
-  sv_S[5,5] <- .0001
-  sv_S[6,6] <- .0001
-  sv_S[7,7] <- .0001
-  sv_S[8,8] <- .0001
-  
-## Extra control efficacy in oat is now needed  
-  sv_O[5,5] <- .01
-  sv_O[6,6] <- .01
-  sv_O[7,7] <- .01
-  sv_O[8,8] <- .01
-
-# corn phase dynamics  
-   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
- # soybean phase dynamics
-   after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S %*%   after_corn
-# oat phase dynamics
-   after_oat <-   ow_O %*%  poh_O %*% seed_O %*% sv_O %*% em_O %*% prt_O %*% after_soy 
-   
-  after_oat
-}
-
-### low herbicide weed management
-## Manipulation note: if cohorts 1 through 3 were reduced to rlnorm(1, 2.65, 0.89), alphas are around 0.5 --> super "safe", but hard
-## cohorts 1 through 3 at rlnorm(1, 5.2, 0.51): more realistic
-rot_3year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C, 
-                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S ,
-                           poh_O, ow_O, prt_O, em_O, sv_O, seed_O){
-  
-
-
-  sv_C[3,3] <- .0001
-  sv_C[4,4] <- .003
-  sv_C[5,5] <- .003
-#  sv_C[6,6] <- .0001
-#  sv_C[7,7] <- .0001
-#  sv_C[8,8] <- .0001
-
-
-
-  sv_S[3,3] <- .0001
-  sv_S[4,4] <- .003
-  sv_S[5,5] <- .003
- # sv_S[6,6] <- .0001
- # sv_S[7,7] <- .0001
-#  sv_S[8,8] <- .001
-
-  
-# corn phase dynamics  
-   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
- # soybean phase dynamics
-   after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S %*%   after_corn
-# oat phase dynamics
-   after_oat <-   ow_O %*%  poh_O %*% seed_O %*% sv_O %*% em_O %*% prt_O %*% after_soy 
-   
-  after_oat
-}
-```
-
-```{r 3yr-conv-sim-b, echo=TRUE}
+```{r 3yr-lambda-sim-b, echo=TRUE}
 ##### with corn under conventional weed management {-}
-N_3yr_conv <- list() # blank dataframe to save loop output 
+N_3yr_conv_lambda <- list() # blank dataframe to save loop output 
 
-N_3yr_conv[[1]] <- starting_point 
+N_3yr_conv_lambda[[1]] <- starting_point 
 
 
 for (i in 2:t) { 
-  N_3yr_conv[[i]] = rot_3year_conv(vec = N_3yr_conv[[i-1]],
+  N_3yr_conv_lambda[[i]] = rot_3year_conv_lambda(vec = N_3yr_conv_lambda[[i-1]],
                               poh_C = fall_tillage$C3_conv,
                               ow_C = overwinter$C3_conv,
                               prt_C  = spring_tillage$C3_conv,
@@ -334,7 +195,7 @@ for (i in 2:t) {
                               seed_O = fecundity18$O3_conv)
 }
 
-N_3yr_conv_df <-  N_3yr_conv %>% 
+N_3yr_conv_lambda_df <-  N_3yr_conv_lambda %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
     dplyr::rename(counts = ".") %>%
@@ -348,18 +209,15 @@ N_3yr_conv_df <-  N_3yr_conv %>%
           Rotation = "3-year",
          Corn_weed_management = "conventional") %>%
     na.omit() 
-```
- 
 
-```{r 3yr-low-sim-b, echo=TRUE}
 ##### with corn under low herbicide weed management {-} 
-N_3yr_low <- list() # blank dataframe to save loop output 
+N_3yr_low_lambda <- list() # blank dataframe to save loop output 
 
-N_3yr_low[[1]] <- starting_point 
+N_3yr_low_lambda[[1]] <- starting_point 
 
 
 for (i in 2:t) { 
-  N_3yr_low[[i]] = rot_3year_low(vec = N_3yr_low[[i-1]],
+  N_3yr_low_lambda[[i]] = rot_3year_low_lambda(vec = N_3yr_low_lambda[[i-1]],
                              poh_C = fall_tillage$C3_conv,
                              ow_C = overwinter$C3_low,
                              prt_C  = spring_tillage$C3_low,
@@ -384,7 +242,7 @@ for (i in 2:t) {
                              seed_O = fecundity18$O3_low)
 }
 
-N_3yr_low_df <-  N_3yr_low %>% 
+N_3yr_low_lambda_df <-  N_3yr_low_lambda %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
     dplyr::rename(counts = ".") %>%
@@ -403,84 +261,15 @@ N_3yr_low_df <-  N_3yr_low %>%
 
 
 
-```{r rot-4yr-function-b, echo=TRUE}
-### conventional weed management
-rot_4year_conv <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C, 
-                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S ,
-                           poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
-                       poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
 
-
-  sv_C[3,3] <- .0001
-  sv_C[4,4] <- .001
-  sv_C[5,5] <- .001
-  sv_C[6,6] <- .005
-  sv_C[7,7] <- .005
-  sv_C[8,8] <- .005
-
-
-
-  sv_S[3,3] <- .0001
-  sv_S[4,4] <- .001
-  sv_S[5,5] <- .001
-  sv_S[6,6] <- .005
-  sv_S[7,7] <- .005
-  sv_S[8,8] <- .005
-
-# corn phase dynamics  
-   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
- # soybean phase dynamics
-   after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S %*%   after_corn
-# oat phase dynamics
-   after_oat <-   ow_O %*%  poh_O %*% seed_O %*% sv_O %*% em_O %*% prt_O %*% after_soy 
-# alfalfa phase dynamics
-after_alfalfa <-   ow_A %*%  poh_A %*% seed_A %*% sv_A %*% em_A %*% prt_A %*% after_oat 
-  after_alfalfa
-}
-
-### low herbicide weed management
-rot_4year_low <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C,  seed_C, 
-                           poh_S, ow_S, prt_S, em_S, sv_S, seed_S ,
-                           poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
-                       poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
-  
-
-
-  sv_C[3,3] <- .0001
-  sv_C[4,4] <- .001
-  sv_C[5,5] <- .009
-  sv_C[6,6] <- .05
-
-
-
-
-  sv_S[3,3] <- .0001
-  sv_S[4,4] <- .001
-  sv_S[5,5] <- .009
-  sv_S[6,6] <- .05
-
-
-# corn phase dynamics  
-   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
- # soybean phase dynamics
-   after_soy <- ow_S %*%  poh_S %*% seed_S %*% sv_S %*% em_S %*% prt_S %*%   after_corn
-# oat phase dynamics
-   after_oat <-   ow_O %*%  poh_O %*% seed_O %*% sv_O %*% em_O %*% prt_O %*% after_soy 
-# alfalfa phase dynamics
-after_alfalfa <-   ow_A %*%  poh_A %*% seed_A %*% sv_A %*% em_A %*% prt_A %*% after_oat 
-   
-  after_alfalfa
-}
-```
-
-```{r 4yr-conv-sim-b, echo=TRUE}
+```{r 4yr-lambda-sim-b, echo=TRUE}
 ##### with corn under conventional weed management {-}
-N_4yr_conv <- list() # blank dataframe to save loop output 
+N_4yr_conv_lambda <- list() # blank dataframe to save loop output 
 
-N_4yr_conv[[1]] <- starting_point 
+N_4yr_conv_lambda[[1]] <- starting_point 
 
 for (i in 2:t) { 
-  N_4yr_conv[[i]] = rot_4year_conv(vec = N_4yr_conv[[i-1]],
+  N_4yr_conv_lambda[[i]] = rot_4year_conv_lambda(vec = N_4yr_conv_lambda[[i-1]],
                               poh_C = fall_tillage$C4_conv,
                               ow_C = overwinter$C4_conv,
                               prt_C  = spring_tillage$C4_conv,
@@ -513,7 +302,7 @@ for (i in 2:t) {
                           seed_A = fecundity18$A4_conv)
 }
 
-N_4yr_conv_df <-  N_4yr_conv %>% 
+N_4yr_conv_lambda_df <-  N_4yr_conv_lambda %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
   dplyr::rename(counts = ".") %>%
@@ -528,17 +317,13 @@ N_4yr_conv_df <-  N_4yr_conv %>%
          Corn_weed_management = "conventional") %>%
   na.omit() 
 
-```
- 
-
-```{r 4yr-low-sim-b, echo=TRUE}
 ##### with corn under low herbicide weed management {-} 
-N_4yr_low <- list() # blank dataframe to save loop output 
+N_4yr_low_lambda <- list() # blank dataframe to save loop output 
 
-N_4yr_low[[1]] <- starting_point 
+N_4yr_low_lambda[[1]] <- starting_point 
 
 for (i in 2:t) { 
-  N_4yr_low[[i]] = rot_4year_low(vec = N_4yr_low[[i-1]],
+  N_4yr_low_lambda[[i]] = rot_4year_low_lambda(vec = N_4yr_low_lambda[[i-1]],
                               poh_C = fall_tillage$C4_low,
                               ow_C = overwinter$C4_low,
                               prt_C  = spring_tillage$C4_low,
@@ -571,7 +356,7 @@ for (i in 2:t) {
                               seed_A = fecundity18$A4_low)
 }
 
-N_4yr_low_df <-  N_4yr_low %>% 
+N_4yr_low_lambda_df <-  N_4yr_low_lambda %>% 
   unlist(recursive = FALSE) %>%
   data.frame() %>%
   dplyr::rename(counts = ".") %>%

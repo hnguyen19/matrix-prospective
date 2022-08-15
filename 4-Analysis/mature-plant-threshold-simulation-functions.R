@@ -7,14 +7,19 @@ rot_2year_conv_lambda <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
                            prt_S, em_S, sv_S, seed_S, poh_S, ow_S){
   
   
-  seed_C[1,3] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 5.34, 0.5) # 208.18 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 5.34, 0.5) 
+  sv_C[3,3] <- .006 #99.4 % efficacy wrt plant density
+  sv_C[4,4] <- .006
+  sv_C[5,5] <- .006
+  # sv_C[6,6] <- .01
+  #  sv_C[7,7] <- .01
   
   
-  seed_S[1,3] <- rlnorm(1, 5.55, 0.48) 
-  seed_S[1,4] <- rlnorm(1, 5.55, 0.48) 
-  seed_S[1,5] <- rlnorm(1, 5.75, 0.46) #316.83
+  
+  sv_S[3,3] <- .006
+  sv_S[4,4] <- .006
+  sv_S[5,5] <- .006
+  #  sv_S[6,6] <- .01
+  #  sv_S[7,7] <- .01
   
   
   # corn phase dynamics   
@@ -32,13 +37,20 @@ rot_2year_low_lambda <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
                           prt_S, em_S, sv_S, seed_S, poh_S, ow_S){
   
   
-  seed_C[1,3] <- rlnorm(1, 3.85, 0.7) # 46.55 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 3.44, 0.76) # 30.84 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 3.85, 0.7)
+  sv_C[3,3] <- .001 #99.9 % efficacy
+  sv_C[4,4] <- .002
+  sv_C[5,5] <- .003 # 99.8% efficacy
+  # sv_C[6,6] <- .01
+  #  sv_C[7,7] <- .01
   
-  seed_S[1,3] <- rlnorm(1, 3.85, 0.7)
-  seed_S[1,4] <- rlnorm(1, 3.85, 0.7)
-  seed_S[1,5] <- rlnorm(1, 4.22, 0.65) #67.56 seeds/plant
+  
+  
+  sv_S[3,3] <- .001
+  sv_S[4,4] <-  .002
+  sv_S[5,5] <-  .003
+  #  sv_S[6,6] <- .01
+  #  sv_S[7,7] <- .01
+  
   
   # corn phase dynamics   
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
@@ -50,19 +62,26 @@ rot_2year_low_lambda <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
 }
 
 ###### Mature plant density output #######
-### given manipulated per-capita seed production that make annualized lambda = 1
-rot_2year_conv_plant_density_fixed <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C, 
+
+rot_2year_conv_plant_density <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C, 
                                                prt_S, em_S, sv_S, seed_S, poh_S, ow_S){
   
   
-  seed_C[1,3] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 5.34, 0.5) # 208.18 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 5.34, 0.5) 
+  
+  sv_C[3,3] <- .006 #99.4 % efficacy wrt plant density
+  sv_C[4,4] <- .006
+  sv_C[5,5] <- .006
+  # sv_C[6,6] <- .01
+  #  sv_C[7,7] <- .01
   
   
-  seed_S[1,3] <- rlnorm(1, 5.55, 0.48) 
-  seed_S[1,4] <- rlnorm(1, 5.55, 0.48) 
-  seed_S[1,5] <- rlnorm(1, 5.75, 0.46) #316.83 seeds/plant
+  
+  sv_S[3,3] <- .006
+  sv_S[4,4] <- .006
+  sv_S[5,5] <- .006
+  #  sv_S[6,6] <- .01
+  #  sv_S[7,7] <- .01
+  
   
   
   # corn phase dynamics   
@@ -83,18 +102,23 @@ rot_2year_conv_plant_density_fixed <- function(vec, prt_C, em_C, sv_C, seed_C, p
 }
 
 
-rot_2year_low_plant_density_fixed <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C, 
+rot_2year_low_plant_density <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C, 
                                               prt_S, em_S, sv_S, seed_S, poh_S, ow_S){
   
   
-  seed_C[1,3] <- rlnorm(1, 3.85, 0.7) # 46.55 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 3.44, 0.76) # 30.84 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 3.85, 0.7)
+  sv_C[3,3] <- .001 #99.9 % efficacy
+  sv_C[4,4] <- .002
+  sv_C[5,5] <- .003 # 99.8% efficacy
+  # sv_C[6,6] <- .01
+  #  sv_C[7,7] <- .01
   
-  seed_S[1,3] <- rlnorm(1, 3.85, 0.7)
-  seed_S[1,4] <- rlnorm(1, 3.85, 0.7)
-  seed_S[1,5] <- rlnorm(1, 4.22, 0.65) #67.56 seeds/plant
   
+  
+  sv_S[3,3] <- .001
+  sv_S[4,4] <-  .002
+  sv_S[5,5] <-  .003
+  #  sv_S[6,6] <- .01
+  #  sv_S[7,7] <- .01
   # corn phase dynamics   
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
   
@@ -112,18 +136,24 @@ rot_2year_low_plant_density_fixed <- function(vec, prt_C, em_C, sv_C, seed_C, po
   l
 }
 
-###### Seed production, manipulated #######
-rot_2year_conv_seed_production_per_cap <- function(seed_C, seed_S){
+###### Seed production, fixed #######
+### given manipulated mature plant density that make annualized lambda = 1
+rot_2year_conv_seed_production_per_cap_fixed <- function(seed_C, seed_S){
   
   
-  seed_C[1,3] <- rlnorm(1, 5.55, 0.48) #257.03 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 5.34, 0.5) # 208.18 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 5.34, 0.5) 
+  sv_C[3,3] <- .006 #99.4 % efficacy wrt plant density
+  sv_C[4,4] <- .006
+  sv_C[5,5] <- .006
+  # sv_C[6,6] <- .01
+  #  sv_C[7,7] <- .01
   
   
-  seed_S[1,3] <- rlnorm(1, 5.55, 0.48) 
-  seed_S[1,4] <- rlnorm(1, 5.55, 0.48) 
-  seed_S[1,5] <- rlnorm(1, 5.75, 0.46) #316.83 seeds/plant
+  
+  sv_S[3,3] <- .006
+  sv_S[4,4] <- .006
+  sv_S[5,5] <- .006
+  #  sv_S[6,6] <- .01
+  #  sv_S[7,7] <- .01
   
   
   seed_production_count_corn <- seed_C[1,3:8] 
@@ -140,16 +170,22 @@ rot_2year_conv_seed_production_per_cap <- function(seed_C, seed_S){
   
 }
 
-rot_2year_low_seed_production_per_cap <- function(seed_C, seed_S){
+rot_2year_low_seed_production_per_cap_fixed <- function(seed_C, seed_S){
   
   
-  seed_C[1,3] <- rlnorm(1, 3.85, 0.7) # 46.55 seeds/plant
-  seed_C[1,4] <- rlnorm(1, 3.44, 0.76) # 30.84 seeds/plant
-  seed_C[1,5] <- rlnorm(1, 3.85, 0.7)
+  sv_C[3,3] <- .001 #99.9 % efficacy
+  sv_C[4,4] <- .002
+  sv_C[5,5] <- .003 # 99.8% efficacy
+  # sv_C[6,6] <- .01
+  #  sv_C[7,7] <- .01
   
-  seed_S[1,3] <- rlnorm(1, 3.85, 0.7)
-  seed_S[1,4] <- rlnorm(1, 3.85, 0.7)
-  seed_S[1,5] <- rlnorm(1, 4.22, 0.65) #67.56 seeds/plant
+  
+  
+  sv_S[3,3] <- .001
+  sv_S[4,4] <-  .002
+  sv_S[5,5] <-  .003
+  #  sv_S[6,6] <- .01
+  #  sv_S[7,7] <- .01
   
   
   seed_production_count_corn <- seed_C[1,3:8] 
@@ -172,19 +208,28 @@ rot_3year_conv_lambda <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
                            prt_O, em_O, sv_O, seed_O, poh_O, ow_O){
   
   
-  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,6] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,7] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,8] <- rlnorm(1, 2.66, 0.89)
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .0001
+  sv_C[5,5] <- .0001
+  sv_C[6,6] <- .0001
+  sv_C[7,7] <- .0001
+  sv_C[8,8] <- .0001
   
-  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1, 2.66, 0.89)
-   seed_S[1,6] <- rlnorm(1, 2.66, 0.89)
-    seed_S[1,7] <- rlnorm(1, 2.66, 0.89)
-    seed_S[1,8] <- rlnorm(1, 2.66, 0.89)
+  
+  
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .0001
+  sv_S[5,5] <- .0001
+  sv_S[6,6] <- .0001
+  sv_S[7,7] <- .0001
+  sv_S[8,8] <- .0001
+  
+  ## Extra control efficacy in oat is now needed  
+  sv_O[5,5] <- .01
+  sv_O[6,6] <- .01
+  sv_O[7,7] <- .01
+  sv_O[8,8] <- .01
+  
   
   
   # corn phase dynamics  
@@ -204,14 +249,22 @@ rot_3year_low_lambda <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,
                           prt_O, em_O, sv_O, seed_O, poh_O, ow_O ){
   
   
-  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1, 5.05, 0.53)
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .003
+  sv_C[5,5] <- .003
+  #  sv_C[6,6] <- .0001
+  #  sv_C[7,7] <- .0001
+  #  sv_C[8,8] <- .0001
   
   
-  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1, 6.94, 0.43)
+  
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .003
+  sv_S[5,5] <- .003
+  # sv_S[6,6] <- .0001
+  # sv_S[7,7] <- .0001
+  #  sv_S[8,8] <- .001
+  
   
   # corn phase dynamics  
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -225,24 +278,26 @@ rot_3year_low_lambda <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,
 
 ###### Mature plant density output #######
 ### given manipulated per-capita seed production that make annualized lambda = 1
-rot_3year_conv_plant_density_fixed <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,  
+rot_3year_conv_plant_density <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,  
                                                prt_S, em_S, sv_S, seed_S , poh_S, ow_S, 
                                                prt_O, em_O, sv_O, seed_O, poh_O, ow_O ){
   
   
-  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,6] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,7] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,8] <- rlnorm(1, 2.66, 0.89)
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .0001
+  sv_C[5,5] <- .0001
+  sv_C[6,6] <- .0001
+  sv_C[7,7] <- .0001
+  sv_C[8,8] <- .0001
   
-  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1, 2.66, 0.89)
-    seed_S[1,6] <- rlnorm(1, 2.66, 0.89)
-    seed_S[1,7] <- rlnorm(1, 2.66, 0.89)
-    seed_S[1,8] <- rlnorm(1, 2.66, 0.89)
+  
+  
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .0001
+  sv_S[5,5] <- .0001
+  sv_S[6,6] <- .0001
+  sv_S[7,7] <- .0001
+  sv_S[8,8] <- .0001
   
   
   
@@ -268,19 +323,26 @@ rot_3year_conv_plant_density_fixed <- function(vec, prt_C, em_C, sv_C,  seed_C, 
   l
 }
 
-rot_3year_low_plant_density_fixed <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,  
+rot_3year_low_plant_density <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,  
                                               prt_S, em_S, sv_S, seed_S , poh_S, ow_S, 
                                               prt_O, em_O, sv_O, seed_O, poh_O, ow_O ){
   
   
-  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1, 5.05, 0.53)
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .003
+  sv_C[5,5] <- .003
+  #  sv_C[6,6] <- .0001
+  #  sv_C[7,7] <- .0001
+  #  sv_C[8,8] <- .0001
   
   
-  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1, 6.94, 0.43)
+  
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .003
+  sv_S[5,5] <- .003
+  # sv_S[6,6] <- .0001
+  # sv_S[7,7] <- .0001
+  #  sv_S[8,8] <- .001
   
   
   # corn phase dynamics   
@@ -307,23 +369,25 @@ rot_3year_low_plant_density_fixed <- function(vec, prt_C, em_C, sv_C,  seed_C, p
 }
 
 
-###### Seed production, manipulated #######
-rot_3year_conv_seed_production_per_cap <- function(seed_C, seed_S, seed_O){
+###### Seed production, fixed #######
+rot_3year_conv_seed_production_per_cap_fixed <- function(seed_C, seed_S, seed_O){
   
   
-  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,6] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,7] <- rlnorm(1, 2.66, 0.89)
-    seed_C[1,8] <- rlnorm(1, 2.66, 0.89)
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .0001
+  sv_C[5,5] <- .0001
+  sv_C[6,6] <- .0001
+  sv_C[7,7] <- .0001
+  sv_C[8,8] <- .0001
   
-  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1, 2.66, 0.89)
-    seed_S[1,6] <- rlnorm(1, 2.66, 0.89)
-    seed_S[1,7] <- rlnorm(1, 2.66, 0.89)
-    seed_S[1,8] <- rlnorm(1, 2.66, 0.89)
+  
+  
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .0001
+  sv_S[5,5] <- .0001
+  sv_S[6,6] <- .0001
+  sv_S[7,7] <- .0001
+  sv_S[8,8] <- .0001
   
   
   seed_production_count_corn <- seed_C[1, 3:8] 
@@ -344,17 +408,24 @@ rot_3year_conv_seed_production_per_cap <- function(seed_C, seed_S, seed_O){
   
 }
 
-rot_3year_low_seed_production_per_cap <- function(seed_C, seed_S, seed_O){
+rot_3year_low_seed_production_per_cap_fixed <- function(seed_C, seed_S, seed_O){
   
   
-  seed_C[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1, 5.05, 0.53)
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .003
+  sv_C[5,5] <- .003
+  #  sv_C[6,6] <- .0001
+  #  sv_C[7,7] <- .0001
+  #  sv_C[8,8] <- .0001
   
   
-  seed_S[1,3] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1, 2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1, 6.94, 0.43)
+  
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .003
+  sv_S[5,5] <- .003
+  # sv_S[6,6] <- .0001
+  # sv_S[7,7] <- .0001
+  #  sv_S[8,8] <- .001
   
   
   seed_production_count_corn <- seed_C[1,3:8] 
@@ -384,16 +455,21 @@ rot_4year_conv_lambda <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,
                            prt_O, em_O, sv_O, seed_O, poh_O, ow_O, 
                            prt_A, em_A, sv_A, seed_A,poh_A, ow_A){
   
-  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
-  #fecundity was much lower after cohort 3, so focus on suppressing plant size in soybean
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .001
+  sv_C[5,5] <- .001
+  sv_C[6,6] <- .005
+  sv_C[7,7] <- .005
+  sv_C[8,8] <- .005
   
   
-  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,6] <- rlnorm(1,  7.34, 0.44)
+  
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .001
+  sv_S[5,5] <- .001
+  sv_S[6,6] <- .005
+  sv_S[7,7] <- .005
+  sv_S[8,8] <- .005
   
   # corn phase dynamics  
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
@@ -412,21 +488,18 @@ rot_4year_low_lambda <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,
                           prt_O, em_O, sv_O, seed_O, poh_O, ow_O, 
                           prt_A, em_A, sv_A, seed_A,poh_A, ow_A){
   
-  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,6] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,7] <- rlnorm(1,  2.66, 0.89)
-  # seed_C[1,8] <- rlnorm(1,  2.66, 0.89)
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .001
+  sv_C[5,5] <- .009
+  sv_C[6,6] <- .05
   
   
-  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,6] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,7] <- rlnorm(1,  2.66, 0.89)
-  # seed_S[1,8] <- rlnorm(1,  2.66, 0.89)
   
+  
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .001
+  sv_S[5,5] <- .009
+  sv_S[6,6] <- .05
   # corn phase dynamics  
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*%  vec 
   # soybean phase dynamics
@@ -442,23 +515,28 @@ rot_4year_low_lambda <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,
 
 
 ###### Mature plant density output #######
-### given manipulated per-capita seed production that make annualized lambda = 1
-rot_4year_conv_plant_density_fixed <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
+
+rot_4year_conv_plant_density <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                                                poh_S, ow_S, prt_S, em_S, sv_S, seed_S,
                                                poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                                                poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
   
   
-  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
-  #fecundity was much lower after cohort 3, so focus on suppressing plant size in soybean
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .001
+  sv_C[5,5] <- .001
+  sv_C[6,6] <- .005
+  sv_C[7,7] <- .005
+  sv_C[8,8] <- .005
   
   
-  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,6] <- rlnorm(1,  7.34, 0.44)
+  
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .001
+  sv_S[5,5] <- .001
+  sv_S[6,6] <- .005
+  sv_S[7,7] <- .005
+  sv_S[8,8] <- .005
   
   
   # corn phase dynamics   
@@ -496,20 +574,15 @@ rot_4year_low_plant_density_fixed <- function(vec, poh_C, ow_C, prt_C, em_C, sv_
                                               poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
   
   
-  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,6] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,7] <- rlnorm(1,  2.66, 0.89)
-  # seed_C[1,8] <- rlnorm(1,  2.66, 0.89)
-  
-  
-  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,6] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,7] <- rlnorm(1,  2.66, 0.89)
-  # seed_S[1,8] <- rlnorm(1,  2.66, 0.89)
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .001
+  sv_C[5,5] <- .009
+  sv_C[6,6] <- .05
+
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .001
+  sv_S[5,5] <- .009
+  sv_S[6,6] <- .05
   
   
   # corn phase dynamics   
@@ -542,21 +615,25 @@ rot_4year_low_plant_density_fixed <- function(vec, poh_C, ow_C, prt_C, em_C, sv_
   l
 }
 
-###### Seed production, manipulated #######
-rot_4year_conv_seed_production_per_cap <- function(seed_C, seed_S, seed_O, seed_A){
+###### Seed production, fixed #######
+### given manipulated mature plant density that make annualized lambda = 1
+rot_4year_conv_seed_production_per_cap_fixed <- function(seed_C, seed_S, seed_O, seed_A){
+  
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .001
+  sv_C[5,5] <- .001
+  sv_C[6,6] <- .005
+  sv_C[7,7] <- .005
+  sv_C[8,8] <- .005
   
   
   
-  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
-  #fecundity was much lower after cohort 3, so focus on suppressing plant size in soybean
-  
-  
-  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,6] <- rlnorm(1,  7.34, 0.44)
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .001
+  sv_S[5,5] <- .001
+  sv_S[6,6] <- .005
+  sv_S[7,7] <- .005
+  sv_S[8,8] <- .005
   
   
   seed_production_count_corn <- seed_C[1, 3:8] 
@@ -581,20 +658,17 @@ rot_4year_conv_seed_production_per_cap <- function(seed_C, seed_S, seed_O, seed_
 rot_4year_low_seed_production_per_cap <- function(seed_C, seed_S, seed_O, seed_A){
   
   
-  seed_C[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,5] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,6] <- rlnorm(1,  2.66, 0.89)
-  seed_C[1,7] <- rlnorm(1,  2.66, 0.89)
-  # seed_C[1,8] <- rlnorm(1,  2.66, 0.89)
+  
+  sv_C[3,3] <- .0001
+  sv_C[4,4] <- .001
+  sv_C[5,5] <- .009
+  sv_C[6,6] <- .05
   
   
-  seed_S[1,3] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,4] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,5] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,6] <- rlnorm(1,  2.66, 0.89)
-  seed_S[1,7] <- rlnorm(1,  2.66, 0.89)
-  # seed_S[1,8] <- rlnorm(1,  2.66, 0.89)
+  sv_S[3,3] <- .0001
+  sv_S[4,4] <- .001
+  sv_S[5,5] <- .009
+  sv_S[6,6] <- .05
   
   
   seed_production_count_corn <- seed_C[1,3:8] 
