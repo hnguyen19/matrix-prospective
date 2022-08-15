@@ -13,14 +13,12 @@ rot_2year_conv_lambda <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
   # sv_C[6,6] <- .01
   #  sv_C[7,7] <- .01
   
-  
-  
+
   sv_S[3,3] <- .006
   sv_S[4,4] <- .006
   sv_S[5,5] <- .006
   #  sv_S[6,6] <- .01
   #  sv_S[7,7] <- .01
-  
   
   # corn phase dynamics   
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
@@ -42,9 +40,7 @@ rot_2year_low_lambda <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
   sv_C[5,5] <- .003 # 99.8% efficacy
   # sv_C[6,6] <- .01
   #  sv_C[7,7] <- .01
-  
-  
-  
+
   sv_S[3,3] <- .001
   sv_S[4,4] <-  .002
   sv_S[5,5] <-  .003
@@ -66,8 +62,6 @@ rot_2year_low_lambda <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
 rot_2year_conv_plant_density <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C, 
                                                prt_S, em_S, sv_S, seed_S, poh_S, ow_S){
   
-  
-  
   sv_C[3,3] <- .006 #99.4 % efficacy wrt plant density
   sv_C[4,4] <- .006
   sv_C[5,5] <- .006
@@ -82,8 +76,7 @@ rot_2year_conv_plant_density <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, 
   #  sv_S[6,6] <- .01
   #  sv_S[7,7] <- .01
   
-  
-  
+
   # corn phase dynamics   
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
   
@@ -105,13 +98,11 @@ rot_2year_conv_plant_density <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, 
 rot_2year_low_plant_density <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C, 
                                               prt_S, em_S, sv_S, seed_S, poh_S, ow_S){
   
-  
   sv_C[3,3] <- .001 #99.9 % efficacy
   sv_C[4,4] <- .002
   sv_C[5,5] <- .003 # 99.8% efficacy
   # sv_C[6,6] <- .01
   #  sv_C[7,7] <- .01
-  
   
   
   sv_S[3,3] <- .001
@@ -137,32 +128,17 @@ rot_2year_low_plant_density <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, o
 }
 
 ###### Seed production, fixed #######
-### given manipulated mature plant density that make annualized lambda = 1
+### from fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 rot_2year_conv_seed_production_per_cap_fixed <- function(seed_C, seed_S){
   
+
+  seed_production_per_cap_corn_fixed <- seed_C[1,3:8] 
   
-  sv_C[3,3] <- .006 #99.4 % efficacy wrt plant density
-  sv_C[4,4] <- .006
-  sv_C[5,5] <- .006
-  # sv_C[6,6] <- .01
-  #  sv_C[7,7] <- .01
-  
-  
-  
-  sv_S[3,3] <- .006
-  sv_S[4,4] <- .006
-  sv_S[5,5] <- .006
-  #  sv_S[6,6] <- .01
-  #  sv_S[7,7] <- .01
-  
-  
-  seed_production_count_corn <- seed_C[1,3:8] 
-  
-  seed_production_count_soy <- seed_S[1,3:8]  
+  seed_production_per_cap_soy_fixed <- seed_S[1,3:8]  
   
   # seed at harvest
   
-  l <- list(seed_production_count_corn, seed_production_count_soy)
+  l <- list(seed_production_per_cap_corn_fixed, seed_production_per_cap_soy_fixed)
   
   names(l) <- c("C2", "S2")
   
@@ -172,29 +148,14 @@ rot_2year_conv_seed_production_per_cap_fixed <- function(seed_C, seed_S){
 
 rot_2year_low_seed_production_per_cap_fixed <- function(seed_C, seed_S){
   
+
+  seed_production_per_cap_corn_fixed <- seed_C[1,3:8] 
   
-  sv_C[3,3] <- .001 #99.9 % efficacy
-  sv_C[4,4] <- .002
-  sv_C[5,5] <- .003 # 99.8% efficacy
-  # sv_C[6,6] <- .01
-  #  sv_C[7,7] <- .01
-  
-  
-  
-  sv_S[3,3] <- .001
-  sv_S[4,4] <-  .002
-  sv_S[5,5] <-  .003
-  #  sv_S[6,6] <- .01
-  #  sv_S[7,7] <- .01
-  
-  
-  seed_production_count_corn <- seed_C[1,3:8] 
-  
-  seed_production_count_soy <- seed_S[1,3:8]  
+  seed_production_per_cap_soy_fixed <- seed_S[1,3:8]  
   
   # seed at harvest
   
-  l <- list(seed_production_count_corn, seed_production_count_soy)
+  l <- list(seed_production_per_cap_corn_fixed, seed_production_per_cap_soy_fixed)
   
   names(l) <- c("C2", "S2")
   
@@ -370,37 +331,22 @@ rot_3year_low_plant_density <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, 
 
 
 ###### Seed production, fixed #######
+### from fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 rot_3year_conv_seed_production_per_cap_fixed <- function(seed_C, seed_S, seed_O){
   
+
   
-  sv_C[3,3] <- .0001
-  sv_C[4,4] <- .0001
-  sv_C[5,5] <- .0001
-  sv_C[6,6] <- .0001
-  sv_C[7,7] <- .0001
-  sv_C[8,8] <- .0001
+  seed_production_per_cap_corn_fixed <- seed_C[1, 3:8] 
   
+  seed_production_per_cap_soy_fixed <- seed_S[1, 3:8]  
   
-  
-  sv_S[3,3] <- .0001
-  sv_S[4,4] <- .0001
-  sv_S[5,5] <- .0001
-  sv_S[6,6] <- .0001
-  sv_S[7,7] <- .0001
-  sv_S[8,8] <- .0001
-  
-  
-  seed_production_count_corn <- seed_C[1, 3:8] 
-  
-  seed_production_count_soy <- seed_S[1, 3:8]  
-  
-  seed_production_count_oat <- seed_O[1, 3:8]
+  seed_production_per_cap_oat_fixed <- seed_O[1, 3:8]
   
   # seed at harvest
   
-  l <- list(seed_production_count_corn,
-            seed_production_count_soy,
-            seed_production_count_oat)
+  l <- list(seed_production_per_cap_corn_fixed,
+            seed_production_per_cap_soy_fixed,
+            seed_production_per_cap_oat_fixed)
   
   names(l) <- c("C3", "S3", "O3")
   
@@ -410,35 +356,19 @@ rot_3year_conv_seed_production_per_cap_fixed <- function(seed_C, seed_S, seed_O)
 
 rot_3year_low_seed_production_per_cap_fixed <- function(seed_C, seed_S, seed_O){
   
+
   
-  sv_C[3,3] <- .0001
-  sv_C[4,4] <- .003
-  sv_C[5,5] <- .003
-  #  sv_C[6,6] <- .0001
-  #  sv_C[7,7] <- .0001
-  #  sv_C[8,8] <- .0001
+  seed_production_per_cap_corn_fixed <- seed_C[1,3:8] 
   
+  seed_production_per_cap_soy_fixed <- seed_S[1,3:8]  
   
-  
-  sv_S[3,3] <- .0001
-  sv_S[4,4] <- .003
-  sv_S[5,5] <- .003
-  # sv_S[6,6] <- .0001
-  # sv_S[7,7] <- .0001
-  #  sv_S[8,8] <- .001
-  
-  
-  seed_production_count_corn <- seed_C[1,3:8] 
-  
-  seed_production_count_soy <- seed_S[1,3:8]  
-  
-  seed_production_count_oat <- seed_O[1, 3:8]
+  seed_production_per_cap_oat_fixed <- seed_O[1, 3:8]
   
   # seed at harvest
   
-  l <- list(seed_production_count_corn,
-            seed_production_count_soy,
-            seed_production_count_oat)
+  l <- list(seed_production_per_cap_corn_fixed,
+            seed_production_per_cap_soy_fixed,
+            seed_production_per_cap_oat_fixed)
   
   names(l) <- c("C3", "S3", "O3")
   
@@ -516,7 +446,7 @@ rot_4year_low_lambda <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,
 
 ###### Mature plant density output #######
 
-rot_4year_conv_plant_density <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
+rot_4year_conv_plant <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                                                poh_S, ow_S, prt_S, em_S, sv_S, seed_S,
                                                poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                                                poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
@@ -568,7 +498,7 @@ rot_4year_conv_plant_density <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, se
   l
 }
 
-rot_4year_low_plant_density_fixed <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
+rot_4year_low_plant_density <- function(vec, poh_C, ow_C, prt_C, em_C, sv_C, seed_C,
                                               poh_S, ow_S, prt_S, em_S, sv_S, seed_S,
                                               poh_O, ow_O, prt_O, em_O, sv_O, seed_O,
                                               poh_A, ow_A, prt_A, em_A, sv_A, seed_A){
@@ -616,38 +546,22 @@ rot_4year_low_plant_density_fixed <- function(vec, poh_C, ow_C, prt_C, em_C, sv_
 }
 
 ###### Seed production, fixed #######
-### given manipulated mature plant density that make annualized lambda = 1
+### from fecundity18 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
 rot_4year_conv_seed_production_per_cap_fixed <- function(seed_C, seed_S, seed_O, seed_A){
+
   
-  sv_C[3,3] <- .0001
-  sv_C[4,4] <- .001
-  sv_C[5,5] <- .001
-  sv_C[6,6] <- .005
-  sv_C[7,7] <- .005
-  sv_C[8,8] <- .005
+  seed_production_per_cap_corn_fixed <- seed_C[1, 3:8] 
   
+  seed_production_per_cap_soy_fixed <- seed_S[1, 3:8]  
   
+  seed_production_per_cap_oat_fixed <- seed_O[1, 3:8]
   
-  sv_S[3,3] <- .0001
-  sv_S[4,4] <- .001
-  sv_S[5,5] <- .001
-  sv_S[6,6] <- .005
-  sv_S[7,7] <- .005
-  sv_S[8,8] <- .005
-  
-  
-  seed_production_count_corn <- seed_C[1, 3:8] 
-  
-  seed_production_count_soy <- seed_S[1, 3:8]  
-  
-  seed_production_count_oat <- seed_O[1, 3:8]
-  
-  seed_production_count_alfalfa <- seed_A[1, 3:8]
+  seed_production_per_cap_alfalfa_fixed <- seed_A[1, 3:8]
   
   # seed at harvest
   
-  l <- list(seed_production_count_corn, seed_production_count_soy,
-            seed_production_count_oat, seed_production_count_alfalfa)
+  l <- list(seed_production_per_cap_corn_fixed, seed_production_per_cap_soy_fixed,
+            seed_production_per_cap_oat_fixed, seed_production_per_cap_alfalfa_fixed)
   
   names(l) <- c("C4", "S4", "O4", "A4")
   
@@ -655,34 +569,22 @@ rot_4year_conv_seed_production_per_cap_fixed <- function(seed_C, seed_S, seed_O,
   
 }
 
-rot_4year_low_seed_production_per_cap <- function(seed_C, seed_S, seed_O, seed_A){
+rot_4year_low_seed_production_per_cap_fixed <- function(seed_C, seed_S, seed_O, seed_A){
   
+
   
+  seed_production_per_cap_corn_fixed <- seed_C[1,3:8] 
   
-  sv_C[3,3] <- .0001
-  sv_C[4,4] <- .001
-  sv_C[5,5] <- .009
-  sv_C[6,6] <- .05
+  seed_production_per_cap_soy_fixed <- seed_S[1,3:8]  
   
+  seed_production_per_cap_oat_fixed <- seed_O[1, 3:8]
   
-  sv_S[3,3] <- .0001
-  sv_S[4,4] <- .001
-  sv_S[5,5] <- .009
-  sv_S[6,6] <- .05
-  
-  
-  seed_production_count_corn <- seed_C[1,3:8] 
-  
-  seed_production_count_soy <- seed_S[1,3:8]  
-  
-  seed_production_count_oat <- seed_O[1, 3:8]
-  
-  seed_production_count_alfalfa <- seed_A[1, 3:8]
+  seed_production_per_cap_alfalfa_fixed <- seed_A[1, 3:8]
   
   # seed at harvest
   
-  l <- list(seed_production_count_corn, seed_production_count_soy,
-            seed_production_count_oat, seed_production_count_alfalfa)
+  l <- list(seed_production_per_cap_corn_fixed, seed_production_per_cap_soy_fixed,
+            seed_production_per_cap_oat_fixed, seed_production_per_cap_alfalfa_fixed)
   
   names(l) <- c("C4", "S4", "O4", "A4")
   
