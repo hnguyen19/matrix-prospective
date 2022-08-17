@@ -35,17 +35,18 @@ rot_2year_low_lambda <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,
   
   
   sv_C[3,3] <- .001 #99.9 % efficacy
-  sv_C[4,4] <- .002
-  sv_C[5,5] <- .003 # 99.8% efficacy
-  # sv_C[6,6] <- .01
-  #  sv_C[7,7] <- .01
+  sv_C[4,4] <- .001
+  sv_C[5,5] <- .001 # 99.8% efficacy
+ # sv_C[6,6] <- .001
+#  sv_C[7,7] <- .001
+#  sv_C[8,8] <- .001
 
   sv_S[3,3] <- .001
-  sv_S[4,4] <-  .002
-  sv_S[5,5] <-  .003
-  #  sv_S[6,6] <- .01
-  #  sv_S[7,7] <- .01
-  
+  sv_S[4,4] <-  .001
+  sv_S[5,5] <-  .001
+#  sv_S[6,6] <- .001
+#  sv_S[7,7] <- .001
+#  sv_S[8,8] <- .001
   
   # corn phase dynamics   
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
@@ -102,16 +103,18 @@ rot_2year_low_manipulated_outputs <- function(vec, prt_C, em_C, sv_C, seed_C, po
   
   
   sv_C[3,3] <- .001 #99.9 % efficacy
-  sv_C[4,4] <- .002
-  sv_C[5,5] <- .003 # 99.8% efficacy
-  # sv_C[6,6] <- .01
-  #  sv_C[7,7] <- .01
+  sv_C[4,4] <- .001
+  sv_C[5,5] <- .001 # 99.8% efficacy
+  # sv_C[6,6] <- .001
+  #  sv_C[7,7] <- .001
+  #  sv_C[8,8] <- .001
   
   sv_S[3,3] <- .001
-  sv_S[4,4] <-  .002
-  sv_S[5,5] <-  .003
-  #  sv_S[6,6] <- .01
-  #  sv_S[7,7] <- .01
+  sv_S[4,4] <-  .001
+  sv_S[5,5] <-  .001
+  #  sv_S[6,6] <- .001
+  #  sv_S[7,7] <- .001
+  #  sv_S[8,8] <- .001
   
   # corn phase dynamics   
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
@@ -160,8 +163,8 @@ rot_2year_original_outputs <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow
   l <- list(diag(sv_C)[3:8], original_mature_plant_density_in_corn[3:8], original_seed_production_in_corn,
             diag(sv_S)[3:8], original_mature_plant_density_in_soy[3:8],original_seed_production_in_soy)
   
-  names(l) <- c("C2_original_survive", "C2_original_plant_density", "C2_original_seed_prod",
-                "S2_original_survive", "S2_original_plant_density", "S2_original_seed_prod")
+  names(l) <- c("C2_original_survive", "C2_original_mature_plant_density", "C2_original_seed_production",
+                "S2_original_survive", "S2_original_mature_plant_density", "S2_original_seed_production")
   
   l
 }
@@ -373,9 +376,9 @@ rot_3year_original_outputs <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow
             diag(sv_S)[3:8], original_mature_plant_density_in_soy[3:8], original_seed_production_in_soy,
             diag(sv_O)[3:8], original_mature_plant_density_in_oat[3:8], original_seed_production_in_oat)
   
-  names(l) <- c("C3_original_survive", "C3_original_plant_density", "C3_original_seed_prod",
-                "S3_original_survive", "S3_original_plant_density", "S3_original_seed_prod",
-                "O3_original_survive", "O3_original_plant_density", "O3_original_seed_prod")
+  names(l) <- c("C3_original_survive", "C3_original_mature_plant_density", "C3_original_seed_production",
+                "S3_original_survive", "S3_original_mature_plant_density", "S3_original_seed_production",
+                "O3_original_survive", "O3_original_mature_plant_density", "O3_original_seed_production")
   
   l
 }
@@ -385,7 +388,7 @@ rot_3year_original_outputs <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow
 ###### Lambda calculation #######
 
 ### conventional weed management
-rot_4year_conv_lambda <- function(vec, prt_C, em_C, sv_C,  seed_C, poh_C, ow_C,  
+rot_4year_conv_lambda <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow_C,  
                            prt_S, em_S, sv_S, seed_S , poh_S, ow_S, 
                            prt_O, em_O, sv_O, seed_O, poh_O, ow_O, 
                            prt_A, em_A, sv_A, seed_A,poh_A, ow_A){
@@ -502,10 +505,10 @@ rot_4year_conv_manipulated_outputs  <- function(vec, poh_C, ow_C, prt_C, em_C, s
             diag(sv_O)[3:8], manipulated_mature_plant_density_in_oat[3:8], manipulated_seed_production_in_oat,
             diag(sv_A)[3:8], manipulated_mature_plant_density_in_alfalfa[3:8], manipulated_seed_production_in_alfalfa)
   
-  names(l) <- c("C4_manipulated_survive", "C4_manipulated_mature_plant_density", "C4_manipulated_seed_prod",
-                "S4_manipulated_survive", "S4_manipulated_mature_plant_density", "S4_manipulated_seed_prod",
-                "O4_manipulated_survive", "O4_manipulated_mature_plant_density", "O4_manipulated_seed_prod",
-                "A4_manipulated_survive", "A4_manipulated_mature_plant_density", "A4_manipulated_seed_prod")
+  names(l) <- c("C4_manipulated_survive", "C4_manipulated_mature_plant_density", "C4_manipulated_seed_production",
+                "S4_manipulated_survive", "S4_manipulated_mature_plant_density", "S4_manipulated_seed_production",
+                "O4_manipulated_survive", "O4_manipulated_mature_plant_density", "O4_manipulated_seed_production",
+                "A4_manipulated_survive", "A4_manipulated_mature_plant_density", "A4_manipulated_seed_production")
   
   l
 }
@@ -560,10 +563,10 @@ rot_4year_low_manipulated_outputs  <- function(vec, poh_C, ow_C, prt_C, em_C, sv
             diag(sv_O)[3:8], manipulated_mature_plant_density_in_oat[3:8], manipulated_seed_production_in_oat,
             diag(sv_A)[3:8], manipulated_mature_plant_density_in_alfalfa[3:8], manipulated_seed_production_in_alfalfa)
   
-  names(l) <- c("C4_manipulated_survive", "C4_manipulated_mature_plant_density", "C4_manipulated_seed_prod",
-                "S4_manipulated_survive", "S4_manipulated_mature_plant_density", "S4_manipulated_seed_prod",
-                "O4_manipulated_survive", "O4_manipulated_mature_plant_density", "O4_manipulated_seed_prod",
-                "A4_manipulated_survive", "A4_manipulated_mature_plant_density", "A4_manipulated_seed_prod")
+  names(l) <- c("C4_manipulated_survive", "C4_manipulated_mature_plant_density", "C4_manipulated_seed_production",
+                "S4_manipulated_survive", "S4_manipulated_mature_plant_density", "S4_manipulated_seed_production",
+                "O4_manipulated_survive", "O4_manipulated_mature_plant_density", "O4_manipulated_seed_production",
+                "A4_manipulated_survive", "A4_manipulated_mature_plant_density", "A4_manipulated_seed_production")
   
   l
 }
@@ -610,10 +613,10 @@ rot_4year_original_outputs <- function(vec, prt_C, em_C, sv_C, seed_C, poh_C, ow
             diag(sv_O)[3:8], original_mature_plant_density_in_oat[3:8], original_seed_production_in_oat,
             diag(sv_A)[3:8], original_mature_plant_density_in_alfalfa[3:8], original_seed_production_in_alfalfa)
   
-  names(l) <- c("C4_original_survive", "C4_original_plant_density", "C4_original_seed_prod",
-                "S4_original_survive", "S4_original_plant_density", "S4_original_seed_prod",
-                "O4_original_survive", "O4_original_plant_density", "O4_original_seed_prod",
-                "A4_original_survive", "A4_original_plant_density", "A4_original_seed_prod")
+  names(l) <- c("C4_original_survive", "C4_original_mature_plant_density", "C4_original_seed_production",
+                "S4_original_survive", "S4_original_mature_plant_density", "S4_original_seed_production",
+                "O4_original_survive", "O4_original_mature_plant_density", "O4_original_seed_production",
+                "A4_original_survive", "A4_original_mature_plant_density", "A4_original_seed_production")
   
   l
 }
