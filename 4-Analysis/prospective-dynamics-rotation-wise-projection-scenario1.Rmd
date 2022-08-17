@@ -1,7 +1,7 @@
 ---
 output:
-  #  bookdown::word_document2:
-    bookdown::html_document2:
+    bookdown::word_document2:
+ #   bookdown::html_document2:
       toc: false
       fig_caption: yes
 ---
@@ -126,7 +126,7 @@ scenario1_phase_projection_trimmed <- rapply(scenario1_phase_projection, \(x) ma
 # View(scenario1_phase_projection_trimmed)
 
 ## For all cropping systems, start with the same N0
-N0 <- matrix(c(1000,0),nrow = 2)
+N0 <- matrix(c(10000,0),nrow = 2)
 
 ##Split scenario1_phase_projection_trimmed into 18 data
 for (i in seq_along(scenario1_phase_projection_trimmed)) {
@@ -785,10 +785,55 @@ scenario1_phase_lambda <-  scenario1_phase_projection_trimmed %>%
   arrange(Rotation, Corn_weed_management) %>%
   mutate(phase_lambda_r = round(phase_lambda, 2))
 
-# View(scenario1_phase_lambda )
+
 ```
 
-```{r scenario1-phase-wise-lambda-plot, echo=FALSE, fig.width = 7, fig.height= 7, fig.cap= "Scenario 1: Changes of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). The model started at year 0 with 1000 and 0 seeds per squared meter in the top (0-2 cm) and bottom (2-20 cm) strata, respectively. The red horizontal line shows the number of seeds in the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
+
+```{r scenario1-merge-rotation-phase-lambda, echo=FALSE}
+scenario1_annualized_lambda_df_condensed <- scenario1_annualized_lambda_df_long %>%
+  mutate(Rot = substr(.id, 29, 29),
+         Rotation = paste(Rot,"year", sep = "-")) %>%
+  mutate(annualized_lambda_r = round(annualized_lambda, 2),
+         rot_wise_lambda_r = round(rot_wise_lambda, 2)) %>%
+  select(Rotation, Corn_weed_management, annualized_lambda_r, rot_wise_lambda_r) %>% 
+  mutate(Corn_weed_management = ifelse(Corn_weed_management == "conv",
+                                       paste0(Corn_weed_management,"entional"), "low"))
+
+
+
+scenario1_phase_lambda_wide <- scenario1_phase_lambda %>%
+  dplyr::mutate(crop_ab = substr(Crop_ID, 1,1),
+         Rot = substr(Rotation, 1, 1),
+         Phase = ifelse(crop_ab == "C", "corn",
+                        ifelse(crop_ab == "S", "soybean",
+                               ifelse(crop_ab == "O", "oat",  "alfalfa")))) %>%
+  dplyr::mutate(phase_order = ifelse(str_detect(Crop_ID, "C"), 1,
+                              ifelse(str_detect(Crop_ID, "S"), 2,
+                                     ifelse(str_detect(Crop_ID, "O"), 3, 4)))) %>%
+    arrange(Rot, phase_order, Corn_weed_management) %>%
+  select(Rotation, Phase, Corn_weed_management, phase_lambda_r) %>% 
+  tidyr::pivot_wider(names_from = Phase, values_from = phase_lambda_r)
+
+
+scenario1_annualized_lambda_df_condensed %>%
+  left_join(scenario1_phase_lambda_wide,by = c("Rotation", "Corn_weed_management") ) %>%
+  flextable() %>%
+    set_caption("Population growth rate under high control efficacy condition.")  %>%
+  set_header_labels(values = list(Crop_ID = "Crop ID",
+                                  Corn_weed_management = "Corn weed management",
+               annualized_lambda_r = "annualized",
+               rot_wise_lambda_r = "rotation wise")) %>%
+add_header_row(values = c(" ", " ", "lambda", "phase wise lambda in"),
+  colwidths = c(1, 1 , 2, 4))
+```
+
+
+
+
+
+
+
+```{r scenario1-phase-wise-lambda-plot, include=FALSE, fig.width = 7, fig.height= 7, fig.cap= "Scenario 1: Changes of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). The model started at year 0 with 1000 and 0 seeds per squared meter in the top (0-2 cm) and bottom (2-20 cm) strata, respectively. The red horizontal line shows the number of seeds in the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
 
 scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
   mutate(Stratum = rep(c("0-2 cm", "2-20 cm"),6),
@@ -837,7 +882,7 @@ scenario1_phase_seed_vectors_long  %>%
    aes(x = Year, y = ln_Count, group = Stratum) +
   geom_line(aes(y = ln_Count, linetype =  Stratum)) +
   geom_point(aes(y = ln_Count, shape =  Stratum)) +
-  geom_hline(aes(yintercept = log(1001), color = "baseline")) +
+  geom_hline(aes(yintercept = log(10001), color = "baseline")) +
   facet_wrap(Rotation ~ Corn_weed_management, ncol = 2, labeller = label_wrap_gen(multi_line=FALSE)) + 
   scale_x_continuous(breaks = scales::pretty_breaks(n = 13)) + #don't need this with as.factor(Year)
   labs(x = "Crop species abbreviation and model year",   #/
@@ -848,7 +893,7 @@ scenario1_phase_seed_vectors_long  %>%
         panel.background=element_rect(fill="transparent",colour=NA),
       plot.background=element_rect(fill="transparent",colour=NA)) +
   #annotate("text", label = paste("\u03BB =", c("0.567 (1663.3)", "0.537 (1876.0)", "0.544 (46598.7)", "0.542 (46996.3)", "0.701 (268.9)", "0.968 (141.3)")) , size = 3, x = 8, y = 10000) +
-  ylim(0,16) +
+ # ylim(0,16) +
     theme_bw() +
  # guides(shape=guide_legend(title = "soil stratum")) +
   theme(legend.position = "top") +
@@ -863,7 +908,7 @@ scenario1_phase_seed_vectors_long  %>%
 ```
 
 
-```{r scenario1-phase-wise-lambda-plot-no-annotation, echo=FALSE, fig.width = 7, fig.height= 7, fig.cap= "Scenario 1: Changes of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). The model started at year 0 with 1000 and 0 seeds per squared meter in the top (0-2 cm) and bottom (2-20 cm) strata, respectively. The red horizontal line shows the number of seeds in the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
+```{r scenario1-phase-wise-lambda-plot-no-annotation, echo=FALSE, fig.width = 7, fig.height= 7, fig.cap= "Scenario 1: Changes of seed densities in two soil strata after 12 model years in three rotations (2-year, 3-year, and 4-year) crossed with two corn weed management programs (conventional and low herbicide). The model started at year 0 with 10000 and 0 seeds per squared meter in the top (0 - 2 cm) and bottom (2 - 20 cm) strata, respectively. The red horizontal line shows the number of seeds in the top stratum at the beginning of the model clock. The annualized population growth rates are followed by their variances in brackets. The model years' are labelled with the main crop species names' abbreviations: C - corn, S - soybean, O - oat, and A - alfalfa."}
 
 scenario1_phase_seed_vectors_long <- scenario1_phase_seed_vectors %>%
   mutate(Stratum = rep(c("0-2 cm", "2-20 cm"),6),
@@ -897,11 +942,11 @@ scenario1_phase_seed_vectors_long  %>%
    aes(x = Year, y = ln_Count, group = Stratum) +
   geom_line(aes(y = ln_Count, linetype =  Stratum)) +
   geom_point(aes(y = ln_Count, shape =  Stratum)) +
-  geom_hline(aes(yintercept = log(1001), color = "baseline")) +
+  geom_hline(aes(yintercept = log(10001), color = "baseline")) +
   facet_wrap(Rotation ~ Corn_weed_management, ncol = 2, labeller = label_wrap_gen(multi_line=FALSE)) + 
   scale_x_continuous(breaks = scales::pretty_breaks(n = 13)) + #don't need this with as.factor(Year)
   labs(x = "Crop species abbreviation and model year",   #/
-       y = expression(paste("ln(Seed density (seeds+1)",~m^-2,"))"))) +
+       y = expression(paste("Seed density on natural logarithm scale(ln(seeds+1)",~m^-2,")"))) +
 #  theme(axis.text.x = element_text(angle = 90)) +
   theme(legend.position = "bottom", legend.title = element_blank(),
         legend.key = element_rect(fill = "transparent", colour = "transparent"),
@@ -914,7 +959,7 @@ scenario1_phase_seed_vectors_long  %>%
   theme(legend.position = "top") +
 #  geom_text(data = lambda_label, aes(label = label), size = 2.5, x = 4, y = 13) +
       geom_text(aes(x = Year, 
-                  y = 16,  #leave space between bar and label
+                  y = 14,  #leave space between bar and label
                   label = Sequence), 
               size = 2) +
   guides(colour = "none")
@@ -922,8 +967,7 @@ scenario1_phase_seed_vectors_long  %>%
 # none of facet_nested_wrap, or lemon::'s is working
 ```
 
-```{r}
-```
+
 
 ```{r scenario1-all-E-B, include=FALSE}
 scenario1_E_B_contribution <- tibble::lst(scenario1_E_B_contribution_2yr_conv,
@@ -1387,7 +1431,7 @@ scenario1_E_B_recombine_wide_ranked <- data.frame(scenario1_E_B_recombine_wide[,
 
 
 
-```{r scenario1-E-B-by-rot-rank, include = FALSE,  fig.cap = "Scenario 1: Elasticity of annualized population growth rates to changes in lower-level demographic parameters. Bar height represents parameter's ranking. Each bar is labeled with the absolute value of the contribution of the parameter to elasticity of annualized population growth rates (zeros from s_s1 through s_p6 in C3, S3, and O3 were due to rounding). Crop identities are color-coded by crop species. From left to right of the x-axis, the sub-annual demographic parameters are: t_11_s - probability that a seed in the 0-2 cm soil stratum stay at that statum after pre-planting tillage; t_21_s - probability that a seed in the 2-20 cm soil stratum move to the 0-2 cm soil stratum after pre-planting tillage; t_12_s - probability that a seed in the 0-2 cm soil stratum move to the 2-20 cm stratum after pre-planting tillage; and t_22_s - probability that a seed in the 2-20 cm soil stratum stay at that statum after pre-planting tillage; d - the probability that a seed is not germinating; g_1 through g_6: the probabiblites that a seed emerge to seedling cohorts 1 through 6; s_s1 and s_s2 - the survival rate of seeds in the 0-2 cm and 2-20 cm soil strata in the cropped season; s_p1 through s_p6: the probability that seedling cohorts 1 through 6 reach reproductive maturity; f_1 through f_6 - the fecundity rates of mature plant cohorts 1 through 6; t_11_f - probability that a seed in the 0-2 cm soil stratum stay at that statum after post-harvest tillage; t_21_f - probability that a seed in the 2-20 cm soil stratum move to the 0-2 cm soil stratum after post-harvest tillage; t_12_f - probability that a seed in the 0-2 cm soil stratum move to the 2-20 cm stratum after post-harvest tillage; and t_22_f - probability that a seed in the 2-20 cm soil stratum stay at that statum after post-harvest tillage; o_11 and o_12 - overwiter survival rates in the 0-2 cm and 2-20 cm soil strata.", fig.height= 16, fig.width=12 , message=FALSE, warning=FALSE}
+```{r scenario1-E-B-by-rot-rank, echo = FALSE,  fig.cap = "Scenario 1: Elasticity of annualized population growth rates to changes in lower-level demographic parameters. Bar height represents parameter's ranking. Each bar is labeled with the absolute value of the contribution of the parameter to elasticity of annualized population growth rates (zeros from s_s1 through s_p6 in C3, S3, and O3 were due to rounding). Crop identities are color-coded by crop species. From left to right of the x-axis, the sub-annual demographic parameters are: t_11_s - probability that a seed in the 0 - 2 cm soil stratum stay at that statum after pre-planting tillage; t_21_s - probability that a seed in the 2 - 20 cm soil stratum move to the 0 - 2 cm soil stratum after pre-planting tillage; t_12_s - probability that a seed in the 0 - 2 cm soil stratum move to the 2 - 20 cm stratum after pre-planting tillage; and t_22_s - probability that a seed in the 2 - 20 cm soil stratum stay at that statum after pre-planting tillage; d - the probability that a seed is not germinating; g_1 through g_6: the probabiblites that a seed emerge to seedling cohorts 1 through 6; s_s1 and s_s2 - the survival rate of seeds in the 0 - 2 cm and 2 - 20 cm soil strata in the cropped season; s_p1 through s_p6: the probability that seedling cohorts 1 through 6 reach reproductive maturity; f_1 through f_6 - the fecundity rates of mature plant cohorts 1 through 6; t_11_f - probability that a seed in the 0 - 2 cm soil stratum stay at that statum after post-harvest tillage; t_21_f - probability that a seed in the 2 - 20 cm soil stratum move to the 0 - 2 cm soil stratum after post-harvest tillage; t_12_f - probability that a seed in the 0 - 2 cm soil stratum move to the 2 - 20 cm stratum after post-harvest tillage; and t_22_f - probability that a seed in the 2 - 20 cm soil stratum stay at that statum after post-harvest tillage; o_11 and o_12 - overwiter survival rates in the 0 - 2 cm and 2 - 20 cm soil strata.", fig.height= 8, fig.width = 6 , message=FALSE, warning=FALSE}
 ## Prepare bar labels (with absolute values of E_B)
 
 scenario1_E_B_recombine_long <- scenario1_E_B_recombine_wide %>%
@@ -1432,17 +1476,20 @@ ggplot(aes(x=Parameter, y=Rank, fill = Crop)) +
   geom_bar(stat = "identity") +
     scale_fill_brewer(palette = "Set1") +
     geom_text(aes(x = Parameter, 
-                  y = 40,  #leave space between bar and label
+                  y = 50,  #leave space between bar and label
                   label = Value_rounded), 
               angle = 90,
               size = 2.5) +
   facet_grid(Crop_ID ~ Corn_weed_management) +
-  ylim(0, 70) +
+  ylim(0, 80) +
   labs(x = "Parameter",
        y= expression(paste("Elasticity of ", lambda, " to changes in lower-level demographic parameters"))) +
-  theme(axis.text.x = element_text(angle = 45)) +
+  theme(axis.text.x = element_text(angle = 30),
+        text = element_text(size=8)) +
   theme(legend.position = "bottom", 
         legend.title = element_blank()) 
 ```
 
-
+```{r scenario1-E-B-output-supp, include=FALSE}
+# write.csv(scenario1_E_B_recombine_ranked_value, "../5-Report/scenario1-elasticities.csv")
+```

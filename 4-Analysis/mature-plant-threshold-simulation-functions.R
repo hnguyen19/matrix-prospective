@@ -265,12 +265,20 @@ rot_3year_conv_manipulated_outputs <- function(vec, prt_C, em_C, sv_C,  seed_C, 
   sv_C[7,7] <- .0001
   sv_C[8,8] <- .0001
   
+  
+  
   sv_S[3,3] <- .0001
   sv_S[4,4] <- .0001
   sv_S[5,5] <- .0001
   sv_S[6,6] <- .0001
   sv_S[7,7] <- .0001
   sv_S[8,8] <- .0001
+  
+  ## Extra control efficacy in oat is now needed  
+  sv_O[5,5] <- .01
+  sv_O[6,6] <- .01
+  sv_O[7,7] <- .01
+  sv_O[8,8] <- .01
   
   # corn phase dynamics   
   after_corn <- ow_C %*%  poh_C %*% seed_C %*% sv_C %*% em_C %*% prt_C %*% vec 
