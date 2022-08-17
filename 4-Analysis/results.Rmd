@@ -64,24 +64,26 @@ Within the same calendar year, cumulative whole-season and cohort-based seedling
 
 ## Waterhemp population growth rates {-}
 
-All the data sets for the empirically estimated sub-annual parameters were measured once. In 2019, individual plant size at maturity was measured for six cohorts in each quadrat of each eu and two stratum of soil seedbank were estimated between crop harvest and post-harvest tillage. In 2018, a different number of cohorts were followed in different crop environments because of limited labor availability and adverse weather conditions. 2019 data was used as scenario 1. Within the same rotation, a consistent pattern of top:bottom ratios of seed densities was observed between two corn weed management regimes. The seedbanks' top : bottom partitioning differed between rotations and between crop phases of the same rotation. 
+All the data sets for the empirically estimated sub-annual parameters were measured once. In 2019, individual plant size at maturity was measured for six cohorts in each quadrat of each eu, and two strata of soil seedbank were estimated between crop harvest and post-harvest tillage. In 2018, a different number of cohorts was followed in different crop environments because of limited labor availability and adverse weather conditions. The 2019 data were used for Scenario 1 because 2019 was the only year the soil seedbank samples were stratified (0 – 2 cm top stratum and 2 – 20 cm bottom stratum). Within the same rotation, a consistent pattern of top : bottom ratios of seed densities was observed between two corn weed management regimes. The seedbanks’ top : bottom partitioning patterns were consistent in the same crop phase within the same rotation in both control efficacy levels. The top and bottom soil strata were evenly populated after the corn and soybean phases in all rotations crossed with corn weed management treatments. The top soil stratum was less populated than the bottom soil stratum after oat intercropped with red clover (O3) but more populated than the bottom after oat intercroped with alfalfa (O4). Larger proportions of the soil seedbanks were found in the bottom stratum after alfalfa.  
 
-### Scenario 1 {-}
-Using 2019 fecundity rates that were estimated from individual plant size using eighteen equations from @nguyenImpactCroppingSystem2022, waterhemp population densities were projected to decrease in all treatments, except in the 4-year rotation with low herbicide corn weed management ($\lambda(4,low)$ = 1.4)  (Figure \@ref(fig:scenario1-phase-wise-lambda-plot)). Waterhemp populations were projected to decrease the most quickly in the 3-year and 4-year rotations under conventional herbicide corn weed management. 
+### Scenario 1 – High control efficacy for seed production{-}
 
-The top and bottom soil strata were evenly populated at the completion of the corn phase in all rotations crossed with corn weed management treatments, but a smaller portion of the seedbank was in the top soil stratum than in the bottom soil stratum in the soybean phase of all the rotations crossed with corn weed management treatments, and in the alfalfa phase of the 4-year rotation regardless of the corn weed management regimes. The top soil stratum was less populated than the bottom soil stratum at the completion of O3 but more populated than the bottom soil stratum at the completion of O4. 
+In the high control efficacy, as reflected by the 2019 reproductive potential, waterhemp population densities were projected to decrease or slightly increase (Figure \@ref(fig:scenario1-phase-wise-lambda-plot-no-annotation) and Table \@ref(tab:scenario1-merge-rotation-phase-lambda)). 
 
+Waterhemp seedbank densities were projected to decrease in the 3-year rotation regardless of corn weed management program ($\lambda = 0.58$  and $\lambda = 0.77$ and in the 2-year and 4-year rotations where conventional weed management was applied on the corn phase ($\lambda = 0.62$ and $\lambda = 0.64$ (Table \@ref(tab:scenario1-merge-rotation-phase-lambda)). Waterhemp seedbank densities were projected to increase in the 2-year and 4-year rotation where low herbicide weed management was applied in corn ($\lambda = 1.18$ and $\lambda = 1.08$) (Table \@ref(tab:scenario1-merge-rotation-phase-lambda)).
 
-With the exception of the 4-year rotation in which corn was treated with low herbicide weed management, all the other treatments' decline of waterhemp population was attributed to the steady decrease of population size in the crop phases after corn. Even though the 2-year and 3-year rotations were of similar annualized population growth ($\lambda(2,conv) = 0.8$, $\lambda(2,low) = 0.9$, $\lambda(3,conv) = 0.7$, and $\lambda(3,low) = 0.9$), larger proportion of the seedbank was buried in the bottom soil stratum in the 3-year rotation, which can shrink the available seed pool for germination. 
-
-### Scenario 2 {-}
-
-Using 2018 fecundity rates, waterhemp population densities would increase rapidly in all rotations (Figure \@ref(fig:scenario2-phase-wise-lambda-plot)) , but most quickly in the 2-year rotation ($\lambda(2,conv) = 59.4$ and $\lambda(2,low) = 333.3$). In the more diverse rotations (3-year and 4-year), waterhemp population increased at lower annualized rates if the corn phase was treated with low herbicide weed management ($\lambda(3,conv) = 48.4$, $\lambda(3,low) = 28.5$, $\lambda(4,conv) = 14.7$ and $\lambda(4,low) = 10.5$). This trend suggests possible elevated herbicide resistance in the treatments in which corn was managed with conventional herbicide, as organisms developed resistance to the strongest selection factor against them.
+In the 2-year rotation under low herbicide weed management, a 3.6-fold increase of seedbank size in the corn phase did not resulted in substantial annualized seedbank density increase ($\lambda = 1.18$) because the seedbank declined in half in the soybean phase ($\lambda = 0.51$). In the 4-year rotation under low herbicide weed management, even though waterhemp seedbank densities substantially increased in the corn phase ($\lambda = 9.80$), the annualized population could be stabilized (annualized $\lambda = 1.08$) because the population declined in the soybean ($\lambda = 0.55$) and alfalfa ($\lambda = 0.53$) phases.
 
 
-The top and bottom soil strata were fairly evenly populated at the completion of the corn phase, but a larger portion of the seedbanks were in the top soil stratum at the completion of the soybean phase in the 2-year and 3-year rotations (S2 and S3). The top : bottom soil stratum seed density partition in the soybean phase of the 4-year rotation (S4) was on-and-off, in which the top stratum was projected to be more populated in one model cycle (four years) but less populated in another model cycle. The top soil stratum was less populated than the bottom soil stratum at the completion of O3, but more population than the bottom soil stratum at the completion of O4. The top soil stratum in the alfalfa phase was more populated than the bottom soil stratum. The alfalfa phase of the 4-year rotation (A4) offered an opportunity for decreasing $\lambda$, which was not possible in any other crop phases in the three examined rotations. However, the declines in and A4 ($\lambda(A4,conv)$ = 0.6 and $\lambda(A4,low)$ = 0.5) were not strong enough to deplete the replenishment from the corn ($\lambda(C4,conv)$ = 29.7, and $\lambda(C4,low)$ = 87.3) and soybean phases ($\lambda(S4,conv)$ = 773.7, and $\lambda(S4,low)$ = 92.1). 
 
-## Elasticities of popilation growth rates to lower-level demographic parameters {-} **remove**
+### Scenario 2 – Low control efficacy for seed production {-}
+
+In the low control efficacy level as reflected by the 2018 reproduction potentials, waterhemp population densities were projected to increase rapidly in all rotations, but most quickly in the 2-year rotation ($\lambda(2,conv) = 59.35$ and $\lambda(2,low) = 333$) and slowest in the 4-year rotation ($\lambda(4,conv) = 14.65$ and $\lambda(4,low) = 10.50$) (Figure \@ref(fig:scenario1-phase-wise-lambda-plot-no-annotation) and Table \@ref(tab:scenario2-merge-rotation-phase-lambda)). 
+
+
+The alfalfa phase of the 4-year rotation (A4) offered opportunities for decreasing $\lambda$, which was not possible in any other crop phases in the three examined rotations. However, the declines in phase-wise $\lambda$ in A4 ($\lambda(A4,conv) = 0.57$ and $\lambda(A4,conv) = 0.53$) were not strong enough to deplete seed replenishment occurring in the corn phase ($\lambda(C4,conv) = 29.68$, and $\lambda(C4,low) = 92.07$), soybean phase ($\lambda(S4,conv) = 773.71$, and $\lambda(C4,low) = 10.18$), and oat phase ($\lambda(O4,conv) = 6.54$, and $\lambda(O4,low) = 12.80$). 
+
+## Elasticities of population growth rates to lower-level demographic parameters {-} **remove**
 
 All the relative ranking of elasticity of $\lambda$ to the lower-level demographic parameters was consistent between corn weed management regimes (Figures \@ref(fig:scenario1-E-B-by-rot-rank) and \@ref(fig:scenario2-E-B-by-rot-rank)). However, the overall population change rate can be reflected by the relative importance of each $b_{ij}$ element on the elasticity of $\lambda$. 
 
@@ -121,33 +123,55 @@ The second-ranked group of demographic parameters to $\lambda_r$ differed by rot
 
 ## Simulation {-}
 
-The more diverse rotations (3-year and 4-year) can tolerate higher seed production than the 2-year rotation can (Figure \@ref(fig:seed-allowance-sim-plot)). This pattern is consistent with the population projection presented previously.  
+### Seed production threshold {-}
 
-Using the population dynamics demonstrated in Scenario 1, an initial population density of 10000 seeds/m$^2$ would remain stable if the first three cohorts in C2 and S2 produced 42 seeds/m$^2$ in total (or 0.04 gram/$^2$ of dried aboveground mass), which would be equivalent to almost total control.  
+Keeping all the input matrices, except the seed production matrix ($B_f$), as in the population projection exercise, the seed production thresholds presented here were converted from seeds plant-1 to seeds m-2.
 
-The 4-year rotation can tolerate bigger plants in the corn and soybean phases than the 3-year rotation, but the different was more substantial under low herbicide corn weed management. When corn was managed with conventional herbicide, 4821 seeds/m$^2$ in C4 versus 1101 seeds/m$^2$ in C3 and 3017 seeds/m$^2$ in S4 versus 2531 seeds/m$^2$ in S3 was tolerated. Within the seed production allowance under conventional corn weed management, 2187 seeds/m$^2$ could be tolerated in C4's and S4's first three waterhemp cohorts but 627 seeds/m$^2$ could be tolerated in C3's  and S3's first three waterhemp cohorts. However, when low herbicide regime was used for corn weed management, 2394 seeds/m$^2$ in C4 versus 889 seeds/m$^2$ in C3 and 2672 seeds/m$^2$ in S4 versus 785 seeds/m$^2$ in S3 was tolerated. Within the seed production allowance under low herbicide corn weed management, 2187 seeds/m$^2$ could be tolerated in C4's and S4's first three waterhemp cohorts but 627 seeds/m$^2$ could be tolerated in C3's and S3's first three waterhemp cohorts.
+Under both corn weed management regimes, the 4-year rotation was projected to tolerate higher seed production in the corn phase than the 3-year and 2-year rotations could *(Figure 5)*. The lower seed production was in the cool season crops; the higher seed production could be tolerated in the warm-season crops. The relative seed production tolerance of the 3-year rotation differed between two corn weed management regimes *(Figure 5)*: 863 seeds m$^{-2}$ under conventional corn weed management and 4482 seeds m$^{-2}$ under low herbicide corn weed management. However, regardless of the corn weed management regime, the more diverse rotation could tolerate lower seed production in the soybean phase than the 2-year rotation. 
+Using the population dynamics demonstrated in Scenario 1, an initial population density of 10000 seeds m$^{-2}$ would remain stable if the first three waterhemp cohorts in C2 seed production was capped at 1464 seeds m$^{-2}$ and 1402 seeds m$^{-2}$ in conventional and low herbicide management, respectively; the first three waterhemp cohorts in S2 seed production was capped at 39843 seeds m$^{-2}$ and 1070 seeds m$^{-2}$ in conventional and low herbicide management, respectively.  
 
+While it was not necessary to expose *the waterhemp cohorts 4 and beyond* to control measures in the corn and soybean phases of the 2-year rotation, it would be necessary to expand weed control measures after the first three waterhemp cohorts in corn and soybean phases in the 3-year rotation with conventional corn weed management and the 4-year rotation under both corn weed management regimes to control the plants that emerged later but were of high reproductive potentials. As no herbicide was applied in the cool-season crops, weed control efficacy in those crop environments would be largely dependent on the crop’s competitiveness, such as canopy closure, allelochemical exudation and retention, physical weed control, such as post-harvest stubble clipping timing frequency in O3 and hay cut frequency in A4), and granivore activity enhancement in O3, O4, and A4. 
 
 
 ```{r, child = "Q1-seed-production-allowance-rot.Rmd"}
 ```
 
+### Mature plant density threshold {-}  
+
+Keeping all the input matrices, except the seed production matrix ($B_s$), as in the population projection exercise, the mature plant densities presented here are plant m$^{-2}$ immediately before seed production.  
+
+The patterns shown in mature plant density thresholds are similar to seed production thresholds (Figure 6). Regardless of the corn weed management program, the 4-year rotation could tolerate higher mature waterhemp densities in the corn phase than the 3-year and 2-year rotations.  
+
+Among all the cool-season crops, no additional control efficacy was needed, except in the oat phase of the 3-year rotation that followed conventional herbicide corn weed management. More aggressive stubble clipping after oat harvest would be necessary in this case, as 99.999% control efficacy in the corn and soybean phases was insufficient to stabilize the population size.  Even though the simulation showed that additional control efficacy might not be necessary in the oat and alfalfa phases of the 4-year rotation, it might be required in reality because achieving 0.00052 plants m$^{-2}$ to 0.002 plants m$^{-2}$ (equivalent to above 99.999% efficacy with respect to density) might be impossible. Similarly, the mature waterhemp plant density in O3 that followed conventional corn weed management would need to be reduced to lower than 0.59 plants m$^{-2}$.
+
+
+```{r, child = "Q2-mature-plant-density-allowance-rot.Rmd"}
+```
+
+
 ## Conclusion {-}
 
-Delayed but steady emergence (Tables \@ref(tab:Julian-19-20-emm) and \@ref(tab:Julian-19-20-ct-tab)), Figure \@ref(fig:seedlings-density-and-cumu-prop-2019-2020)) in the cool-season crop environments decreased population fecundity in the oat and alfalfa phases, and thus, accelerated seedbank size reduction in scenario 1 and slowed seedbank size increment in scenario 2. 
+Delayed but steady emergence (Tables \@ref(tab:Julian-19-20-emm) and \@ref(tab:Julian-19-20-ct-tab)), Figure \@ref(fig:seedlings-density-and-cumu-prop-2019-2020)) in the cool-season crop environments decreased population fecundity in the oat and alfalfa phases, and thus, accelerated seedbank size reduction in scenario 1 and slowed seedbank size increment in Scenario 2. 
 
 Opportunities to deplete and risks to replenish the soil seedbank are intertwined as illustrated in the population trajectories in Scenario 1's 4-year rotation with corn managed with low herbicide and in Scenario 2's all trajectories. The soil seedbank density's response to the oat crop environment was unstable and dependent upon oat's establishment performance. The oat in our experiment did not establish well and was hail-damaged soon before harvest in 2018 (Scenario 2's input), but established well and was not damaged in 2019 (Scenario 1's input) and this performance was reflected in the projected phase-wise $\lambda$ (Figures \@ref(fig:scenario1-phase-wise-lambda-plot) and \@ref(fig:scenario2-phase-wise-lambda-plot)). The seedbank's more stable and predictable response to alfalfa crop environment effect could be attributed to alfalfa's ability to form dense canopy.  
 
 
-The hypothesis that "extending a conventional 2-year rotation of corn and soybean with cool-season crops can accelerate soil seedbank depletion" was supported. Unlike giant foxtail whose bottle neck point in the life cycle was overwinter seed survival rate [@davisCroppingSystemEffects2002], waterhemp's bottle neck point in its life cycle was seedling emergence rate and seedling to maturity success rate. However, if the early emerged plants were unaffected by weed control programs, either through herbicide resistance or escape from cultivation, and successfully complete their life cycle, a small number of large, prolific female plants would sufficiently replenish the soil seedbank.  
+The hypothesis that “extending a conventional 2-year rotation of corn and soybean with cool-season crops can accelerate soil seedbank depletion” was supported by Scenario 1 in the projection exercise and the follow-up simulation. Unlike giant foxtail, whose bottleneck point in the life cycle was the overwinter seed survival rates [@davisCroppingSystemEffects2002], waterhemp’s bottleneck point in its life cycle was seedling emergence rate and seedling to maturity survival success rate. An elasticity analysis (outputs not shown) suggested that fecundity overrode all the population dynamics and dictated the population growth. Even though the elasticity analysis was not informative, it was consistent with waterhemp’s competitiveness, that is, even with an extremely low survival rate, if the early emerged plants were unaffected by weed control programs, either through herbicide resistance or escaped from cultivation, and completed their life cycle, a small number of large, prolific female plants would sufficiently replenish the soil seedbank.
 
-Since the elasticity of $\lambda$ was the least affected by seedling emergence in both the population-increasing and population-declining scenarios, it would be helpful to focus on disrupting seed production by reducing individual plant size by delaying emergence or applying multiple stress factors to successfully established plants, and by limiting seed deposit to the soil. Under the current 4-year rotation's crop sequence, oat (O4) and alfalfa (A4) provided valuable opportunities to reduce plant size [@nguyenWeedCommunityComposition2022; @nguyenImpactCroppingSystem2022]. 
 
-A reduction in the mass of applied herbicide active ingredients [@nguyenWeedCommunityComposition2022] was not coincident with population declining in the Scenario 1 ($\lambda < 1$) but did coincide with population increases in scenario 2 ($\lambda > 1$). In consideration of Scenario 2, population-increasing, it would be useful to examine how many years of continuous overwinter crops would be necessary and which cool-season crop species would be most efficient in decreasing waterhemp $\lambda$ after steady seedbank replenishment. Such an investigation is needed because even if the increased abundance of waterhemp and other weed species has not been observed at the experiment site [@nguyenWeedCommunityComposition2022], an abundant seedbank of a highly competitive weed species harbors risks of weed outbreaks.
+*Since the elasticity of $\lambda$ was the least affected by seedling emergence in both the population-increasing and population-declining scenarios, it would be helpful to focus on disrupting seed production by reducing individual plant size by delaying emergence or applying multiple stress factors to successfully established plants, and by limiting seed deposit to the soil. Under the current 4-year rotation's crop sequence, oat (O4) and alfalfa (A4) provided valuable opportunities to reduce plant size [@nguyenWeedCommunityComposition2022; @nguyenImpactCroppingSystem2022].* 
 
-The weed control pressure for the corn and soybean phases could be lessened with more extended rotations as bigger waterhemp plants in cohorts 1 through 3 can be tolerated in the 3-year and 4-year rotation than in the 2-year rotation. This higher tolerance can be attributed to the weed control effects provided by extending a cropping system of corn and soybean only with cool-season crops. As waterhemp fecundity was manipulated for cohorts 1 through 3 in corn and soybean environments only, it is implied that if effort was made to severely suppress waterhemp in corn and soybean phases, no additional weed management may be needed in the oat and alfalfa phases, so even the big waterhemp plants in oat and alfalfa phases would not need attention. Practitioners who chose the 4-year rotation for the economic and ecological benefits it offers [@davisIncreasingCroppingSystem2012; @huntReducingFreshwaterToxicity2017; @huntCroppingSystemDiversity2019; @liebmanWeedSeedbankDiversity2021] might be less concerned with the risk of waterhemp seedbank size increment as compared to the 2-year rotation.  
 
-The cohort-based female emergence rates at the experiment site were not realistically estimated due to small sample size of the soil seedbank and the plant community [@nguyenReducingHerbicideUse2016]. Similarly, the cohort-based female survival rates at the experiment site were not realistically estimated due to small sample size in a high-efficacy weed management program (Table \@ref(tab:female-cohort-survive-point-est-tab). Future experiments should focus on assessing cohort-based female vital rates, especially in cool-season crop environments. 
+A reduction in the mass of applied herbicide active ingredients [@nguyenWeedCommunityComposition2022] was not coincident with the population decline in Scenario 1 ($\lambda < 1$)  but did coincide with population increases in Scenario 2  ($\lambda > 1$). Even though population sizes were projected to increase in Scenario 2, the increase rates were lower in the extended rotations. Considering Scenario 2, population-increasing, it would be useful to examine how many years of continuous overwinter crops would be necessary and which cool-season crop species would be most efficient in decreasing waterhemp λ after steady seedbank replenishment. Such an investigation is needed because even if the increased abundance of waterhemp and other weed species has not been observed at the experiment site [@nguyenWeedCommunityComposition2022], an abundant seedbank of a highly competitive weed species harbors risks of weed outbreaks. 
+
+
+The weed control pressure for the corn and soybean phases could be lessened with more extended rotations as waterhemp plants of higher reproductive potentials in cohorts 1 through 3 could be tolerated in the 3-year and 4-year rotations than in the 2-year rotation. This higher tolerance can be attributed to the weed control effects by extending a cropping system of corn and soybean with cool-season crops.  As waterhemp fecundity was manipulated for cohorts 1 through 3 in corn and soybean environments only, it is implied that if effort was made to severely suppress waterhemp in corn and soybean phases, no additional weed management may be needed in the oat and alfalfa phases, so even the big waterhemp plants in oat and alfalfa phases would not need attention. Practitioners who chose the 4-year rotation for the economic and ecological benefits it offers [@davisIncreasingCroppingSystem2012; @huntReducingFreshwaterToxicity2017; @huntCroppingSystemDiversity2019; @liebmanWeedSeedbankDiversity2021] might be less concerned with the risk of waterhemp seedbank size increment as compared to the 2-year rotation.  The more stable moisture provided by the alfalfa crop environment (compared with other crop environments) might be responsible for the steady and higher relative abundant emergence rates in A4. Empirical measurement in alfalfa is needed to test the relatively high emergence rates (approximately 45% of the top 0 – 2 cm soil seedbank) reported in this study. 
+
+Waterhemp seed production and mature plant density thresholds complement each other well in simulating required control efficacy. Using plant density alone would cause erroneous estimations for a species with highly variable individual sizes. In addition, its high relative growth rate and opportunistic germination patterns can allow few plants to escape control measures and establish high reproductive potential. As waterhemp fecundity was manipulated mostly for cohorts 1 through 3 in corn and soybean environments only, it is implied that: 1) if efforts were made to severely suppress waterhemp in corn and soybean phases, no additional weed management might be needed in the oat and alfalfa phases, and thus, even the big waterhemp plants in oat and alfalfa phases might not require attention; and 2) conversely if efforts in suppressing waterhemp cohorts 1 through 3 failed in the warm-season crop phases, either intervention on the waterhemp cohorts 4 and beyond in the warm-season crop phases or higher control efficacy in the cool-season crop phases would be necessary.  
+
+Similarly, as waterhemp mature plant densities were manipulated for when weed control measures would be feasible in our experiment design (a few weeks after corn and soybean sowing, after oat harvest, or alfalfa readiness and weather-permitting hay cut), it is implied that effective and efficient weed management when possible was crucial to keep the population of concern from increasing. In our experiment, the oat, red clover, and alfalfa in the 3-year and 4-year rotations allowed for more frequent physical weed control at stages that waterhemp could be most vulnerable to severe reproductive potential loss.  A more comprehensive simulation combining the seed production and mature plant density thresholds could address a suite of more diverse population compositions in the field. 
+
+
 
 ## Appendix {-}
 
@@ -193,7 +217,6 @@ list(AMATA_female_top_lm, AMATA_female_bottom_lm) %>%
 
 
 ```{r, child= "~/Documents/Dissertation/AMATA-demography/4-Analysis/seedbank-fates-2014through2019.Rmd"}
-
 ```
 
 
@@ -265,7 +288,6 @@ plot(emerge_cohort_20_gls, resid(., type = "p") ~ fitted(.))
 ```
 
 
-
 ### 2019 female survival rate by cohort {-}
 
 ```{r, child= "~/Documents/Dissertation/AMATA-demography/4-Analysis/female-survival-point-est-2019.Rmd"}
@@ -275,14 +297,17 @@ plot(emerge_cohort_20_gls, resid(., type = "p") ~ fitted(.))
 ### Matrix assembly {-}
 
 ```{r, child= "../5-Report/Appendix-matrices-list.Rmd"}
-
 ```
 
-### Simulation {-}  
+### Simulation {-}   
+
+The code for seed production thresholds simulation is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/4-Analysis/Q1-seed-production-allowance-rot.Rmd>
 
 ```{r, child= "Q1-fecund-prep.Rmd"}
-
 ```
+
+
+The code for mature plant density thresholds simulation is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/4-Analysis/Q2-mature-density-allowance-rot.Rmd>
 
 # Acknowledgement {-}
 

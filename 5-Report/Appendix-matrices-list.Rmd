@@ -92,10 +92,10 @@ t_{12,s} & t_{22,s} & 0 & ... & ... & ... & ... & 0\\
 $$   
 
 
-The same pre-planting tillage regimes were applied in 2018 and 2019.    
+The same pre-planting tillage regimes were applied in 2018 and 2019. The list of pre-planting tillage matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-pre-planting-tillage.RData>.    
 
 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 projection_by_matrix_id_named_demo$mean_spring_tillage  %>%
   map(., ~{round(., 2)}) 
 ```
@@ -124,9 +124,9 @@ The $M_s$ section's diagonal ($s_{s_1}$ and $s_{s_2}$) were filled with survival
 
 The empirically measured data for seedling survival were deemed unrealistically (Appendix) low as compared to the literature, so @nordbyInfluenceCornCommon2004's results were used for corn and @hartzlerEffectCommonWaterhemp2004's results were used for soybean crop environments. The seedling survival rates by cohort ($s_{p_k}, k = \{1,...,6\}$) were assigned such that the earlier cohorts had lower survival rate in the oat crop environment; and those in the alfalfa crop environment were evenly low in all cohorts. These estimated numbers were based on a suggestion that cool-season crop environments can inhibit warm-season weed species growth [@nguyenWeedCommunityComposition2022 and citations given there].
 
-The same summer survival rates were used in 2018 and 2019.  
+The same summer survival rates were used in 2018 and 2019. The list of summer seed survival rate matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-summer-seed-survival-Sosnoskie.RData> and the list of seedling survival rate to maturity is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-summer-seedling-survival-Hartzler.RData>.      
 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 projection_by_matrix_id_named_demo$scenario1_mean_summer_survival  %>%
   map(., ~{round(., 2)}) 
 ```
@@ -149,9 +149,9 @@ t_{12,f} & t_{22,f} & 0 & ... & ... & ... & ... & 0\\
 \end{array}\right]
 $$   
 
-The same post-harvest tillage regimes were applied in 2018 and 2019.    
+The same post-harvest tillage regimes were applied in 2018 and 2019. The list of pre-planting tillage matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-post-harvest-tillage.RData>    
 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 projection_by_matrix_id_named_demo$mean_post_harvest_tillage  %>%
   map(., ~{round(., 2)}) 
 ```
@@ -173,9 +173,9 @@ o_{11} & 0 & 0 & ... & ... & ... & ... & 0\\
 \end{array}\right]
 $$   
 
-The same overwinter survival rates were used in 2018 and 2019. Some zero values were due to rounding.  
+The same overwinter survival rates were used in 2018 and 2019. Some zero values were due to rounding. The list of overwinter seed survival matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData>     
 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 projection_by_matrix_id_named_demo$scenario1_mean_overwinter  %>%
   map(., ~{round(., 2)}) 
 ``` 
@@ -214,10 +214,10 @@ From steps 2 through 4, the seed column in sub-period h, $N_h$, was transitioned
 
 5 - Divide the seedling density in each cohort, $l_k$, by $s_{11,f}$, the top soil stratum seed density to yield $g_k$.   
 
-The same emergence rates were used in 2018 and 2019. Some zero values in the first column were due to rounding.      
+The same emergence rates were used in 2018 and 2019. Some zero values in the first column were due to rounding. The list of seedling recruitment matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-emergence-prop-adjusted.RData>       
 
 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 projection_by_matrix_id_named_demo$scenario1_mean_emergence  %>%
   map(., ~{round(., 5)}) 
 ```
@@ -242,17 +242,21 @@ $$
 
 Two scenarios of plant fecundity were used. In scenario 1, plant fecundity ($f_k, k =\{1,...,6\}$) in each crop identity crossed with corn weed management was estimated from plant aboveground mass using eighteen equations from @nguyenImpactCroppingSystem2022. In scenario 2, the plants were partitioned into six size-based bins and their fecundity was summarized as $f_k, k =\{1,...,6\}$ and filled in their relevant positions in the $B_f$ matrix by partitioning. Both practices in scenarios 1 and 2 were based on the assumption that plant size and fecundity decreased as emergence delayed [@hartzlerEffectCommonWaterhemp2004; @nordbyInfluenceCornCommon2004].   
 
-Scenario 1: 2019   
+Scenario 1: High control efficacy  
 
-```{r, echo=FALSE}
+The list of cohort-averaged fecundity matrices under high control efficacy is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-fecundity-19-cohort.RData>
+
+```{r, include=FALSE}
 projection_by_matrix_id_named_demo$scenario1_mean_fecundity_2019  %>%
   map(., ~{round(., 2)}) 
 ```
 
 
-Scenario 2: 2018    
+Scenario 2: Low control efficacy 
 
-```{r, echo=FALSE}
+The list of cohort-averaged fecundity matrices under low control efficacy is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-fecundity-18-cohort.RData>
+
+```{r, include=FALSE}
 projection_by_matrix_id_named_demo$scenario2_mean_fecundity_2018  %>%
   map(., ~{round(., 2)}) 
 ```
