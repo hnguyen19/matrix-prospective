@@ -950,7 +950,7 @@ mature_plant_allowance_sim_df$Crop_ID <- factor(mature_plant_allowance_sim_df$Cr
 mature_plant_allowance_sim_df  %>%
     na.omit() %>%
      ggplot() +
-   aes(x = 100*manipulated_surv, 
+   aes(x = log(manipulated_matu), 
        y = lambda_annualized,
        group = survival_manipulated) +
    facet_grid(Crop_ID ~ cohort) +
@@ -961,7 +961,7 @@ mature_plant_allowance_sim_df  %>%
                  shape = Corn_weed_management)) +
   scale_shape_manual(values = c(1, 4)) +
   ylab("Annualized population growth rate") +
-  xlab(expression(paste("Necessary control efficacy by cohort (%)"))) + 
+  xlab(expression(paste("Mature plant density threshold by cohort (ln(plants",~m^-2,"))"))) + 
   theme_bw() +
   guides(shape = guide_legend(title = "Corn \nweed management"),
          color = guide_legend(title = "Plant survival \nmanipulated")) +

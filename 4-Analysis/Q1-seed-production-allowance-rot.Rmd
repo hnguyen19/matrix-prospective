@@ -883,7 +883,7 @@ seed_allowance_sim_df %>%
                  shape = Corn_weed_management)) +
   scale_shape_manual(values = c(1, 4)) +
   ylab("Annualized population growth rate") +
-  xlab(expression(paste("Seed production threshold by cohort (ln(seeds)",~m^-2,")"))) + 
+  xlab(expression(paste("Seed production threshold by cohort (ln(seeds",~m^-2,"))"))) + 
   theme_bw() +
   guides(shape = guide_legend(title = "Corn \nweed management"),
          color = guide_legend(title = "Seed production \nmanipulated")) +
