@@ -1,6 +1,7 @@
 ---
 output:
-    bookdown::word_document2:
+  #  bookdown::word_document2:
+    bookdown::html_document2:
       toc: false
       fig_caption: yes
       keep_md: yes
@@ -17,7 +18,19 @@ library(magrittr)
 library(flextable)
 source("functions.R")
 ```
+In the low control efficacy level as reflected by the 2018 reproduction potentials, waterhemp population densities were projected to increase rapidly in all rotations, but most quickly in the 2-year rotation ($\lambda(2,conv) = 59.35$ and $\lambda(2,low) = 333$) and slowest in the 4-year rotation ($\lambda(4,conv) = 14.65$ and $\lambda(4,low) = 10.50$) (Figure \@ref(fig:scenario1-phase-wise-lambda-plot-no-annotation) and Table \@ref(tab:scenario2-merge-rotation-phase-lambda)). 
 
+
+The alfalfa phase of the 4-year rotation (A4) offered opportunities for decreasing $\lambda$, which was not possible in any other crop phases in the three examined rotations. However, the declines in phase-wise $\lambda$ in A4 ($\lambda(A4,conv) = 0.57$ and $\lambda(A4,conv) = 0.53$) were not strong enough to deplete seed replenishment occurring in the corn phase ($\lambda(C4,conv) = 29.68$, and $\lambda(C4,low) = 92.07$), soybean phase ($\lambda(S4,conv) = 773.71$, and $\lambda(C4,low) = 10.18$), and oat phase ($\lambda(O4,conv) = 6.54$, and $\lambda(O4,low) = 12.80$). 
+
+### Scenario 2 {-}  
+
+Unlike Scenario 1's dynamics, the differences in the absolute value of the elasticity of $\lambda_r$ to the first-ranked and second-ranked groups of parameters were multiple orders of magnitude. The seed producing parameters were ranked higher in all crop environments (crop species in each rotation).   
+
+The elasticity of $\lambda(r)$'s to fecundity rates, as a group, were ranked first in all crop phases (Figure \@ref(fig:scenario2-E-B-by-rot-rank)). The elasticity of $\lambda$'s to cohort one fecundity were the highest in C2 (4.02 x $10^6$ and 3.44 x $10^6$), S3 (1.33 x $10^6$ and 1.61 x $10^6$), and O4 (682.28 and 1531.97) phases. The elasticity of $\lambda_r$'s elasticity to cohort two fecundity were the highest in S2 (1.82 x $10^{7}$ and 1.39 x $10^7$), C3 (2.22 x $10^6$ and 5.69 x $10^5$), O3 (76673.94 and 	
+62845.84), C4 (5.84 x $10^7$ and 1.01 x $10^6$), S4 (5.74 x $10^6$ and 2.17 x $10^6$), and A4 (1850.3 and 156.54) phases.  
+
+The second-ranked group of demographic parameters to $\lambda_r$ differed by rotation and crop phase. In the 2-year rotation, the second-ranked group of parameters in contribution to the elasticity of $\lambda(2)$ were both pre-planting tillage-induced seed movement and overwinter seed survival. In the 3-year rotation, no clear pattern of the second-ranked group of parameters in contribution to elasticity of $\lambda(3)$ was observed: overwinter survival rate of the top stratum seeds in C3, non-germinating seeds in the top stratum in S3, and overwinter survival rate of the bottom stratum seeds in O3. In the 4-year rotation, the second-ranked group of parameters in contribution to elasticity of $\lambda(4)$ was overwinter seed survival in the warm-season crop phase and non-germinating seeds in the top stratum in the cool-season crop phases.
 
 ```{r scenario2-periodic-matrices-phases-mean, include=FALSE}
 ## Summary: everything the same in all scenarios, but:
@@ -1503,12 +1516,12 @@ ggplot(aes(x=Parameter, y=Rank, fill = Crop)) +
   geom_bar(stat = "identity") +
     scale_fill_brewer(palette = "Set1") +
     geom_text(aes(x = Parameter, 
-                  y = 60,  #leave space between bar and label
+                  y = 100,  #leave space between bar and label
                   label = Value_rounded), 
               angle = 90,
               size = 2.5) +
   facet_grid(Crop_ID ~ Corn_weed_management) +
-#  ylim(0, 70) +
+  ylim(0, 170) +
   labs(x = "Parameter",
        y= expression(paste("Elasticity of ", lambda, " to changes in lower-level demographic parameters"))) +
   theme(axis.text.x = element_text(angle = 90)) +

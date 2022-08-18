@@ -1,7 +1,7 @@
 ---
 output:
-    bookdown::word_document2:
- #   bookdown::html_document2:
+  #  bookdown::word_document2:
+    bookdown::html_document2:
       toc: false
       fig_caption: yes
       keep_md: yes
@@ -18,6 +18,29 @@ library(magrittr)
 library(flextable)
 source("functions.R")
 ```
+In the high control efficacy, as reflected by the 2019 reproductive potential, waterhemp population densities were projected to decrease or slightly increase (Figure \@ref(fig:scenario1-phase-wise-lambda-plot-no-annotation) and Table \@ref(tab:scenario1-merge-rotation-phase-lambda)). 
+
+Waterhemp seedbank densities were projected to decrease in the 3-year rotation regardless of corn weed management program ($\lambda = 0.58$  and $\lambda = 0.77$ and in the 2-year and 4-year rotations where conventional weed management was applied on the corn phase ($\lambda = 0.62$ and $\lambda = 0.64$ (Table \@ref(tab:scenario1-merge-rotation-phase-lambda)). Waterhemp seedbank densities were projected to increase in the 2-year and 4-year rotation where low herbicide weed management was applied in corn ($\lambda = 1.18$ and $\lambda = 1.08$) (Table \@ref(tab:scenario1-merge-rotation-phase-lambda)).
+
+In the 2-year rotation under low herbicide weed management, a 3.6-fold increase of seedbank size in the corn phase did not resulted in substantial annualized seedbank density increase ($\lambda = 1.18$) because the seedbank declined in half in the soybean phase ($\lambda = 0.51$). In the 4-year rotation under low herbicide weed management, even though waterhemp seedbank densities substantially increased in the corn phase ($\lambda = 9.80$), the annualized population could be stabilized (annualized $\lambda = 1.08$) because the population declined in the soybean ($\lambda = 0.55$) and alfalfa ($\lambda = 0.53$) phases.
+
+All the relative ranking of elasticity of $\lambda$ to the lower-level demographic parameters was consistent between corn weed management regimes (Figures \@ref(fig:scenario1-E-B-by-rot-rank) and \@ref(fig:scenario2-E-B-by-rot-rank)). However, the overall population change rate can be reflected by the relative importance of each $b_{ij}$ element on the elasticity of $\lambda$.  
+
+## Elasticities of population growth rates to lower-level demographic parameters {-} 
+
+Even though all the $B_h$ matrices, but $B_f$, were identical across scenarios, the ranking of each $b_{ij}$ element contribution to the elasticity of $\lambda$ might be slightly different across scenarios. For example, the the $\lambda$-decreasing case, the relative ranks of $t_{22_s}$ (the probability that a seed in the 2-20 cm stratum stay at that stratum) was higher that those of other $t_{ij_s}$, whereas $t_{22_s}$ in the population-growing case was the lowest among all $t_{ij_s}$. Similarly, $s_{s2}$ was more important than $s_{s1}$ in the elasticity of $\lambda$ in the population-shrinking versus population-growing case. Consistent patterns in the importance of $t_{ij_f}$ to elasticity of $\lambda$ was observed in the two scenarios.  
+
+Because seed emergence and seedling survival rate contributed minimally to the elasticity of $\lambda$, this pattern suggests that even if weed control programs are of high, or even total efficacy, very few surviving plants prolifically producing new seeds, can sustain the population. The low relative importance of $g_k$ and $s_{p_k}$ can be attributed to the low emergence rate in weeds, the high weed control efficacy, while the high relative importance of of $f_k$ to elasticity of $\lambda$ can be explained by the high individual fecundity.  
+
+
+In both scenarios, the patterns of contribution to elasticity of $\lambda$ in the 3-year rotation was slightly different from the 2-year and 4-year rotations. The contribution of plant survival rate to elasticity of $\lambda$ was non-existent in C2, S2, C4, S4, and O4 (absolute zeroes) but minimal in C3, S3, and O4 (very small positive values). The difference in contribution of plant survival rate on O3 and O4 might be attributed to the different companion crops to oat (red clover in O3 and alfalfa in O4).  
+
+The ranking of parameters or individual parameters to the elasticity of $\lambda_r$ differed by rotation and crop phase (Figure \@ref(fig:scenario1-E-B-by-rot-rank)). The seed preserving parameters were ranked higher in the corn phase of the 3-year rotation (C3) under both weed management regimes, the soybean phase of the 3-year rotation (S3) that followed corn under low herbicide weed management, the oat phases of the 3-year and 4-year rotations (O3 and O4) regardless of the preceding corn phase's weed management regime, and the alfalfa phase of the 4-year rotation (A4) regardless of the preceding corn phase's weed management regime. The seed producing parameters were ranked higher in the other crop environments (crop species in each rotation).  
+
+The elasticity of $\lambda(r)$ to fecundity rate, as a group, were ranked first in the corn phase of the 2-year rotation (C2) (43.13 and 3.15), the soybean phase of the 2-year rotation (S2) (0.75 and 4.18), the soybean phase of the 3-year rotation (S3) that followed corn under low herbicide weed management program (0.91), the corn phase of the 4-year rotation (C4) (305.24 and 323.07), and the alfalfa in the 4-year rotation (A4) (36.78 and 14.49) under both weed management regimes.
+The rate of pre-planting tillage induced seed movement to the 2-20 cm soil stratum was the first-ranked individual parameter to the elasticity of $\lambda(r)$'s in the corn phase of the 3-year rotation (C3) (1.1 and 1.1), the soybean in the 3-year rotation that followed corn under low herbicide weed management (0.89), the oat phase of the 3-year rotation (O3) (0.87 and 0.88), and the oat phase of the 4-year rotation (5.49 and 3.98). The overwinter survival rate of the seeds in the 0-2 cm soil stratum was the first-ranked individual parameter to the elasticity of $\lambda(r)$'s in the soybean phase of the 4-year rotation (S4) (3.32 and 2.41). 
+
+As $\lambda(r)$s declined in this scenario, with some opportunity of increasing in the C4 phase, focusing on reducing plant fecundity in C4 would sufficiently stabilize $\lambda(4)$, provided that the weed control efficacy in the subsequent three crop phases remained adequate. 
 
 
 ```{r scenario1-periodic-matrices-phases-mean, include=FALSE}
