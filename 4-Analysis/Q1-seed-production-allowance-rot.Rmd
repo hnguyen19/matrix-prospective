@@ -858,8 +858,43 @@ seed_allowance_sim_df %>%
                `6` = "cohort 6"))
 ```
 
-```{r}
+```{r sim1-seed-prod-capita}
 
+seed_allowance_sim_df %>% 
+  group_by(Crop_ID, Corn_weed_management, cohort) %>%
+  summarise(mean_seed_per_capita_threshold = mean(seed_per_capita_threshold)) %>%
+  pivot_wider(names_from = cohort, values_from = mean_seed_per_capita_threshold) %>%
+  mutate(phase_order = ifelse(str_detect(Crop_ID, "C"), 1,
+                              ifelse(str_detect(Crop_ID, "S"), 2,
+                                     ifelse(str_detect(Crop_ID, "O"), 3, 4))))  %>%
+  mutate(Rot = substr(Crop_ID,2,2))%>%
+  arrange(Rot, phase_order, Corn_weed_management)
+```
+
+```{r sim1-seed-prod-threshold, echo=FALSE}
+seed_allowance_sim_df %>% 
+  group_by(Crop_ID, Corn_weed_management, cohort) %>%
+  summarise(mean_seed_production_threshold = mean(seed_production_threshold)) %>%
+  pivot_wider(names_from = cohort, values_from = mean_seed_production_threshold) %>%
+  mutate(phase_order = ifelse(str_detect(Crop_ID, "C"), 1,
+                              ifelse(str_detect(Crop_ID, "S"), 2,
+                                     ifelse(str_detect(Crop_ID, "O"), 3, 4)))) %>%
+  mutate(Rot = substr(Crop_ID,2,2))%>%
+  arrange(Rot, phase_order, Corn_weed_management) %>%
+    mutate_at(vars(`1`:`6`), funs(round(., 2))) %>%
+  select(Crop_ID, Corn_weed_management, `1`:`6`) %>%
+  mutate(first_three = `1` + `2`+ `3`) 
+#%>%
+  flextable() %>%
+    set_caption("Seed production thresholds averaged over 10000 rotational cycles (the 2-year rotation cycled over two years and ended at the soybean phase, the 3-year rotation cycled over three years and ended at the oat phase, and the 4-year rotation cycled over four years and ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seeds in the bottom 2 - 20 cm soil stratum.")  %>%
+  set_header_labels(values = list(Crop_ID = "Crop ID",
+                                  Corn_weed_management = "Corn weed management",
+               `1` = "cohort 1",
+               `2` = "cohort 2",
+               `3` = "cohort 2",
+               `4` = "cohort 4",
+               `5` = "cohort 5",
+               `6` = "cohort 6")) 
 ```
 
 
