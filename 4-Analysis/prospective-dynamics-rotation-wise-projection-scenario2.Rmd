@@ -74,14 +74,52 @@ scenario2_mean_fecundity_2018 <- readRDS("../2-Data/Clean/mean-fecundity-18-coho
 
 
 #see min and max
-# scenario2_mean_fecundity_2018[c("C2_conv", "C3_conv", "C4_conv", "C2_low", "C3_low","C4_low")]
+min(scenario2_mean_fecundity_2018[["C4_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C4_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C3_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C3_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C2_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C2_low"]][1,3:8])
 
-# scenario2_mean_fecundity_2018[c("S2_conv", "S3_conv", "S4_conv", "S2_low", "S3_low","S4_low")]
+max(scenario2_mean_fecundity_2018[["C4_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C4_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C3_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C3_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C2_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["C2_low"]][1,3:8])
 
-#scenario2_mean_fecundity_2018[c( "O3_conv", "O4_conv",  "O3_low","O4_low")]
+
+min(scenario2_mean_fecundity_2018[["S4_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S4_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S3_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S3_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S2_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S2_low"]][1,3:8])
+
+max(scenario2_mean_fecundity_2018[["S4_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S4_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S3_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S3_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S2_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["S2_low"]][1,3:8])
 
 
-scenario2_mean_fecundity_2018[c(  "A4_conv", "A4_low")]
+min(scenario2_mean_fecundity_2018[["O4_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["O4_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["O3_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["O3_low"]][1,3:8])
+
+max(scenario2_mean_fecundity_2018[["O4_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["O4_low"]][1,3:8],
+    scenario2_mean_fecundity_2018[["O3_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["O3_low"]][1,3:8])
+
+
+min(scenario2_mean_fecundity_2018[["A4_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["A4_low"]][1,3:8])
+    
+max(scenario2_mean_fecundity_2018[["A4_conv"]][1,3:8],
+    scenario2_mean_fecundity_2018[["A4_low"]][1,3:8])
 
 scenario2_projection_by_matrix_id <- tibble::lst(scenario2_mean_overwinter,
                                                  mean_post_harvest_tillage,

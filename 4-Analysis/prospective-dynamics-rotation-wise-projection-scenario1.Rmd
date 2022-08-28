@@ -84,6 +84,47 @@ scenario1_mean_overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-
 scenario1_mean_fecundity_2019 <- readRDS("../2-Data/Clean/mean-fecundity-19-cohort.RData")
 
 
+min(scenario1_mean_fecundity_2019[["C4_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C4_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C3_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C3_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C2_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C2_low"]][1,3:8])
+
+max(scenario1_mean_fecundity_2019[["C4_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C4_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C3_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C3_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C2_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["C2_low"]][1,3:8])
+
+
+
+min(scenario1_mean_fecundity_2019[["S4_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S4_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S3_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S3_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S2_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S2_low"]][1,3:8])
+
+max(scenario1_mean_fecundity_2019[["S4_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S4_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S3_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S3_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S2_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["S2_low"]][1,3:8])
+
+
+min(scenario1_mean_fecundity_2019[["O4_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["O4_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["O3_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["O3_low"]][1,3:8])
+
+max(scenario1_mean_fecundity_2019[["O4_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["O4_low"]][1,3:8],
+    scenario1_mean_fecundity_2019[["O3_conv"]][1,3:8],
+    scenario1_mean_fecundity_2019[["O3_low"]][1,3:8])
+
 
 scenario1_projection_by_matrix_id <- tibble::lst(scenario1_mean_overwinter,
                                                  mean_post_harvest_tillage,
