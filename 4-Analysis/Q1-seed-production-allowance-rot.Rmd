@@ -883,15 +883,14 @@ seed_allowance_sim_df %>%
   arrange(Rot, phase_order, Corn_weed_management) %>%
     mutate_at(vars(`1`:`6`), funs(round(., 2))) %>%
   select(Crop_ID, Corn_weed_management, `1`:`6`) %>%
-  mutate(first_three = `1` + `2`+ `3`) 
-#%>%
+ # mutate(first_three = `1` + `2`+ `3`) 
   flextable() %>%
     set_caption("Seed production thresholds averaged over 10000 rotational cycles (the 2-year rotation cycled over two years and ended at the soybean phase, the 3-year rotation cycled over three years and ended at the oat phase, and the 4-year rotation cycled over four years and ended at the alfalfa phase). All simulations started with a seed column of 10000 female seeds in the top 0 - 2 cm soil stratum and 0 female seeds in the bottom 2 - 20 cm soil stratum.")  %>%
   set_header_labels(values = list(Crop_ID = "Crop ID",
                                   Corn_weed_management = "Corn weed management",
                `1` = "cohort 1",
                `2` = "cohort 2",
-               `3` = "cohort 2",
+               `3` = "cohort 3",
                `4` = "cohort 4",
                `5` = "cohort 5",
                `6` = "cohort 6")) 
