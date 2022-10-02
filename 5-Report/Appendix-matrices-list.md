@@ -1,70 +1,16 @@
 ---
 output:
-    #bookdown::word_document2:
-    bookdown::pdf_document2:
+    bookdown::word_document2:
       toc: false
       fig_caption: yes
-      keep_tex: yes
+      keep_md: yes
 bibliography: WH-pop-dynamics.bib
 csl: apa-no-ampersand.csl 
 ---
 
-```{r, include=FALSE}
-library(tidyverse)
-```
-
-```{r, include=FALSE}
-## load all matrices 
-## Pre-planting tillage 
-mean_spring_tillage <-  readRDS("../2-Data/Clean/mean-pre-planting-tillage.RData")
-
-## Emergence 
-scenario1_mean_emergence <- readRDS("../2-Data/Clean/mean-emergence-prop.RData")
-
-## Seed survival and plant survival 
-#### seed survival 
-
-scenario1_mean_summer_seed_survival <- readRDS("../2-Data/Clean/mean-summer-seed-survival-Sosnoskie.RData")
-
-#### plant survival: literature data - named as scenario2, because scenario1 is the point-estimates from the experiment 
-#female_survival <- readRDS("../2-Data/Clean/female-survival-rate-cohort-equal.RData")
-
-scenario1_mean_female_survival <- readRDS("../2-Data/Clean/mean-summer-seedling-survival-Hartzler.RData")
-
-#### combine seed and plant survivals into one matrix with element-wise multiplication: this is not computing, but arranging using 1's as placeholders 
-scenario1_mean_summer_survival <- purrr::map2(scenario1_mean_summer_seed_survival, scenario1_mean_female_survival, `*`)
 
 
-## Post-harvest tillage
-mean_post_harvest_tillage <- readRDS("../2-Data/Clean/mean-post-harvest-tillage.RData")
 
-## Overwinter survival 
-scenario1_mean_overwinter <- readRDS("../2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData")
-
-scenario1_mean_fecundity_2019 <- readRDS("../2-Data/Clean/mean-fecundity-19-cohort.RData")
-
-scenario2_mean_fecundity_2018 <- readRDS("../2-Data/Clean/mean-fecundity-18-cohort.RData")
-
-## name the list here with _demo suffix to distinguish with the previous *.Rmd files  for scenarios 1 and 2
-
-projection_by_matrix_id_demo <- tibble::lst(scenario1_mean_overwinter,
-                                                 mean_post_harvest_tillage,
-                                                 scenario1_mean_fecundity_2019,
-                                                 scenario2_mean_fecundity_2018, 
-                                                 scenario1_mean_summer_survival,
-                                               scenario1_mean_emergence,
-                                               mean_spring_tillage)
-## name column and row 
-projection_by_matrix_id_named_demo <- rapply(projection_by_matrix_id_demo, 
-                                                  function(x) {dimnames(x) <- rep(list(c("s_t",
-                                                                                        "s_b", 
-                                                                                        "p_co_1",
-                                                                                        "p_co_2",
-                                                                                        "p_co_3",
-                                                                                        "p_co_4",
-                                                                                        "p_co_5",
-                                                                                        "p_co_6")),2); x}, how="list")
-```
 
 The structure of all periodic matrices used in the two different scenarios are listed below. All numbers are female-only. Each theoretical matrix for a sub-annual period is followed by the set of matrices used in that sub-annual period. The abbreviate row and column names are:  
 - s_t: seed at the top stratum (0 - 2 cm),    
@@ -97,10 +43,7 @@ $$
 The same pre-planting tillage regimes were applied in 2018 and 2019. The list of pre-planting tillage matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-pre-planting-tillage.RData>.    
 
 
-```{r, include=FALSE}
-projection_by_matrix_id_named_demo$mean_spring_tillage  %>%
-  map(., ~{round(., 2)}) 
-```
+
 
 
 ##### In-season survival of seeds and seedlings {-}
@@ -128,10 +71,7 @@ The empirically measured data for seedling survival were deemed unrealistically 
 
 The same summer survival rates were used in 2018 and 2019. The list of summer seed survival rate matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-summer-seed-survival-Sosnoskie.RData> and the list of seedling survival rate to maturity is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-summer-seedling-survival-Hartzler.RData>.      
 
-```{r, include=FALSE}
-projection_by_matrix_id_named_demo$scenario1_mean_summer_survival  %>%
-  map(., ~{round(., 2)}) 
-```
+
 
 
 ##### Post-harvest tillage induced vertical redistribution of seeds post-harvest tillage {-}
@@ -153,10 +93,7 @@ $$
 
 The same post-harvest tillage regimes were applied in 2018 and 2019. The list of pre-planting tillage matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-post-harvest-tillage.RData>    
 
-```{r, include=FALSE}
-projection_by_matrix_id_named_demo$mean_post_harvest_tillage  %>%
-  map(., ~{round(., 2)}) 
-```
+
 
 ##### Overwinter survival {-} 
 
@@ -177,10 +114,7 @@ $$
 
 The same overwinter survival rates were used in 2018 and 2019. Some zero values were due to rounding. The list of overwinter seed survival matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-winter-seed-survival-Sosnoskie.RData>     
 
-```{r, include=FALSE}
-projection_by_matrix_id_named_demo$scenario1_mean_overwinter  %>%
-  map(., ~{round(., 2)}) 
-``` 
+
 
 
 #### Empirically measured data {-}
@@ -219,10 +153,7 @@ From steps 2 through 4, the seed column in sub-period h, $N_h$, was transitioned
 The same emergence rates were used in 2018 and 2019. Some zero values in the first column were due to rounding. The list of seedling recruitment matrices is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-emergence-prop-adjusted.RData>       
 
 
-```{r, include=FALSE}
-projection_by_matrix_id_named_demo$scenario1_mean_emergence  %>%
-  map(., ~{round(., 5)}) 
-```
+
 
 ##### Plant fecundity {-}  
 
@@ -248,19 +179,13 @@ Scenario 1: High control efficacy
 
 The list of cohort-averaged fecundity matrices under high control efficacy is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-fecundity-19-cohort.RData>
 
-```{r, include=FALSE}
-projection_by_matrix_id_named_demo$scenario1_mean_fecundity_2019  %>%
-  map(., ~{round(., 2)}) 
-```
+
 
 
 Scenario 2: Low control efficacy 
 
 The list of cohort-averaged fecundity matrices under low control efficacy is available at <https://github.com/hnguyen19/matrix-prospective/blob/master/2-Data/Clean/mean-fecundity-18-cohort.RData>
 
-```{r, include=FALSE}
-projection_by_matrix_id_named_demo$scenario2_mean_fecundity_2018  %>%
-  map(., ~{round(., 2)}) 
-```
+
 
 
