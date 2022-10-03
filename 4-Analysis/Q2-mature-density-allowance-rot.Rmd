@@ -1,7 +1,7 @@
 ---
 output:
-  bookdown::word_document2:
-#  bookdown::html_document2:
+#  bookdown::word_document2:
+  bookdown::html_document2:
       toc: false
       fig_caption: yes
       keep_md: true
