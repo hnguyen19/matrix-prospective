@@ -79,14 +79,14 @@ min(scenario2_mean_fecundity_2018[["C4_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["C3_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["C3_low"]][1,3:8],
     scenario2_mean_fecundity_2018[["C2_conv"]][1,3:8],
-    scenario2_mean_fecundity_2018[["C2_low"]][1,3:8])
+    scenario2_mean_fecundity_2018[["C2_low"]][1,3:8]) # 18.75
 
 max(scenario2_mean_fecundity_2018[["C4_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["C4_low"]][1,3:8],
     scenario2_mean_fecundity_2018[["C3_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["C3_low"]][1,3:8],
     scenario2_mean_fecundity_2018[["C2_conv"]][1,3:8],
-    scenario2_mean_fecundity_2018[["C2_low"]][1,3:8])
+    scenario2_mean_fecundity_2018[["C2_low"]][1,3:8]) #93672.33
 
 
 min(scenario2_mean_fecundity_2018[["S4_conv"]][1,3:8],
@@ -94,32 +94,32 @@ min(scenario2_mean_fecundity_2018[["S4_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["S3_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["S3_low"]][1,3:8],
     scenario2_mean_fecundity_2018[["S2_conv"]][1,3:8],
-    scenario2_mean_fecundity_2018[["S2_low"]][1,3:8])
+    scenario2_mean_fecundity_2018[["S2_low"]][1,3:8]) #1397.667
 
 max(scenario2_mean_fecundity_2018[["S4_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["S4_low"]][1,3:8],
     scenario2_mean_fecundity_2018[["S3_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["S3_low"]][1,3:8],
     scenario2_mean_fecundity_2018[["S2_conv"]][1,3:8],
-    scenario2_mean_fecundity_2018[["S2_low"]][1,3:8])
+    scenario2_mean_fecundity_2018[["S2_low"]][1,3:8]) #1249255
 
 
 min(scenario2_mean_fecundity_2018[["O4_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["O4_low"]][1,3:8],
     scenario2_mean_fecundity_2018[["O3_conv"]][1,3:8],
-    scenario2_mean_fecundity_2018[["O3_low"]][1,3:8])
+    scenario2_mean_fecundity_2018[["O3_low"]][1,3:8]) #65.25
 
 max(scenario2_mean_fecundity_2018[["O4_conv"]][1,3:8],
     scenario2_mean_fecundity_2018[["O4_low"]][1,3:8],
     scenario2_mean_fecundity_2018[["O3_conv"]][1,3:8],
-    scenario2_mean_fecundity_2018[["O3_low"]][1,3:8])
+    scenario2_mean_fecundity_2018[["O3_low"]][1,3:8]) #3696.556
 
 
 min(scenario2_mean_fecundity_2018[["A4_conv"]][1,3:8],
-    scenario2_mean_fecundity_2018[["A4_low"]][1,3:8])
+    scenario2_mean_fecundity_2018[["A4_low"]][1,3:8]) #0.5
     
 max(scenario2_mean_fecundity_2018[["A4_conv"]][1,3:8],
-    scenario2_mean_fecundity_2018[["A4_low"]][1,3:8])
+    scenario2_mean_fecundity_2018[["A4_low"]][1,3:8]) #460.3333
 
 scenario2_projection_by_matrix_id <- tibble::lst(scenario2_mean_overwinter,
                                                  mean_post_harvest_tillage,
