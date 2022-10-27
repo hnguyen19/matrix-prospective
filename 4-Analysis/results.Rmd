@@ -204,7 +204,7 @@ AMATA_female_bottom_emm_log <- emmeans(AMATA_female_bottom_lm, c("Crop_ID" , "Co
 joint_tests(AMATA_female_bottom_emm_log)
 ```
 
-```{r, echo=FALSE, fig.cap = "Diagnosis plots for the effects of crop identity and crop weed managennt on the seedbank densities at the top (A) and bottom (B) soil strata"}
+```{r top-bot-strata-diag, echo=FALSE, fig.cap = "Diagnosis plots for the effects of crop identity and crop weed managennt on the seedbank densities at the top (A) and bottom (B) soil strata"}
 
 list(AMATA_female_top_lm, AMATA_female_bottom_lm) %>%
    lapply(resid_panel, nrow = 4) %>% 
@@ -268,7 +268,7 @@ joint_tests(Julian_cohort1_20_lm )
 ```
 
 
-```{r, echo=FALSE, fig.cap = "Diagnosis plots for the effects of crop identity and corn weed management on the seedbank densities at the top (A) and bottom (B) soil strata"}
+```{r top-bot-cohort1-diag, echo=FALSE, fig.cap = "Diagnosis plots for the effects of crop identity and corn weed management on the seedbank densities at the top (A) and bottom (B) soil strata"}
 list(Julian_cohort1_19_lm, Julian_cohort1_20_lm) %>%
    lapply(resid_panel, nrow = 4) %>% 
   wrap_plots() +
