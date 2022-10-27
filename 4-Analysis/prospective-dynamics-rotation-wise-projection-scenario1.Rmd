@@ -1562,5 +1562,6 @@ ggplot(aes(x=Parameter, y=Rank, fill = Crop)) +
 ```
 
 ```{r scenario1-E-B-output-supp, include=FALSE}
-# write.csv(scenario1_E_B_recombine_ranked_value, "../5-Report/scenario1-elasticities.csv")
+#View(scenario1_E_B_recombine_ranked_value)
+ write.csv(scenario1_E_B_recombine_ranked_value[,1:8], "../5-Report/scenario1-elasticities.csv") # exclude the ln-transformed columns 
 ```

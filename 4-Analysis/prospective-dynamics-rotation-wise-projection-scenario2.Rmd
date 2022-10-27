@@ -1569,5 +1569,5 @@ ggplot(aes(x=Parameter, y=Rank, fill = Crop)) +
 
 
 ```{r scenario2-E-B-output-supp, include=FALSE}
-write.csv(scenario2_E_B_recombine_ranked_value, "../5-Report/scenario2-elasticities.csv")
+write.csv(scenario2_E_B_recombine_ranked_value[,1:8], "../5-Report/scenario2-elasticities.csv", row.names = FALSE)
 ```
