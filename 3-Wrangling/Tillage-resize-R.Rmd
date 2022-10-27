@@ -79,8 +79,4 @@ post_harvest_repeat_n <-list(c(6, ), c(2,3)) #number of times each matrix is rep
 repeat_chisel <- lapply(seq_along(tillage_list_raw ), function(i)rep(tillage_list_raw[[i]], repeat.list[[i]]))
 
 # Arrange tillage matrix with matrix_id as in other list
-
-
-
-
 ```
