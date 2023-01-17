@@ -145,7 +145,7 @@ The patterns shown in mature plant density thresholds are similar to seed produc
 Among all the cool-season crops, no additional control efficacy was needed, except in the oat phase of the 3-year rotation that followed conventional herbicide corn weed management. More aggressive stubble clipping after oat harvest would be necessary in this case, as 99.999% control efficacy in the corn and soybean phases was insufficient to stabilize the population size.  Even though the simulation showed that additional control efficacy might not be necessary in the oat and alfalfa phases of the 4-year rotation, it might be required in reality because achieving 0.00052 plants m$^{-2}$ to 0.002 plants m$^{-2}$ (equivalent to above 99.999% efficacy with respect to density) might be impossible. Similarly, the mature waterhemp plant density in O3 that followed conventional corn weed management would need to be reduced to lower than 0.59 plants m$^{-2}$.
 
 
-```{r, child = "Q2-mature-plant-density-allowance-rot.Rmd"}
+```{r, child = "Q2-mature-density-allowance-rot.Rmd"}
 ```
 
 
