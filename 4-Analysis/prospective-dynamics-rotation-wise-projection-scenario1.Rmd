@@ -163,7 +163,7 @@ scenario1_phase_projection <- scenario1_projection_by_matrix_id_transpose  %>%
 #lapply(scenario1_projection_by_matrix_id_transpose, 
 #       \(x) x[[1]] %*% x[[2]] %*% x[[3]] %*% x[[4]] %*% x[[5]] %*% x[[6]])
 
-# View(scenario1_phase_projection)
+ View(scenario1_phase_projection)
 ```
 
 

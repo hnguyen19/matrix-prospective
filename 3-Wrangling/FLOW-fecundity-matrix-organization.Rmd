@@ -133,7 +133,7 @@ fecundity_mean_18_list_emm <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$mat
 #       function(x) rbind(matrix(0,nrow = 2, ncol =8), cbind(matrix(0,nrow = 6, ncol = 2), diag(x$var_seed,6))))
          
 
-
+View(fecundity_mean_18_list_emm)
 
 # saveRDS(fecundity_var_18_list, file="../2-Data/Clean/var-fecundity-18-cohort.RData")
 ```
@@ -291,7 +291,7 @@ female_19_est_individual_fecundity <-  female_19_est %>%
          var_Weight = var(Weight), #m2_ pooled variance of biomass, need cohort-based, CropID x corn weed mgt var later
     Seed_log = a*log(Weight + 0.005) + b, # return ln(seed +1)
     var_Seed_log = var(Seed_log), #pooled variance of log of number of seeds
-    Seed = exp(Seed_log + var_Seed_log/2) - `1, #subtract 1 to get raw seed
+    Seed = exp(Seed_log + var_Seed_log/2) - 1, #subtract 1 to get raw seed
     var_Seed = (exp(var_Seed_log) -1)*exp(Seed*2 + var_Seed_log))  %>% # pooled variance of number of seeds
   select(Crop_ID, Corn_weed_management, Cohort,
         a, var_a, var_b, Weight, Seed, var_Weight, var_Seed) # keep relevant columns only 
@@ -314,11 +314,13 @@ female_19_est_cohort_summ <- female_19_est_individual_fecundity %>%
 
 # Save 2019 estimated fecundity as a list
 mean_fecundity_19_list <- lapply(split(
-female_19_est_cohort_sorted, 
-female_19_est_cohort_sorted$matrix_id),
+female_19_est_cohort_summ, 
+female_19_est_cohort_summ$matrix_id),
        function(x) rbind(cbind(diag(1,2),
                          rbind(matrix(c(x$mean_Seed_cohort, rep(0,6)), byrow = TRUE, nrow=2))),
        matrix(rep(0,48), nrow = 6, byrow = TRUE))) 
+
+View(mean_fecundity_19_list)
 
 ## Save the 2019 fecundity matrices as a list 
 # saveRDS(mean_fecundity_19_list, file="../2-Data/Clean/mean-fecundity-19-cohort.RData")
