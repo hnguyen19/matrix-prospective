@@ -78,7 +78,7 @@ fecundity_mean_18_list <-  lapply(split(fecundity18_sb_log_quantile_summ, fecund
 
 ## Save the 18 2018 fecundity matrices as a list 
 
-
+View(fecundity_mean_18_list)
 ```
 
 ```{r save-fecundity, include=FALSE}
@@ -118,7 +118,7 @@ seeds_18_emm_df <- seeds_18_emm %>%
 
 # View(seeds_18_emm_df)
 
-# Write a list of 8 x 8 mean matrices, model based
+# Write a list of 8 x 8 mean matrices, model based | Decide whether to use data-based or model-based numbers in the model
 
 fecundity_mean_18_list_emm <-  lapply(split(seeds_18_emm_df, seeds_18_emm_df$matrix_id),
        function(x)(rbind(cbind(diag(1,2),
